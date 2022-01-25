@@ -6,3 +6,6 @@
 /common/build/
 /desktop/build/
 /server/build/
+.gradle
+.idea
+gradle/wrapper/gradle-wrapper.jar

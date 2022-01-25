@@ -1,0 +1,10 @@
+= Section IT
+
+*kotlin multiplatform project:*
+
+* android
+* browser
+* desktop
+* server
+* _spring-monolith_
+* _web-landing_
