@@ -5,6 +5,6 @@
 * android
 * browser
 * desktop
-* backend
-* _spring-monolith_
+* simple-server (ktor)
+* _backend_ (spring-boot)
 * _web-landing_
