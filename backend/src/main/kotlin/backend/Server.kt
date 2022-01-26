@@ -13,11 +13,11 @@ import javax.annotation.PostConstruct
 class Server(
     private val context: ApplicationContext
 ) {
+    @PostConstruct
+    private fun init(): Array<String> = checkProfileLog(context = context)
+
     companion object {
         @JvmStatic
         fun main(args: Array<String>) = start(args)
     }
-
-    @PostConstruct
-    private fun init(): Array<String> = checkProfileLog(context = context)
 }
