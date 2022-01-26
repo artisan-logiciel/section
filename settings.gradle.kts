@@ -17,22 +17,13 @@ pluginManagement {
         id("com.google.cloud.tools.jib").version(extra["jib.version"] as String)
         id("org.springframework.boot").version(extra["springboot.version"] as String)
     }
-//    buildscript {
-//        repositories {
-//            gradlePluginPortal()
-//            maven("https://repo.spring.io/milestone")
-//            maven("https://repo.spring.io/snapshot")
-//            mavenCentral()
-//        }
-//    }
 }
+
 rootProject.name = "section"
-
-
 include(":android")
 include(":desktop")
 include(":common")
 include(":browser")
 include(":simple-server")
-include(":server")
+include(":backend")
 

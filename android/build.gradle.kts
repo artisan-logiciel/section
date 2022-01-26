@@ -1,7 +1,7 @@
 import org.gradle.api.JavaVersion.VERSION_1_8
 
 plugins {
-    id("org.jetbrains.compose") version ("1.0.1")
+    id("org.jetbrains.compose").version ("1.0.1")
     id("com.android.application")
     kotlin(module = "android")
 }

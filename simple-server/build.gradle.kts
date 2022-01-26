@@ -14,7 +14,7 @@ version = "1.0"
 repositories {
     mavenCentral()
     google()
-    maven("https://maven.pkg.jetbrains.space/public/p/kotlinx-html/maven")
+    maven(url="https://maven.pkg.jetbrains.space/public/p/kotlinx-html/maven")
 }
 
 dependencies {

@@ -5,6 +5,6 @@
 * android
 * browser
 * desktop
-* server
+* backend
 * _spring-monolith_
 * _web-landing_

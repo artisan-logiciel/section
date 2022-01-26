@@ -5,10 +5,10 @@
 /build/js/packages/section-browser/kotlin/
 /common/build/
 /desktop/build/
-/server/build/
+/simple-server/build/
 .gradle
 .idea
 gradle/wrapper/gradle-wrapper.jar
 data
 section.code-workspace
-server/bin
+simple-server/bin
