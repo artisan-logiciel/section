@@ -9,7 +9,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
 import reactor.core.publisher.Mono
-import backend.config.Log.log
+import backend.Server.Log.log
 import backend.repositories.UserRepository
 import backend.repositories.entities.User
 import backend.services.exceptions.UserNotActivatedException

@@ -1,4 +1,4 @@
-package backend.http
+package backend.http.util
 
 import org.springframework.data.domain.Page
 import org.springframework.http.HttpHeaders
@@ -46,15 +46,32 @@ object PaginationUtil {
         return headers
     }
 
-    private fun prepareLink(uriBuilder: UriComponentsBuilder, pageNumber: Int, pageSize: Int, relType: String): String {
-        return MessageFormat.format(HEADER_LINK_FORMAT, preparePageUri(uriBuilder, pageNumber, pageSize), relType)
-    }
+    private fun prepareLink(
+        uriBuilder: UriComponentsBuilder,
+        pageNumber: Int,
+        pageSize: Int,
+        relType: String
+    ): String = MessageFormat.format(
+        HEADER_LINK_FORMAT,
+        preparePageUri(
+            uriBuilder = uriBuilder,
+            pageNumber = pageNumber,
+            pageSize = pageSize
+        ),
+        relType
+    )
 
-    private fun preparePageUri(uriBuilder: UriComponentsBuilder, pageNumber: Int, pageSize: Int): String {
-        return uriBuilder.replaceQueryParam("page", pageNumber.toString())
-            .replaceQueryParam("size", pageSize.toString())
-            .toUriString()
-            .replace(",", "%2C")
-            .replace(";", "%3B")
-    }
+    private fun preparePageUri(
+        uriBuilder: UriComponentsBuilder,
+        pageNumber: Int,
+        pageSize: Int
+    ): String = uriBuilder.replaceQueryParam(
+        "page",
+        pageNumber.toString()
+    ).replaceQueryParam(
+        "size",
+        pageSize.toString()
+    ).toUriString()
+        .replace(oldValue = ",", newValue = "%2C")
+        .replace(oldValue = ";", newValue = "%3B")
 }

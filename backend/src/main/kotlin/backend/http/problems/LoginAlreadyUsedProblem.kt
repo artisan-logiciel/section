@@ -3,12 +3,12 @@ package backend.http.problems
 import org.zalando.problem.Exceptional
 import backend.config.Constants.LOGIN_ALREADY_USED_TYPE
 
-class LoginAlreadyUsedBadRequestException :
-    BadRequestAlertException(
-        LOGIN_ALREADY_USED_TYPE,
-        "Login name already used!",
-        "userManagement",
-        "userexists"
+class LoginAlreadyUsedProblem :
+    AlertProblem(
+        type = LOGIN_ALREADY_USED_TYPE,
+        defaultMessage = "Login name already used!",
+        entityName = "userManagement",
+        errorKey = "userexists"
     ) {
     override fun getCause(): Exceptional? = super.cause
 

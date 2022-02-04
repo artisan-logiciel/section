@@ -5,7 +5,7 @@ import org.apache.commons.lang3.StringUtils.uncapitalize
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
-import backend.config.Log.log
+import backend.Server.Log.log
 import backend.domain.DataTest.defaultAccount
 import backend.domain.DataTest.defaultUser
 import backend.repositories.entities.User

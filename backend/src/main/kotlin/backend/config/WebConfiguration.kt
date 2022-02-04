@@ -11,7 +11,7 @@ import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource
 import org.springframework.web.reactive.config.EnableWebFlux
 import org.springframework.web.reactive.config.WebFluxConfigurer
 //import reactor.core.publisher.Hooks.onOperatorDebug
-import backend.config.Log.log
+import backend.Server.Log.log
 import backend.properties.ApplicationProperties
 
 

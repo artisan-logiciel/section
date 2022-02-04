@@ -29,7 +29,7 @@ import org.springframework.test.context.ActiveProfiles
 import backend.config.Constants.ROLE_ADMIN
 import backend.config.Constants.ROLE_ANONYMOUS
 import backend.config.Constants.ROLE_USER
-import backend.config.Log.log
+import backend.Server.Log.log
 import backend.domain.DataTest.defaultAccount
 import backend.domain.DataTest.defaultUser
 import backend.domain.unlockUser

@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.context.ApplicationContext
 import org.springframework.test.context.ActiveProfiles
-import backend.config.Log.log
+import backend.Server.Log.log
 import kotlin.test.Test
 
 @SpringBootTest

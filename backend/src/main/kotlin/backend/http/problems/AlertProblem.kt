@@ -6,7 +6,7 @@ import org.zalando.problem.Status.BAD_REQUEST
 import java.net.URI
 
 
-open class BadRequestAlertException(
+open class AlertProblem(
     type: URI,
     defaultMessage: String,
     val entityName: String,
@@ -20,8 +20,11 @@ open class BadRequestAlertException(
     null,
     getAlertParameters(entityName, errorKey)
 ) {
-    constructor(defaultMessage: String, entityName: String, errorKey: String) :
-            this(DEFAULT_TYPE, defaultMessage, entityName, errorKey)
+    constructor(
+        defaultMessage: String,
+        entityName: String,
+        errorKey: String
+    ) : this(DEFAULT_TYPE, defaultMessage, entityName, errorKey)
 
     override fun getCause(): Exceptional? = super.cause
 

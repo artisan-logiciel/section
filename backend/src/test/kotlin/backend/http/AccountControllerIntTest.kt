@@ -6,15 +6,6 @@
 
 package backend.http
 
-import kotlinx.coroutines.reactive.awaitSingle
-import kotlinx.coroutines.runBlocking
-import org.springframework.beans.factory.getBean
-import org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR
-import org.springframework.http.MediaType.APPLICATION_JSON
-import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
-import org.springframework.security.authentication.ReactiveAuthenticationManager
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
-import org.springframework.security.test.context.support.WithMockUser
 import backend.config.Constants.AUTHORIZATION_HEADER
 import backend.config.Constants.BEARER_START_WITH
 import backend.config.Constants.DEFAULT_LANGUAGE
@@ -28,8 +19,16 @@ import backend.services.TokenProvider
 import backend.tdd.integration.AbstractRestIntegrationTest
 import backend.tdd.integration.TEST_USER_LOGIN
 import backend.tdd.integration.WithUnauthenticatedMockUser
+import kotlinx.coroutines.reactive.awaitSingle
+import kotlinx.coroutines.runBlocking
+import org.springframework.beans.factory.getBean
+import org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR
+import org.springframework.http.MediaType.APPLICATION_JSON
+import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
+import org.springframework.security.authentication.ReactiveAuthenticationManager
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
+import org.springframework.security.test.context.support.WithMockUser
 import java.time.Instant.now
-import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -139,19 +138,19 @@ class AccountControllerIntTest : AbstractRestIntegrationTest() {
             .contentType(APPLICATION_JSON)
             .bodyValue(
                 AccountPassword(
-                password = defaultAccount.password
-            ).apply {
-                login = "funky-log(n"
-                firstName = USER_LOGIN
-                lastName = USER_LOGIN
-                email = defaultAccount.email
-                langKey = DEFAULT_LANGUAGE
-                createdBy = SYSTEM_USER
-                createdDate = now()
-                lastModifiedBy = SYSTEM_USER
-                lastModifiedDate = now()
-                imageUrl = "http://placehold.it/50x50"
-            })
+                    password = defaultAccount.password
+                ).apply {
+                    login = "funky-log(n"
+                    firstName = USER_LOGIN
+                    lastName = USER_LOGIN
+                    email = defaultAccount.email
+                    langKey = DEFAULT_LANGUAGE
+                    createdBy = SYSTEM_USER
+                    createdDate = now()
+                    lastModifiedBy = SYSTEM_USER
+                    lastModifiedDate = now()
+                    imageUrl = "http://placehold.it/50x50"
+                })
             .exchange()
             .expectStatus()
             .isBadRequest
@@ -168,19 +167,19 @@ class AccountControllerIntTest : AbstractRestIntegrationTest() {
             .contentType(APPLICATION_JSON)
             .bodyValue(
                 AccountPassword(
-                password = defaultAccount.password
-            ).apply {
-                login = defaultAccount.login
-                firstName = USER_LOGIN
-                lastName = USER_LOGIN
-                email = "invalid"
-                langKey = DEFAULT_LANGUAGE
-                createdBy = SYSTEM_USER
-                createdDate = now()
-                lastModifiedBy = SYSTEM_USER
-                lastModifiedDate = now()
-                imageUrl = "http://placehold.it/50x50"
-            })
+                    password = defaultAccount.password
+                ).apply {
+                    login = defaultAccount.login
+                    firstName = USER_LOGIN
+                    lastName = USER_LOGIN
+                    email = "invalid"
+                    langKey = DEFAULT_LANGUAGE
+                    createdBy = SYSTEM_USER
+                    createdDate = now()
+                    lastModifiedBy = SYSTEM_USER
+                    lastModifiedDate = now()
+                    imageUrl = "http://placehold.it/50x50"
+                })
             .exchange()
             .expectStatus()
             .isBadRequest
@@ -227,26 +226,25 @@ class AccountControllerIntTest : AbstractRestIntegrationTest() {
             .contentType(APPLICATION_JSON)
             .bodyValue(
                 AccountPassword(
-                password = null
-            ).apply {
-                login = defaultAccount.login
-                firstName = USER_LOGIN
-                lastName = USER_LOGIN
-                email = defaultAccount.email
-                langKey = DEFAULT_LANGUAGE
-                createdBy = SYSTEM_USER
-                createdDate = now()
-                lastModifiedBy = SYSTEM_USER
-                lastModifiedDate = now()
-                imageUrl = "http://placehold.it/50x50"
-            })
+                    password = null
+                ).apply {
+                    login = defaultAccount.login
+                    firstName = USER_LOGIN
+                    lastName = USER_LOGIN
+                    email = defaultAccount.email
+                    langKey = DEFAULT_LANGUAGE
+                    createdBy = SYSTEM_USER
+                    createdDate = now()
+                    lastModifiedBy = SYSTEM_USER
+                    lastModifiedDate = now()
+                    imageUrl = "http://placehold.it/50x50"
+                })
             .exchange()
             .expectStatus()
             .isBadRequest
         assertEquals(countUser(), 0)
     }
 
-    @Ignore
     @Test
     @Throws(Exception::class)
     fun `test register account avec un email existant activé`(): Unit = runBlocking {
@@ -262,19 +260,21 @@ class AccountControllerIntTest : AbstractRestIntegrationTest() {
             .contentType(APPLICATION_JSON)
             .bodyValue(
                 AccountPassword(
-                password = defaultAccount.password
-            ).apply {
-                login = TEST_USER_LOGIN
-                firstName = defaultAccount.firstName
-                lastName = defaultAccount.lastName
-                email = defaultAccount.email
-                langKey = defaultAccount.langKey
-                createdBy = defaultAccount.createdBy
-                createdDate = now()
-                lastModifiedBy = defaultAccount.lastModifiedBy
-                lastModifiedDate = now()
-                imageUrl = "http://placehold.it/50x50"
-            })
+                    password = defaultAccount.password
+                ).apply {
+                    login = TEST_USER_LOGIN
+                    firstName = defaultAccount.firstName
+                    lastName = defaultAccount.lastName
+                    email = defaultAccount.email
+                    langKey = defaultAccount.langKey
+                    createdBy = defaultAccount.createdBy
+                    now().apply {
+                        lastModifiedDate = this
+                        lastModifiedDate = this
+                    }
+                    lastModifiedBy = defaultAccount.lastModifiedBy
+                    imageUrl = "http://placehold.it/50x50"
+                })
             .exchange()
             .expectStatus()
             .is4xxClientError
@@ -298,19 +298,19 @@ class AccountControllerIntTest : AbstractRestIntegrationTest() {
             .contentType(APPLICATION_JSON)
             .bodyValue(
                 AccountPassword(
-                password = defaultAccount.password
-            ).apply {
-                login = defaultAccount.login
-                firstName = defaultAccount.firstName
-                lastName = defaultAccount.lastName
-                email = "j.doe@acme.com"
-                langKey = defaultAccount.langKey
-                createdBy = defaultAccount.createdBy
-                createdDate = now()
-                lastModifiedBy = defaultAccount.lastModifiedBy
-                lastModifiedDate = now()
-                imageUrl = "http://placehold.it/50x50"
-            })
+                    password = defaultAccount.password
+                ).apply {
+                    login = defaultAccount.login
+                    firstName = defaultAccount.firstName
+                    lastName = defaultAccount.lastName
+                    email = "j.doe@acme.com"
+                    langKey = defaultAccount.langKey
+                    createdBy = defaultAccount.createdBy
+                    createdDate = now()
+                    lastModifiedBy = defaultAccount.lastModifiedBy
+                    lastModifiedDate = now()
+                    imageUrl = "http://placehold.it/50x50"
+                })
             .exchange()
             .expectStatus()
             .isBadRequest

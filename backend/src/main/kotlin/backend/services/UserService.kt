@@ -13,7 +13,7 @@ import org.springframework.transaction.annotation.Transactional
 import backend.config.Constants.ROLE_USER
 import backend.config.Constants.SYSTEM_USER
 import backend.config.Constants.USER_INITIAL_ACTIVATED_VALUE
-import backend.config.Log.log
+import backend.Server.Log.log
 import backend.domain.Account
 import backend.domain.Avatar
 import backend.repositories.*
@@ -89,13 +89,13 @@ class UserService(
     suspend fun register(account: Account, password: String): User? = userRepository
         .findOneByLogin(account.login!!)
         ?.apply isActivatedOnCheckLogin@{
-            if (!activated) return@isActivatedOnCheckLogin userRepository.delete(this)
+            if (!activated) return@isActivatedOnCheckLogin userRepository.delete(user = this)
             else throw UsernameAlreadyUsedException()
         }
         .also {
             userRepository.findOneByEmail(account.email!!)
                 ?.apply isActivatedOnCheckEmail@{
-                    if (!activated) return@isActivatedOnCheckEmail userRepository.delete(this)
+                    if (!activated) return@isActivatedOnCheckEmail userRepository.delete(user = this)
                     else throw EmailAlreadyUsedException()
                 }
         }

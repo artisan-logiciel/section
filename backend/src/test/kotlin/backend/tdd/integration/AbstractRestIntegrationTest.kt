@@ -29,7 +29,7 @@ import org.springframework.test.web.reactive.server.WebTestClient
 import org.springframework.test.web.reactive.server.WebTestClient.bindToServer
 import backend.Server
 import backend.config.Constants.DEV_HOST
-import backend.config.Log
+import backend.Server.Log
 import backend.domain.DataTest
 import backend.domain.DataTest.defaultUser
 import backend.domain.unlockUser

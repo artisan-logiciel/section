@@ -1,16 +1,15 @@
-package backend.http
+package backend.http.util
 
+import backend.Server
 import org.springframework.http.HttpHeaders
-import backend.config.Log.log
 import java.io.UnsupportedEncodingException
-import java.net.URLEncoder.encode
-import java.nio.charset.StandardCharsets.UTF_8
-
+import java.net.URLEncoder
+import java.nio.charset.StandardCharsets
 
 /**
  * Utility class for HTTP headers creation.
  */
-object HeaderUtil {
+object HttpHeaderUtil {
 
     /**
      *
@@ -29,7 +28,7 @@ object HeaderUtil {
         val headers = HttpHeaders()
         headers.add("X-$applicationName-alert", message)
         try {
-            headers.add("X-$applicationName-params", encode(param, UTF_8.toString()))
+            headers.add("X-$applicationName-params", URLEncoder.encode(param, StandardCharsets.UTF_8.toString()))
         } catch (e: UnsupportedEncodingException) {
             // StandardCharsets are supported by every Java implementation so this exceptions will never happen
         }
@@ -73,13 +72,12 @@ object HeaderUtil {
         enableTranslation: Boolean,
         entityName: String,
         param: String
-    ): HttpHeaders =
-        createAlert(
-            applicationName,
-            if (enableTranslation) "$applicationName.$entityName.updated"
-            else "A $entityName is updated with identifier $param",
-            param
-        )
+    ): HttpHeaders = createAlert(
+        applicationName,
+        if (enableTranslation) "$applicationName.$entityName.updated"
+        else "A $entityName is updated with identifier $param",
+        param
+    )
 
     /**
      *
@@ -120,7 +118,7 @@ object HeaderUtil {
         entityName: String?,
         errorKey: String,
         defaultMessage: String?
-    ): HttpHeaders = log.error(
+    ): HttpHeaders = Server.Log.log.error(
         "Entity processing failed, {}",
         defaultMessage
     ).run {

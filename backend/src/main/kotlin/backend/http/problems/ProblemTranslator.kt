@@ -1,7 +1,18 @@
 @file:Suppress("unused")
 
-package backend.http
+package backend.http.problems
 
+import backend.Server.Log.log
+import backend.config.Constants.CONSTRAINT_VIOLATION_TYPE
+import backend.config.Constants.DEFAULT_TYPE
+import backend.config.Constants.ERR_CONCURRENCY_FAILURE
+import backend.config.Constants.ERR_VALIDATION
+import backend.config.Constants.SPRING_PROFILE_PRODUCTION
+import backend.http.util.HttpHeaderUtil.createFailureAlert
+import backend.properties.ApplicationProperties
+import backend.services.exceptions.EmailAlreadyUsedException
+import backend.services.exceptions.InvalidPasswordException
+import backend.services.exceptions.UsernameAlreadyUsedException
 import org.springframework.core.env.Environment
 import org.springframework.dao.ConcurrencyFailureException
 import org.springframework.dao.DataAccessException
@@ -20,19 +31,6 @@ import org.zalando.problem.spring.webflux.advice.security.SecurityAdviceTrait
 import org.zalando.problem.violations.ConstraintViolationProblem
 import reactor.core.publisher.Mono
 import reactor.core.publisher.Mono.just
-import backend.config.Constants.CONSTRAINT_VIOLATION_TYPE
-import backend.config.Constants.DEFAULT_TYPE
-import backend.config.Constants.ERR_CONCURRENCY_FAILURE
-import backend.config.Constants.ERR_VALIDATION
-import backend.config.Constants.SPRING_PROFILE_PRODUCTION
-import backend.config.Log.log
-import backend.http.HeaderUtil.createFailureAlert
-import backend.http.problems.BadRequestAlertException
-import backend.http.problems.EmailAlreadyUsedBadRequestException
-import backend.http.problems.InvalidPasswordBadRequestException
-import backend.http.problems.LoginAlreadyUsedBadRequestException
-import backend.properties.ApplicationProperties
-import backend.services.exceptions.UsernameAlreadyUsedException
 import java.io.Serializable
 import java.net.URI
 import org.zalando.problem.Problem.DEFAULT_TYPE as PROBLEM_DEFAULT_TYPE
@@ -44,7 +42,7 @@ import org.zalando.problem.Problem.DEFAULT_TYPE as PROBLEM_DEFAULT_TYPE
  */
 @Component
 @ControllerAdvice
-class RequestProblemTranslator(
+class ProblemTranslator(
     private val env: Environment,
     private val properties: ApplicationProperties
 ) : ProblemHandling, SecurityAdviceTrait
@@ -84,7 +82,10 @@ class RequestProblemTranslator(
                     || problem is DefaultProblem)
         ) return just(entity)
         val builder = builder()
-            .withType(if (PROBLEM_DEFAULT_TYPE == problem.type) DEFAULT_TYPE else problem.type)
+            .withType(
+                if (PROBLEM_DEFAULT_TYPE == problem.type) DEFAULT_TYPE
+                else problem.type
+            )
             .withStatus(problem.status)
             .withTitle(problem.title)
             .with(PATH_KEY, request.request.path.value())
@@ -125,8 +126,8 @@ class RequestProblemTranslator(
             .with(FIELD_ERRORS_KEY, ex.bindingResult.fieldErrors.map {
                 FieldErrorVM(
                     it.objectName.replaceFirst(
-                        Regex("DTO$"),
-                        ""
+                        Regex(pattern = "DTO$"),
+                        replacement = ""
                     ), it.field, it.code
                 )
             }).build(), request
@@ -134,20 +135,20 @@ class RequestProblemTranslator(
 
     @ExceptionHandler
     fun handleEmailAlreadyUsedException(
-        ex: EmailAlreadyUsedBadRequestException,
+        ex: EmailAlreadyUsedException,
         request: ServerWebExchange
     ): Mono<ResponseEntity<Problem>> {
         log.info("passé par ici")
-        val problem = LoginAlreadyUsedBadRequestException()
+        val problem = EmailAlreadyUsedProblem()
         return create(
             problem,
             request,
             createFailureAlert(
-                properties.clientApp.name,
-                true,
-                problem.entityName,
-                problem.errorKey,
-                problem.message
+                applicationName = properties.clientApp.name,
+                enableTranslation = true,
+                entityName = problem.entityName,
+                errorKey = problem.errorKey,
+                defaultMessage = problem.message
             )
         )
     }
@@ -157,42 +158,42 @@ class RequestProblemTranslator(
         ex: UsernameAlreadyUsedException,
         request: ServerWebExchange
     ): Mono<ResponseEntity<Problem>> {
-        val problem = LoginAlreadyUsedBadRequestException()
+        val problem = LoginAlreadyUsedProblem()
         return create(
             problem,
             request,
             createFailureAlert(
-                properties.clientApp.name,
-                true,
-                problem.entityName,
-                problem.errorKey,
-                problem.message
+                applicationName = properties.clientApp.name,
+                enableTranslation = true,
+                entityName = problem.entityName,
+                errorKey = problem.errorKey,
+                defaultMessage = problem.message
             )
         )
     }
 
     @ExceptionHandler
     fun handleInvalidPasswordException(
-        ex: InvalidPasswordBadRequestException,
+        ex: InvalidPasswordException,
         request: ServerWebExchange
     ): Mono<ResponseEntity<Problem>> = create(
-        InvalidPasswordBadRequestException(),
+        InvalidPasswordProblem(),
         request
     )
 
     @ExceptionHandler
     fun handleBadRequestAlertException(
-        ex: BadRequestAlertException,
+        ex: AlertProblem,
         request: ServerWebExchange
     ): Mono<ResponseEntity<Problem>> =
         create(
             ex, request,
             createFailureAlert(
-                properties.clientApp.name,
-                true,
-                ex.entityName,
-                ex.errorKey,
-                ex.message
+                applicationName = properties.clientApp.name,
+                enableTranslation = true,
+                entityName = ex.entityName,
+                errorKey = ex.errorKey,
+                defaultMessage = ex.message
             )
         )
 

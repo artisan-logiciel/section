@@ -16,7 +16,7 @@ import org.springframework.stereotype.Component
 import backend.config.Constants.AUTHORITIES_KEY
 import backend.config.Constants.INVALID_TOKEN
 import backend.config.Constants.VALID_TOKEN
-import backend.config.Log.log
+import backend.Server.Log.log
 import backend.properties.ApplicationProperties
 import java.security.Key
 import java.util.*

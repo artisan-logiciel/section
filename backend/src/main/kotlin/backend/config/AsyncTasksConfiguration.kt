@@ -1,5 +1,6 @@
 package backend.config
 
+import backend.Server.Log.log
 import org.springframework.aop.interceptor.AsyncUncaughtExceptionHandler
 import org.springframework.aop.interceptor.SimpleAsyncUncaughtExceptionHandler
 import org.springframework.beans.factory.DisposableBean
@@ -12,7 +13,6 @@ import org.springframework.scheduling.annotation.AsyncConfigurer
 import org.springframework.scheduling.annotation.EnableAsync
 import org.springframework.scheduling.annotation.EnableScheduling
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor
-import backend.config.Log.log
 import java.util.concurrent.Callable
 import java.util.concurrent.Executor
 import java.util.concurrent.Future

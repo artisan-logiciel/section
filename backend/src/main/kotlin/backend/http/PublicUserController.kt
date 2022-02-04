@@ -13,9 +13,9 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.util.UriComponentsBuilder.fromHttpRequest
-import backend.config.Log.log
+import backend.Server.Log.log
 import backend.domain.Avatar
-import backend.http.PaginationUtil.generatePaginationHttpHeaders
+import backend.http.util.PaginationUtil.generatePaginationHttpHeaders
 import backend.services.UserService
 
 @RestController

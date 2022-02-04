@@ -5,7 +5,7 @@ import org.junit.jupiter.api.BeforeAll
 import org.springframework.boot.runApplication
 import org.springframework.context.ConfigurableApplicationContext
 import backend.Server
-import backend.config.Log.log
+import backend.Server.Log.log
 import kotlin.test.Test
 
 @Suppress("unused")

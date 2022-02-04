@@ -17,7 +17,7 @@ class RequestProblemConfiguration {
     @Bean
     @Order(-2) // The handler must have precedence over WebFluxResponseStatusExceptionHandler
     // and Spring Boot's ErrorWebExceptionHandler
-    fun problemExceptionHandler(
+    fun problemHandler(
         mapper: ObjectMapper,
         problemHandling: ProblemHandling
     ): WebExceptionHandler = ProblemExceptionHandler(mapper, problemHandling)

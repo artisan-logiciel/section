@@ -15,13 +15,13 @@ import org.springframework.web.server.ResponseStatusException
 import org.springframework.web.util.UriComponentsBuilder.fromHttpRequest
 import backend.config.Constants.LOGIN_REGEX
 import backend.config.Constants.ROLE_ADMIN
-import backend.config.Log.log
+import backend.Server.Log.log
 import backend.domain.Account
-import backend.http.HeaderUtil.createAlert
-import backend.http.PaginationUtil.generatePaginationHttpHeaders
-import backend.http.problems.BadRequestAlertException
-import backend.http.problems.EmailAlreadyUsedBadRequestException
-import backend.http.problems.LoginAlreadyUsedBadRequestException
+import backend.http.util.HttpHeaderUtil.createAlert
+import backend.http.util.PaginationUtil.generatePaginationHttpHeaders
+import backend.http.problems.AlertProblem
+import backend.http.problems.EmailAlreadyUsedProblem
+import backend.http.problems.LoginAlreadyUsedProblem
 import backend.properties.ApplicationProperties
 import backend.repositories.entities.User
 import backend.services.MailService
@@ -85,14 +85,14 @@ class UserController(
      * @param account the user to create.
      * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new user,
      * or with status {@code 400 (Bad Request)} if the login or email is already in use.
-     * @throws BadRequestAlertException {@code 400 (Bad Request)} if the login or email is already in use.
+     * @throws AlertProblem {@code 400 (Bad Request)} if the login or email is already in use.
      */
     @PostMapping("users")
     @PreAuthorize("hasAuthority(\"$ROLE_ADMIN\")")
     suspend fun createUser(@Valid @RequestBody account: Account): ResponseEntity<User> {
         account.apply requestAccount@{
             log.debug("REST request to save User : {}", account)
-            if (id != null) throw BadRequestAlertException(
+            if (id != null) throw AlertProblem(
                 "A new user cannot already have an ID",
                 "userManagement",
                 "idexists"
@@ -102,14 +102,14 @@ class UserController(
                         this@requestAccount.login,
                         true
                     ) == true
-                ) throw LoginAlreadyUsedBadRequestException()
+                ) throw LoginAlreadyUsedProblem()
             }
             userService.findAccountByEmail(email!!).apply retrieved@{
                 if (this@retrieved?.email?.equals(
                         this@requestAccount.email,
                         true
                     ) == true
-                ) throw EmailAlreadyUsedBadRequestException()
+                ) throw EmailAlreadyUsedProblem()
             }
             userService.createUser(this).run {
                 mailService.sendActivationEmail(this)
@@ -134,8 +134,8 @@ class UserController(
      *
      * @param account the user to update.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated user.
-     * @throws EmailAlreadyUsedBadRequestException {@code 400 (Bad Request)} if the email is already in use.
-     * @throws LoginAlreadyUsedBadRequestException {@code 400 (Bad Request)} if the login is already in use.
+     * @throws EmailAlreadyUsedProblem {@code 400 (Bad Request)} if the email is already in use.
+     * @throws LoginAlreadyUsedProblem {@code 400 (Bad Request)} if the login is already in use.
      */
     @PutMapping("/users")
     @PreAuthorize("hasAuthority(\"$ROLE_ADMIN\")")
@@ -143,11 +143,11 @@ class UserController(
         log.debug("REST request to update User : {}", account)
         userService.findAccountByEmail(account.email!!).apply {
             if (this == null) throw ResponseStatusException(NOT_FOUND)
-            if (id != account.id) throw EmailAlreadyUsedBadRequestException()
+            if (id != account.id) throw EmailAlreadyUsedProblem()
         }
         userService.findAccountByLogin(account.login!!).apply {
             if (this == null) throw ResponseStatusException(NOT_FOUND)
-            if (id != account.id) throw LoginAlreadyUsedBadRequestException()
+            if (id != account.id) throw LoginAlreadyUsedProblem()
         }
         return ok()
             .headers(

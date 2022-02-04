@@ -3,7 +3,7 @@ package backend.services
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.MessageSource
 import backend.config.Constants
-import backend.config.Log
+import backend.Server.Log
 import backend.tdd.functional.AbstractBaseFunctionalTest
 import java.util.*
 import kotlin.test.Test
