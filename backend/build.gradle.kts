@@ -11,8 +11,8 @@ plugins {
     kotlin(module = "plugin.noarg")
     kotlin(module = "plugin.serialization")
     id("org.springframework.boot")
-    id("io.spring.dependency-management")
-    id("com.google.cloud.tools.jib")
+    id( "io.spring.dependency-management")
+    id( "com.google.cloud.tools.jib")
 }
 
 repositories {
@@ -32,6 +32,7 @@ repositories {
 
 @Suppress("GradlePackageUpdate")
 dependencies {
+    implementation(project(path = ":common"))
     //Kotlin lib: jdk8, reflexion, coroutines
     implementation(dependencyNotation = "org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     implementation(dependencyNotation = "org.jetbrains.kotlin:kotlin-reflect")

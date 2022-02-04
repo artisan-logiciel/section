@@ -13,7 +13,8 @@ import javax.annotation.PostConstruct
 class Server(
     private val context: ApplicationContext
 ) {
-    @PostConstruct
+
+    @PostConstruct @Suppress("unused")
     private fun init(): Array<String> = checkProfileLog(context = context)
 
     companion object {

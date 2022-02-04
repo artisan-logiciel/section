@@ -20,10 +20,6 @@ pluginManagement {
 }
 
 rootProject.name = "section"
-include(":android")
-include(":desktop")
-include(":common")
-include(":browser")
-include(":simple-server")
 include(":backend")
-
+include(":common")
+include(":desktop")

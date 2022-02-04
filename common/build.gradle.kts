@@ -21,12 +21,6 @@ kotlin {
     jvm(name = "desktop") {
         compilations.all { kotlinOptions.jvmTarget = "1.8" }
     }
-    js(LEGACY) {
-        binaries.executable()
-        browser {
-            commonWebpackConfig { cssSupport.enabled = true }
-        }
-    }
     sourceSets {
         val commonMain by getting {
             dependencies {
@@ -38,32 +32,18 @@ kotlin {
         val commonTest by getting {
             dependencies { implementation(kotlin(simpleModuleName = "test")) }
         }
-        val androidMain by getting {
-            dependencies {
-                api(dependencyNotation = "androidx.appcompat:appcompat:1.4.1")
-                api(dependencyNotation = "androidx.core:core-ktx:1.7.0")
-            }
-        }
-        val androidTest by getting {
-            dependencies { implementation(dependencyNotation = "junit:junit:4.13.2") }
-        }
         val desktopMain by getting {
             dependencies { api(compose.preview) }
         }
         val desktopTest by getting
-        val jsMain by getting {
-            dependencies { implementation(dependencyNotation = "org.jetbrains.kotlinx:kotlinx-html:0.7.3") }
-        }
-        val jsTest by getting
     }
 }
 
 android {
     compileSdkVersion(apiLevel = 31)
-    sourceSets["main"].manifest.srcFile(srcPath = "src/androidMain/AndroidManifest.xml")
     defaultConfig {
-        minSdkVersion(24)
-        targetSdkVersion(31)
+        minSdkVersion(minSdkVersion = 24)
+        targetSdkVersion(targetSdkVersion = 31)
     }
     compileOptions {
         sourceCompatibility = VERSION_1_8
