@@ -16,6 +16,10 @@ pluginManagement {
         id("io.spring.dependency-management").version(extra["spring_dependency_management.version"] as String)
         id("com.google.cloud.tools.jib").version(extra["jib.version"] as String)
         id("org.springframework.boot").version(extra["springboot.version"] as String)
+
+
+        kotlin("multiplatform").version(extra["kotlin.version"] as String)
+        id("org.jetbrains.compose").version(extra["compose.version"] as String)
     }
 }
 
@@ -23,3 +27,4 @@ rootProject.name = "section"
 include(":backend")
 include(":common")
 include(":desktop")
+include(":browser")
