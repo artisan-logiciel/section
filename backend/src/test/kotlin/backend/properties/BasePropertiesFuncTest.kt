@@ -12,27 +12,27 @@ class BasePropertiesFuncTest : AbstractBaseFunctionalTest() {
     @Autowired
     lateinit var properties: ApplicationProperties
 
-    @Value("\${$PROP_MESSAGE}")
+    @Value(value = "\${$PROP_MESSAGE}")
     lateinit var messagePropValue: String
 
-    @Value("\${$PROP_ITEM}")
+    @Value(value = "\${$PROP_ITEM}")
     lateinit var itemPropValue: String
 
     @Test
     fun `Check property reaktive_message`() {
         checkProperty(
-            PROP_MESSAGE,
-            properties.message,
-            messagePropValue
+            property = PROP_MESSAGE,
+            value = properties.message,
+            injectedValue = messagePropValue
         )
     }
 
     @Test
     fun `Check property reaktive_item`() {
         checkProperty(
-            PROP_ITEM,
-            properties.item,
-            itemPropValue
+            property = PROP_ITEM,
+            value = properties.item,
+            injectedValue = itemPropValue
         )
     }
 }

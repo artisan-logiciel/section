@@ -183,15 +183,14 @@ class AccountControllerIntTest : AbstractRestIntegrationTest() {
             .exchange()
             .expectStatus()
             .isBadRequest
-        assertEquals(countUser(), 0)
+        assertEquals(expected = countUser(), actual = 0)
     }
 
     @Test
     @Throws(Exception::class)
     fun `test register account avec un password invalid`(): Unit = runBlocking {
-        assertEquals(countUser(), 0)
-        client
-            .post()
+        assertEquals(expected = countUser(), actual = 0)
+        client.post()
             .uri("/api/register")
             .contentType(APPLICATION_JSON)
             .bodyValue(

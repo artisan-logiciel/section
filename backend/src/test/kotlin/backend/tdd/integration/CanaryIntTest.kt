@@ -6,8 +6,10 @@ import org.springframework.boot.runApplication
 import org.springframework.context.ConfigurableApplicationContext
 import backend.Server
 import backend.Server.Log.log
+import kotlin.test.Ignore
 import kotlin.test.Test
 
+@Ignore
 @Suppress("unused")
 class CanaryIntTest {
     private lateinit var context: ConfigurableApplicationContext
@@ -28,7 +30,6 @@ class CanaryIntTest {
     fun `canary integration test`() = log.info("canary integration test")
 
 
-    //@org.junit.jupiter.api.Disabled
     @Test
     fun `canary functional test`() = log.info("""
     ${"\n"}Bean definition names:

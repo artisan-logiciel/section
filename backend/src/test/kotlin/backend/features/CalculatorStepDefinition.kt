@@ -31,27 +31,27 @@ class CalculatorStepDefinition {
         result = 0
     }
 
-    @Given("a integer {int}")
+    @Given(value = "a integer {int}")
     fun `a integer`(number: Int) {
         firstNumber = number
     }
 
-    @And("a second integer {int}")
+    @And(value = "a second integer {int}")
     fun `a second integer`(number: Int) {
         secondNumber = number
     }
 
-    @When("the numbers are added")
+    @When(value = "the numbers are added")
     fun `the numbers are added`() {
         result = add(firstNumber, secondNumber)
     }
 
-    @When("the numbers are subtracted")
+    @When(value = "the numbers are subtracted")
     fun `the numbers are subtracted`() {
         result = subtract(firstNumber, secondNumber)
     }
 
-    @Then("the result is {int}")
+    @Then(value = "the result is {int}")
     fun `the result is`(result: Int) {
         assert(result == this.result)
     }
