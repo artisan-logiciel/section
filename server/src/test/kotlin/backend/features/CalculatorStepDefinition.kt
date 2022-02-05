@@ -1,6 +1,5 @@
 package backend.features
 
-//import io.cucumber.java8.En
 import io.cucumber.java.Before
 import io.cucumber.java.en.And
 import io.cucumber.java.en.Given
@@ -8,15 +7,6 @@ import io.cucumber.java.en.Then
 import io.cucumber.java.en.When
 import backend.calculator.add
 import backend.calculator.subtract
-
-
-//class CalculatorStepDefinition: En {
-//    init{
-//     var firstNumber: Int = 0
-//     var secondNumber: Int = 0
-//     var result: Int = 0
-//    }
-//}
 
 
 class CalculatorStepDefinition {

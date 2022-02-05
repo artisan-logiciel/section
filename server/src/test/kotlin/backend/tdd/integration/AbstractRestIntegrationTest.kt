@@ -7,6 +7,14 @@
 
 package backend.tdd.integration
 
+import backend.Server
+import backend.Server.Log.log
+import backend.config.Constants.DEV_HOST
+import backend.domain.DataTest
+import backend.domain.DataTest.defaultUser
+import backend.domain.unlockUser
+import backend.repositories.entities.User
+import backend.repositories.entities.UserAuthority
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.reactive.awaitSingle
@@ -27,14 +35,6 @@ import org.springframework.r2dbc.core.awaitSingle
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.test.web.reactive.server.WebTestClient
 import org.springframework.test.web.reactive.server.WebTestClient.bindToServer
-import backend.Server
-import backend.config.Constants.DEV_HOST
-import backend.Server.Log
-import backend.domain.DataTest
-import backend.domain.DataTest.defaultUser
-import backend.domain.unlockUser
-import backend.repositories.entities.User
-import backend.repositories.entities.UserAuthority
 import kotlin.test.BeforeTest
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
@@ -53,8 +53,9 @@ abstract class AbstractRestIntegrationTest {
     @BeforeTest
     fun init() = runBlocking { deleteAllUsers() }
 
-    @Suppress("unused")
+
     @BeforeAll
+    @Suppress("unused")
     fun `lance le server en profile test`() {
         context = runApplication<Server> {
             testLoader(app = this)
@@ -69,8 +70,9 @@ abstract class AbstractRestIntegrationTest {
         .bind("login", login)
         .await()
 
-    @Suppress("unused")
+
     @AfterAll
+    @Suppress("unused")
     fun `arrête le serveur`() {
         context.close()
     }
@@ -156,9 +158,9 @@ abstract class AbstractRestIntegrationTest {
         .values
         .first() as Long
 
-    suspend fun logCountUser() = Log.log
+    suspend fun logCountUser() = log
         .info("countUser: ${countUser()}")
 
-    suspend fun logCountUserAuthority() = Log.log
+    suspend fun logCountUserAuthority() = log
         .info("countUserAuthority: ${countUserAuthority()}")
 }

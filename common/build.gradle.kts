@@ -3,11 +3,8 @@ import org.jetbrains.compose.compose
 
 plugins {
     kotlin(module = "multiplatform")
-    id("org.jetbrains.compose").version("1.0.1")
+    id("org.jetbrains.compose")
 }
-
-group = "education.cccp"
-version = "1.0"
 
 repositories {
     google()

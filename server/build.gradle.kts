@@ -4,7 +4,6 @@ import org.gradle.api.tasks.testing.logging.TestLogEvent.SKIPPED
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    jacoco
     kotlin(module = "jvm")
     kotlin(module = "plugin.spring")
     kotlin(module = "plugin.allopen")
@@ -13,10 +12,10 @@ plugins {
     id("org.springframework.boot")
     id( "io.spring.dependency-management")
     id( "com.google.cloud.tools.jib")
+    jacoco
 }
 
 repositories {
-    mavenLocal()
     mavenCentral()
     maven(url = "https://maven.pkg.jetbrains.space/kotlin/p/kotlin/bootstrap/")
     maven(url = "https://repo.spring.io/milestone")

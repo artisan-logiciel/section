@@ -1,4 +1,5 @@
 Feature: Calculator with add and subtract
+
   Scenario: Add two integers
     Given a integer 1
     And a second integer 2

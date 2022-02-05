@@ -8,6 +8,7 @@ import backend.repositories.entities.User
 import backend.services.MailService
 
 @Configuration
+@Suppress("unused")
 class NoOpMailConfiguration {
     private val mockMailService = mock(MailService::class.java)
 

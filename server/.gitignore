@@ -7,6 +7,5 @@ private
 bin
 .classpath
 .project
-reaktive.code-workspace
-rest-api.http
+server.code-workspace
 .settings

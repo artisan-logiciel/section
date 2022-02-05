@@ -2,7 +2,6 @@
 
 package backend.http.problems
 
-import backend.Server.Log.log
 import backend.config.Constants.CONSTRAINT_VIOLATION_TYPE
 import backend.config.Constants.DEFAULT_TYPE
 import backend.config.Constants.ERR_CONCURRENCY_FAILURE
@@ -45,9 +44,7 @@ import org.zalando.problem.Problem.DEFAULT_TYPE as PROBLEM_DEFAULT_TYPE
 class ProblemTranslator(
     private val env: Environment,
     private val properties: ApplicationProperties
-) : ProblemHandling, SecurityAdviceTrait
-//    , OpenApiValidationAdviceTrait
-{
+) : ProblemHandling, SecurityAdviceTrait {
 
     companion object {
         private const val FIELD_ERRORS_KEY = "fieldErrors"
@@ -138,7 +135,6 @@ class ProblemTranslator(
         ex: EmailAlreadyUsedException,
         request: ServerWebExchange
     ): Mono<ResponseEntity<Problem>> {
-        log.info("passé par ici")
         val problem = EmailAlreadyUsedProblem()
         return create(
             problem,

@@ -1,9 +1,9 @@
 package backend.calculator
 
+import kotlin.test.Ignore
 import kotlin.test.Test
 
-//import org.junit.jupiter.api.Test
-
+@Ignore
 class CalculatorTest {
     // Tests on this class are left empty to validate the test coverage reported
     // by jacoco on the cucumber results.
