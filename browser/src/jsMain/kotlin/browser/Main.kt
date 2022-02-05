@@ -9,7 +9,6 @@ import browser.style.AppStylesheet
 fun main() {
     renderComposable(rootElementId = "root") {
         Style(AppStylesheet)
-
         Layout {
             Header()
             MainContentLayout {

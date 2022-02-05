@@ -1,21 +1,25 @@
 package browser.style
 
+import browser.style.AppCSSVariables.wtHorizontalLayoutGutter
 import org.jetbrains.compose.web.css.*
+import org.jetbrains.compose.web.css.AlignItems.Companion.Center
+import org.jetbrains.compose.web.css.DisplayStyle.Companion.Flex
+import org.jetbrains.compose.web.css.FlexWrap.Companion.Wrap
 
 object WtRows : StyleSheet(AppStylesheet) {
 
     val wtRow by style {
         AppCSSVariables.wtHorizontalLayoutGutter(0.px)
-        display(DisplayStyle.Flex)
-        flexWrap(FlexWrap.Wrap)
+        display(Flex)
+        flexWrap(Wrap)
 
         property(
             "margin-right",
-            "calc(-1*${AppCSSVariables.wtHorizontalLayoutGutter.value()})"
+            "calc(-1*${wtHorizontalLayoutGutter.value()})"
         )
         property(
             "margin-left",
-            "calc(-1*${AppCSSVariables.wtHorizontalLayoutGutter.value()})"
+            "calc(-1*${wtHorizontalLayoutGutter.value()})"
         )
         boxSizing("border-box")
     }
@@ -36,7 +40,7 @@ object WtRows : StyleSheet(AppStylesheet) {
 
     val wtRowSmAlignItemsCenter by style {
         self style {
-            alignItems(AlignItems.Center)
+            alignItems(Center)
         }
     }
 }

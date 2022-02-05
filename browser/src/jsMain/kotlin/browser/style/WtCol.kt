@@ -1,5 +1,6 @@
 package browser.style
 
+import browser.style.AppCSSVariables.wtColCount
 import org.jetbrains.compose.web.css.CSSBuilder
 import org.jetbrains.compose.web.css.CSSUnitValue
 import org.jetbrains.compose.web.css.GenericStyleSheetBuilder

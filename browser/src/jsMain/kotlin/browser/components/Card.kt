@@ -34,12 +34,8 @@ private fun CardTitle(
 ) {
     H3({
         classes(wtH3)
-        if (darkTheme) {
-            classes(wtH3ThemeDark)
-        }
-    }) {
-        Text(value = title)
-    }
+        if (darkTheme) classes(wtH3ThemeDark)
+    }) { Text(value = title) }
 }
 
 @Composable
@@ -50,9 +46,7 @@ private fun CardLink(link: LinkOnCard) {
             target(Blank)
         },
         href = link.linkUrl
-    ) {
-        Text(value = link.linkText)
-    }
+    ) { Text(value = link.linkText) }
 }
 
 @Composable
@@ -60,7 +54,11 @@ fun Card(
     title: String,
     links: List<LinkOnCard>,
     darkTheme: Boolean = false,
-    wtExtraStyleClasses: List<String> = listOf(wtCol6, wtColMd6, wtColSm12),
+    wtExtraStyleClasses: List<String> = listOf(
+        wtCol6,
+        wtColMd6,
+        wtColSm12
+    ),
     content: @Composable () -> Unit
 ) {
     Div({
@@ -71,9 +69,7 @@ fun Card(
         )
         classes(if (darkTheme) wtCardThemeDark else wtCardThemeLight)
     }) {
-        Div({
-            classes(wtCardSection, wtVerticalFlex)
-        }) {
+        Div({ classes(wtCardSection, wtVerticalFlex) }) {
             Div({ classes(wtVerticalFlexGrow) }) {
                 CardTitle(
                     title = title,

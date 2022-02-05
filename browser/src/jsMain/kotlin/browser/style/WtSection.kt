@@ -1,5 +1,8 @@
 package browser.style
 
+import browser.style.AppCSSVariables.wtColorGreyDark
+import browser.style.AppCSSVariables.wtColorGreyLight
+import browser.style.AppCSSVariables.wtOffsetTopUnit
 import org.jetbrains.compose.web.css.*
 
 object WtSections : StyleSheet(AppStylesheet) {
@@ -10,18 +13,18 @@ object WtSections : StyleSheet(AppStylesheet) {
         paddingTop(1.px)
         property(
             propertyName = "padding-bottom",
-            value = "calc(4*${AppCSSVariables.wtOffsetTopUnit.value(24.px)})"
+            value = "calc(4*${wtOffsetTopUnit.value(24.px)})"
         )
         backgroundColor(Color("#fff"))
     }
 
     val wtSectionBgGrayLight by style {
         backgroundColor(Color("#f4f4f4"))
-        backgroundColor(AppCSSVariables.wtColorGreyLight.value())
+        backgroundColor(wtColorGreyLight.value())
     }
 
     val wtSectionBgGrayDark by style {
         backgroundColor(Color("#323236"))
-        backgroundColor(AppCSSVariables.wtColorGreyDark.value())
+        backgroundColor(wtColorGreyDark.value())
     }
 }

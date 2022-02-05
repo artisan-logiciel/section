@@ -1,33 +1,45 @@
 package browser.content
 
 import androidx.compose.runtime.Composable
-import org.jetbrains.compose.web.attributes.ATarget
-import org.jetbrains.compose.web.attributes.target
-import org.jetbrains.compose.web.dom.*
-import org.jetbrains.compose.web.css.*
 import browser.components.ContainerInSection
-import browser.style.*
+import browser.style.WtCols.wtCol9
+import browser.style.WtCols.wtColMd11
+import browser.style.WtCols.wtColSm12
+import browser.style.WtOffsets.wtTopOffset24
+import browser.style.WtRows.wtRow
+import browser.style.WtRows.wtRowSizeM
+import browser.style.WtSections.wtSectionBgGrayLight
+import browser.style.WtTexts.wtButton
+import browser.style.WtTexts.wtButtonContrast
+import browser.style.WtTexts.wtLink
+import browser.style.WtTexts.wtSubtitle2
+import org.jetbrains.compose.web.attributes.ATarget.Blank
+import org.jetbrains.compose.web.attributes.target
+import org.jetbrains.compose.web.dom.A
+import org.jetbrains.compose.web.dom.Div
+import org.jetbrains.compose.web.dom.P
+import org.jetbrains.compose.web.dom.Text
 
 @Composable
 fun JoinUs() {
-    ContainerInSection(WtSections.wtSectionBgGrayLight) {
+    ContainerInSection(wtSectionBgGrayLight) {
         Div(attrs = {
-            classes(WtRows.wtRow, WtRows.wtRowSizeM)
+            classes(wtRow, wtRowSizeM)
         }) {
             Div(attrs = {
-                classes(WtCols.wtCol9, WtCols.wtColMd11, WtCols.wtColSm12)
+                classes(wtCol9, wtColMd11, wtColSm12)
             }) {
 
                 P(attrs = {
-                    classes(WtTexts.wtSubtitle2)
+                    classes(wtSubtitle2)
                 }) {
                     Text("Interested in Compose for other platforms?")
 
                     P {
                         Text("Have a look at ")
                         A(href = "https://www.jetbrains.com/lp/compose/", attrs = {
-                            classes(WtTexts.wtLink)
-                            target(ATarget.Blank)
+                            classes(wtLink)
+                            target(Blank)
                         }) {
                             Text("Compose Multiplatform")
                         }
@@ -35,7 +47,7 @@ fun JoinUs() {
                 }
 
                 P(attrs = {
-                    classes(WtTexts.wtSubtitle2, WtOffsets.wtTopOffset24)
+                    classes(wtSubtitle2, wtTopOffset24)
                 }) {
                     Text("Feel free to join the ")
                     LinkToSlack(
@@ -53,8 +65,8 @@ fun JoinUs() {
         }
 
         A(attrs = {
-            classes(WtTexts.wtButton, WtTexts.wtButtonContrast, WtOffsets.wtTopOffset24)
-            target(ATarget.Blank)
+            classes(wtButton, wtButtonContrast, wtTopOffset24)
+            target(Blank)
         }, href = "https://surveys.jetbrains.com/s3/kotlin-slack-sign-up") {
             Text("Join Kotlin Slack")
         }
@@ -64,8 +76,8 @@ fun JoinUs() {
 @Composable
 private fun LinkToSlack(url: String, text: String) {
     A(href = url, attrs = {
-        target(ATarget.Blank)
-        classes(WtTexts.wtLink)
+        target(Blank)
+        classes(wtLink)
     }) {
         Text(text)
     }

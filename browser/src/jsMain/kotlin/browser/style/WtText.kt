@@ -1,17 +1,26 @@
 package browser.style
 
+import browser.style.AppCSSVariables.wtH2FontSize
+import browser.style.AppCSSVariables.wtH3FontSize
+import browser.style.AppCSSVariables.wtH3LineHeight
+import browser.style.AppCSSVariables.wtHeroFontSize
+import browser.style.AppCSSVariables.wtHeroLineHeight
+import browser.style.AppCSSVariables.wtSubtitle2FontSize
+import browser.style.AppCSSVariables.wtSubtitle2LineHeight
 import org.jetbrains.compose.web.css.*
+import org.jetbrains.compose.web.css.DisplayStyle.Companion.InlineBlock
+import org.jetbrains.compose.web.css.DisplayStyle.Companion.LegacyInlineFlex
 
 object WtTexts : StyleSheet(AppStylesheet) {
 
     val wtHero by style {
         color(Color("#27282c"))
         fontSize(60.px)
-        fontSize(AppCSSVariables.wtHeroFontSize.value(60.px))
+        fontSize(wtHeroFontSize.value(60.px))
         letterSpacing(-1.5.px)
         fontWeight(900)
         lineHeight(64.px)
-        lineHeight(AppCSSVariables.wtHeroLineHeight.value(64.px))
+        lineHeight(wtHeroLineHeight.value(64.px))
 
         media(mediaMaxWidth(640.px)) {
             self style {
@@ -29,11 +38,11 @@ object WtTexts : StyleSheet(AppStylesheet) {
     val wtSubtitle2 by style {
         color(Color("#27282c"))
         fontSize(28.px)
-        fontSize(AppCSSVariables.wtSubtitle2FontSize.value(28.px))
+        fontSize(wtSubtitle2FontSize.value(28.px))
         letterSpacing("normal")
         fontWeight(300)
         lineHeight(40.px)
-        lineHeight(AppCSSVariables.wtSubtitle2LineHeight.value(40.px))
+        lineHeight(wtSubtitle2LineHeight.value(40.px))
 
         media(mediaMaxWidth(640.px)) {
             self style {
@@ -120,7 +129,7 @@ object WtTexts : StyleSheet(AppStylesheet) {
     val wtH2 by style {
         color(Color("#27282c"))
         fontSize(31.px)
-        fontSize(AppCSSVariables.wtH2FontSize.value(31.px))
+        fontSize(wtH2FontSize.value(31.px))
         letterSpacing(-.5.px)
         fontWeight(700)
         lineHeight(40.px)
@@ -146,11 +155,11 @@ object WtTexts : StyleSheet(AppStylesheet) {
     val wtH3 by style {
         color(Color("#27282c"))
         fontSize(21.px)
-        fontSize(AppCSSVariables.wtH3FontSize.value(20.px))
+        fontSize(wtH3FontSize.value(20.px))
         letterSpacing("normal")
         fontWeight(700)
         lineHeight(28.px)
-        lineHeight(AppCSSVariables.wtH3LineHeight.value(28.px))
+        lineHeight(wtH3LineHeight.value(28.px))
 
         property(
             "font-family",
@@ -166,7 +175,7 @@ object WtTexts : StyleSheet(AppStylesheet) {
         color(Color("white"))
         backgroundColor(Color("#167dff"))
         fontSize(15.px)
-        display(DisplayStyle.InlineBlock)
+        display(InlineBlock)
         textDecoration("none")
         borderRadius(24.px)
         padding(12.px, 32.px)
@@ -180,7 +189,7 @@ object WtTexts : StyleSheet(AppStylesheet) {
     }
 
     val wtLangButton by style {
-        display(DisplayStyle.LegacyInlineFlex)
+        display(LegacyInlineFlex)
         justifyContent(JustifyContent.Center)
         alignItems(AlignItems.Center)
         backgroundColor(Color("transparent"))
@@ -212,7 +221,7 @@ object WtTexts : StyleSheet(AppStylesheet) {
         }
 
         hover(self) style {
-            backgroundColor(rgba(39,40,44,.05))
+            backgroundColor(rgba(39, 40, 44, .05))
         }
     }
 
@@ -221,7 +230,7 @@ object WtTexts : StyleSheet(AppStylesheet) {
         marginLeft(16.px)
         padding(12.px)
         backgroundColor(Color("transparent"))
-        display(DisplayStyle.LegacyInlineFlex)
+        display(LegacyInlineFlex)
 
         hover(self) style {
             backgroundColor(rgba(255, 255, 255, 0.1))

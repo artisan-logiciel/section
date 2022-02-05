@@ -1,5 +1,6 @@
 package browser.style
 
+import browser.style.AppCSSVariables.wtOffsetTopUnit
 import org.jetbrains.compose.web.css.*
 
 object WtOffsets : StyleSheet(AppStylesheet) {
@@ -7,7 +8,7 @@ object WtOffsets : StyleSheet(AppStylesheet) {
         marginTop(96.px)
         property(
             "margin-top",
-            "calc(4*${AppCSSVariables.wtOffsetTopUnit.value(24.px)})"
+            "calc(4*${wtOffsetTopUnit.value(24.px)})"
         )
     }
 
@@ -15,7 +16,7 @@ object WtOffsets : StyleSheet(AppStylesheet) {
         marginTop(24.px)
         property(
             "margin-top",
-            "calc(1*${AppCSSVariables.wtOffsetTopUnit.value(24.px)})"
+            "calc(1*${wtOffsetTopUnit.value(24.px)})"
         )
     }
 

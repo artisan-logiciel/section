@@ -1,7 +1,9 @@
 package browser.style
 
+import browser.style.AppCSSVariables.wtColCount
+import browser.style.AppCSSVariables.wtHorizontalLayoutGutter
 import org.jetbrains.compose.web.css.*
-import org.jetbrains.compose.web.css.selectors.CSSSelector
+import org.jetbrains.compose.web.css.Position.Companion.Relative
 
 object AppCSSVariables {
     val wtColorGreyLight by variable<CSSColorValue>()
@@ -35,7 +37,7 @@ object AppStylesheet : StyleSheet() {
         fontWeight(400)
         lineHeight(24.px)
 
-        position(Position.Relative)
+        position(Relative)
         top(-32.px)
         marginLeft(8.px)
         fontSize(15.px)
@@ -77,16 +79,16 @@ object AppStylesheet : StyleSheet() {
             name = "class",
             value = "wtCol"
         ) style {
-            marginRight(AppCSSVariables.wtHorizontalLayoutGutter.value())
-            marginLeft(AppCSSVariables.wtHorizontalLayoutGutter.value())
+            marginRight(wtHorizontalLayoutGutter.value())
+            marginLeft(wtHorizontalLayoutGutter.value())
 
             property(
                 "flex-basis",
-                "calc(8.33333%*${AppCSSVariables.wtColCount.value()} - ${AppCSSVariables.wtHorizontalLayoutGutter.value()}*2)"
+                "calc(8.33333%*${wtColCount.value()} - ${wtHorizontalLayoutGutter.value()}*2)"
             )
             property(
                 "max-width",
-                "calc(8.33333%*${AppCSSVariables.wtColCount.value()} - ${AppCSSVariables.wtHorizontalLayoutGutter.value()}*2)"
+                "calc(8.33333%*${wtColCount.value()} - ${wtHorizontalLayoutGutter.value()}*2)"
             )
             boxSizing("border-box")
         }

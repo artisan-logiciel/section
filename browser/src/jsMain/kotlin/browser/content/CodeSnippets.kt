@@ -2,19 +2,28 @@ package browser.content
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
 import androidx.compose.runtime.mutableStateOf
-import org.jetbrains.compose.web.css.*
-import org.jetbrains.compose.web.dom.*
-import browser.HighlightJs
+import androidx.compose.runtime.setValue
+import browser.HighlightJs.Companion.highlightElement
 import browser.components.ContainerInSection
-import browser.style.*
+import browser.style.WtCols.wtCol6
+import browser.style.WtCols.wtColMd4
+import browser.style.WtCols.wtColSm12
+import browser.style.WtOffsets.wtTopOffset24
+import browser.style.WtOffsets.wtTopOffset48
+import browser.style.WtOffsets.wtTopOffsetSm24
+import browser.style.WtRows.wtRow
+import browser.style.WtTexts.wtH2
+import browser.style.WtTexts.wtH3
+import org.jetbrains.compose.web.css.*
+import org.jetbrains.compose.web.css.JustifyContent.Companion.SpaceBetween
 import org.jetbrains.compose.web.css.keywords.auto
+import org.jetbrains.compose.web.dom.*
 import org.w3c.dom.HTMLElement
 
 private fun HTMLElement.setHighlightedCode(code: String) {
     innerText = code
-    browser.HighlightJs.highlightElement(this)
+    highlightElement(block = this)
 }
 
 private val SimpleCounterSnippet = CodeSnippetData(
@@ -197,52 +206,40 @@ private var currentCodeSnippet: CodeSnippetData by mutableStateOf(allSnippets[0]
 private var selectedSnippetIx: Int by mutableStateOf(0)
 
 @Composable
-fun CodeSamples() {
-    ContainerInSection {
-        Div({
-            classes(WtRows.wtRow)
-            style {
-                justifyContent(JustifyContent.SpaceBetween)
-            }
-        }) {
-            Div({ classes(WtCols.wtCol6, WtCols.wtColMd4, WtCols.wtColSm12) }) {
-                H1({
-                    classes(WtTexts.wtH2)
-                }) {
-                    Text("Code samples")
-                }
-            }
-
-            Div({ classes(WtOffsets.wtTopOffsetSm24) }) {
-                CodeSampleSwitcher(count = allSnippets.size, current = selectedSnippetIx) {
-                    selectedSnippetIx = it
-                    currentCodeSnippet = allSnippets[it]
-                }
+fun CodeSamples() = ContainerInSection {
+    Div({
+        classes(wtRow)
+        style { justifyContent(SpaceBetween) }
+    }) {
+        Div({ classes(wtCol6, wtColMd4, wtColSm12) }) {
+            H1({
+                classes(wtH2)
+            }) { Text("Code samples") }
+        }
+        Div({ classes(wtTopOffsetSm24) }) {
+            CodeSampleSwitcher(count = allSnippets.size, current = selectedSnippetIx) {
+                selectedSnippetIx = it
+                currentCodeSnippet = allSnippets[it]
             }
         }
-
-        TitledCodeSample(title = currentCodeSnippet.title, code = currentCodeSnippet.source)
     }
+    TitledCodeSample(title = currentCodeSnippet.title, code = currentCodeSnippet.source)
 }
 
 @Composable
 private fun TitledCodeSample(title: String, code: String) {
     H3({
-        classes(WtTexts.wtH3, WtOffsets.wtTopOffset48)
-    }) {
-        Text(title)
-    }
+        classes(wtH3, wtTopOffset48)
+    }) { Text(title) }
 
     Div({
-        classes(WtOffsets.wtTopOffset24)
+        classes(wtTopOffset24)
         style {
             backgroundColor(rgba(39, 40, 44, 0.05))
             borderRadius(8.px, 8.px, 8.px)
             padding(12.px, 16.px)
         }
-    }) {
-        FormattedCodeSnippet(code = code)
-    }
+    }) { FormattedCodeSnippet(code = code) }
 }
 
 @Composable
@@ -262,11 +259,7 @@ fun FormattedCodeSnippet(code: String, language: String = "kotlin") {
                 fontSize(10.pt)
                 backgroundColor(Color("transparent"))
             }
-        }) {
-            DomSideEffect(code) {
-                it.setHighlightedCode(code)
-            }
-        }
+        }) { DomSideEffect(code) { it.setHighlightedCode(code) } }
     }
 }
 

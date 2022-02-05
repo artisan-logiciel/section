@@ -4,9 +4,9 @@ import org.jetbrains.compose.web.css.*
 
 object WtContainer : StyleSheet(AppStylesheet) {
     val wtContainer by style {
-        property("margin-left", "auto")
-        property("margin-right", "auto")
-        boxSizing("border-box")
+        property(propertyName = "margin-left", value = "auto")
+        property(propertyName = "margin-right", value = "auto")
+        boxSizing(value = "border-box")
         paddingLeft(22.px)
         paddingRight(22.px)
         maxWidth(1276.px)

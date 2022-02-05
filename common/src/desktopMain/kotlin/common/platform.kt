@@ -1,5 +1,3 @@
 package common
 
-actual fun getPlatformName(): String {
-    return "Desktop"
-}
+actual fun getPlatformName() = "Desktop"

@@ -1,6 +1,9 @@
 package browser.content
 
 import androidx.compose.runtime.Composable
+import browser.content.SwitcherStylesheet.boxed
+import browser.content.SwitcherVariables.labelPadding
+import browser.content.SwitcherVariables.labelWidth
 import org.jetbrains.compose.web.attributes.InputType
 import org.jetbrains.compose.web.attributes.name
 import org.jetbrains.compose.web.css.*
@@ -9,6 +12,10 @@ import org.jetbrains.compose.web.dom.Input
 import org.jetbrains.compose.web.dom.Label
 import org.jetbrains.compose.web.dom.Text
 import browser.style.AppStylesheet
+import org.jetbrains.compose.web.attributes.InputType.Radio
+import org.jetbrains.compose.web.css.DisplayStyle.Companion.InlineBlock
+import org.jetbrains.compose.web.css.DisplayStyle.Companion.None
+import org.jetbrains.compose.web.css.LineStyle.Companion.Solid
 
 private object SwitcherVariables {
     val labelWidth by variable<CSSpxValue>()
@@ -26,15 +33,15 @@ object SwitcherStylesheet : StyleSheet(AppStylesheet) {
         }
 
         desc(self, type("label")) style {
-            display(DisplayStyle.InlineBlock)
-            width(SwitcherVariables.labelWidth.value(56.px))
-            padding(SwitcherVariables.labelPadding.value(10.px))
+            display(InlineBlock)
+            width(labelWidth.value(56.px))
+            padding(labelPadding.value(10.px))
             property("transition", "all 0.3s")
             textAlign("center")
             boxSizing("border-box")
 
             border {
-                style(LineStyle.Solid)
+                style(Solid)
                 width(3.px)
                 color(Color("transparent"))
                 borderRadius(20.px, 20.px, 20.px)
@@ -43,7 +50,7 @@ object SwitcherStylesheet : StyleSheet(AppStylesheet) {
         }
 
         border {
-            style(LineStyle.Solid)
+            style(Solid)
             width(1.px)
             color(Color("#aaa"))
             padding(0.px)
@@ -51,7 +58,7 @@ object SwitcherStylesheet : StyleSheet(AppStylesheet) {
         }
 
         type("input") + attrEquals(name = "type", value = "radio") style {
-            display(DisplayStyle.None)
+            display(None)
         }
 
         adjacent(
@@ -59,7 +66,7 @@ object SwitcherStylesheet : StyleSheet(AppStylesheet) {
             selected = type("label")
         ) style {
             border {
-                style(LineStyle.Solid)
+                style(Solid)
                 width(3.px)
                 color(Color("#167dff"))
                 borderRadius(20.px, 20.px, 20.px)
@@ -72,10 +79,10 @@ object SwitcherStylesheet : StyleSheet(AppStylesheet) {
 @Composable
 fun CodeSampleSwitcher(count: Int, current: Int, onSelect: (Int) -> Unit) {
     Form(attrs = {
-        classes(SwitcherStylesheet.boxed)
+        classes(boxed)
     }) {
         repeat(count) { ix ->
-            Input(type = InputType.Radio, attrs = {
+            Input(type = Radio, attrs = {
                 name("code-snippet")
                 value("snippet$ix")
                 id("snippet$ix")

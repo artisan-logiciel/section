@@ -1,12 +1,17 @@
 package browser.style
 
 import org.jetbrains.compose.web.css.*
+import org.jetbrains.compose.web.css.AlignItems.Companion.FlexStart
+import org.jetbrains.compose.web.css.DisplayStyle.Companion.Flex
+import org.jetbrains.compose.web.css.FlexDirection.Companion.Column
+import org.jetbrains.compose.web.css.LineStyle.Companion.Solid
+import org.jetbrains.compose.web.css.Position.Companion.Relative
 
 object WtCards : StyleSheet(AppStylesheet) {
     val wtCard by style {
-        display(DisplayStyle.Flex)
-        flexDirection(FlexDirection.Column)
-        border(1.px, LineStyle.Solid)
+        display(Flex)
+        flexDirection(Column)
+        border(1.px, Solid)
         minHeight(0.px)
         boxSizing("border-box")
     }
@@ -24,7 +29,7 @@ object WtCards : StyleSheet(AppStylesheet) {
     }
 
     val wtCardSection by style {
-        position(Position.Relative)
+        position(Relative)
         overflow("auto")
         flex( "1 1 auto")
         minHeight( 0.px)
@@ -37,9 +42,9 @@ object WtCards : StyleSheet(AppStylesheet) {
     }
 
     val wtVerticalFlex by style {
-        display(DisplayStyle.Flex)
-        flexDirection(FlexDirection.Column)
-        alignItems(AlignItems.FlexStart)
+        display(Flex)
+        flexDirection(Column)
+        alignItems(FlexStart)
     }
 
     val wtVerticalFlexGrow by style {
