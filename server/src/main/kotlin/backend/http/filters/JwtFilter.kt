@@ -15,7 +15,7 @@ import backend.config.Constants.BEARER_START_WITH
 import backend.services.TokenProvider
 
 @Component("jwtFilter")
-class JWTFilter(private val tokenProvider: TokenProvider) : WebFilter {
+class JwtFilter(private val tokenProvider: TokenProvider) : WebFilter {
 
     override fun filter(exchange: ServerWebExchange, chain: WebFilterChain): Mono<Void> {
         resolveToken(exchange.request).apply token@{

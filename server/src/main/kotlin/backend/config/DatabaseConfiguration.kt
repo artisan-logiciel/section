@@ -26,10 +26,11 @@ import java.time.LocalDateTime
 import java.time.LocalDateTime.ofInstant
 import java.time.ZoneOffset.UTC
 
-@Suppress("unused")
+
 @Configuration
 @EnableTransactionManagement
 @EnableR2dbcRepositories("backend.repositories.entities")
+@Suppress("unused")
 class DatabaseConfiguration(
     private val properties: ApplicationProperties
 ) {

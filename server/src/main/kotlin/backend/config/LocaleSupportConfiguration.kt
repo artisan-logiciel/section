@@ -10,8 +10,9 @@ import backend.config.Constants.REQUEST_PARAM_LANG
 import java.util.Locale.forLanguageTag
 import java.util.Locale.getDefault
 
-@Suppress("unused")
+
 @Configuration
+@Suppress("unused")
 class LocaleSupportConfiguration : DelegatingWebFluxConfiguration() {
 
     override fun createLocaleContextResolver(): LocaleContextResolver =
