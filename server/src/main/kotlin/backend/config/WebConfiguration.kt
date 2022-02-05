@@ -12,6 +12,8 @@ import org.springframework.web.reactive.config.EnableWebFlux
 import org.springframework.web.reactive.config.WebFluxConfigurer
 //import reactor.core.publisher.Hooks.onOperatorDebug
 import backend.Server.Log.log
+import backend.config.Constants.CONTENT_SECURITY_POLICY
+import backend.config.Constants.FEATURE_POLICY
 import backend.config.Constants.SPRING_PROFILE_PRODUCTION
 import backend.http.filters.JwtFilter
 import backend.http.filters.SpaWebFilter
@@ -26,6 +28,7 @@ import org.springframework.context.annotation.Import
 import org.springframework.context.annotation.Profile
 import org.springframework.core.annotation.Order
 import org.springframework.http.HttpMethod
+import org.springframework.http.HttpMethod.OPTIONS
 import org.springframework.mail.javamail.JavaMailSender
 import org.springframework.mail.javamail.JavaMailSenderImpl
 import org.springframework.security.authentication.ReactiveAuthenticationManager
@@ -33,15 +36,19 @@ import org.springframework.security.authentication.UserDetailsRepositoryReactive
 import org.springframework.security.config.annotation.method.configuration.EnableReactiveMethodSecurity
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity
 import org.springframework.security.config.web.server.SecurityWebFiltersOrder
+import org.springframework.security.config.web.server.SecurityWebFiltersOrder.AUTHENTICATION
+import org.springframework.security.config.web.server.SecurityWebFiltersOrder.HTTP_BASIC
 import org.springframework.security.config.web.server.ServerHttpSecurity
 import org.springframework.security.core.userdetails.ReactiveUserDetailsService
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.web.server.SecurityWebFilterChain
 import org.springframework.security.web.server.header.ReferrerPolicyServerHttpHeadersWriter
+import org.springframework.security.web.server.header.ReferrerPolicyServerHttpHeadersWriter.ReferrerPolicy.STRICT_ORIGIN_WHEN_CROSS_ORIGIN
 import org.springframework.security.web.server.util.matcher.NegatedServerWebExchangeMatcher
 import org.springframework.security.web.server.util.matcher.OrServerWebExchangeMatcher
 import org.springframework.security.web.server.util.matcher.ServerWebExchangeMatchers
+import org.springframework.security.web.server.util.matcher.ServerWebExchangeMatchers.pathMatchers
 import org.springframework.validation.Validator
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean
 import org.springframework.web.server.WebExceptionHandler
@@ -153,10 +160,10 @@ class WebConfiguration(
         }
 
         @Bean
-        @Profile(JHipsterConstants.SPRING_PROFILE_PRODUCTION)
+        @Profile(SPRING_PROFILE_PRODUCTION)
         public CachingHttpHeadersFilter cachingHttpHeadersFilter() {
             // Use a cache filter that only match selected paths
-            return new CachingHttpHeadersFilter(TimeUnit.DAYS.toMillis(jHipsterProperties.getHttp().getCache().getTimeToLiveInDays()));
+            return new CachingHttpHeadersFilter(TimeUnit.DAYS.toMillis(ApplicationProperties.getHttp().getCache().getTimeToLiveInDays()));
         }
     */
     @Bean("passwordEncoder")
@@ -175,7 +182,7 @@ class WebConfiguration(
         http.securityMatcher(
             NegatedServerWebExchangeMatcher(
                 OrServerWebExchangeMatcher(
-                    ServerWebExchangeMatchers.pathMatchers(
+                    pathMatchers(
                         "/app/**",
                         "/i18n/**",
                         "/content/**",
@@ -183,23 +190,23 @@ class WebConfiguration(
                         "/test/**",
                         "/webjars/**"
                     ),
-                    ServerWebExchangeMatchers.pathMatchers(HttpMethod.OPTIONS, "/**")
+                    pathMatchers(OPTIONS, "/**")
                 )
             )
         ).csrf()
             .disable()
-            .addFilterAt(SpaWebFilter(), SecurityWebFiltersOrder.AUTHENTICATION)
-            .addFilterAt(JwtFilter(tokenProvider), SecurityWebFiltersOrder.HTTP_BASIC)
+            .addFilterAt(SpaWebFilter(), AUTHENTICATION)
+            .addFilterAt(JwtFilter(tokenProvider), HTTP_BASIC)
             .authenticationManager(reactiveAuthenticationManager())
             .exceptionHandling()
             .accessDeniedHandler(problemSupport)
             .authenticationEntryPoint(problemSupport)
             .and()
-            .headers().contentSecurityPolicy(Constants.CONTENT_SECURITY_POLICY)
+            .headers().contentSecurityPolicy(CONTENT_SECURITY_POLICY)
             .and()
-            .referrerPolicy(ReferrerPolicyServerHttpHeadersWriter.ReferrerPolicy.STRICT_ORIGIN_WHEN_CROSS_ORIGIN)
+            .referrerPolicy(STRICT_ORIGIN_WHEN_CROSS_ORIGIN)
             .and()
-            .featurePolicy(Constants.FEATURE_POLICY)
+            .featurePolicy(FEATURE_POLICY)
             .and()
             .frameOptions().disable()
             .and()

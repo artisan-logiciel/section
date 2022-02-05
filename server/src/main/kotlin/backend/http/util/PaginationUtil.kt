@@ -32,8 +32,14 @@ object PaginationUtil {
         val pageSize = page.size
         val link = StringBuilder()
         if (pageNumber < page.totalPages - 1) {
-            link.append(prepareLink(uriBuilder, pageNumber + 1, pageSize, "next"))
-                .append(",")
+            link.append(
+                prepareLink(
+                    uriBuilder = uriBuilder,
+                    pageNumber = pageNumber + 1,
+                    pageSize = pageSize,
+                    relType = "next"
+                )
+            ).append(",")
         }
         if (pageNumber > 0) {
             link.append(prepareLink(uriBuilder, pageNumber - 1, pageSize, "prev"))

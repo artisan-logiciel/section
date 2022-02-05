@@ -1,5 +1,10 @@
 package backend.services
 
+import backend.Server.Log.log
+import backend.config.Constants.AUTHORITIES_KEY
+import backend.config.Constants.INVALID_TOKEN
+import backend.config.Constants.VALID_TOKEN
+import backend.properties.ApplicationProperties
 import io.jsonwebtoken.JwtException
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.Jwts.parserBuilder
@@ -13,11 +18,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.stereotype.Component
-import backend.config.Constants.AUTHORITIES_KEY
-import backend.config.Constants.INVALID_TOKEN
-import backend.config.Constants.VALID_TOKEN
-import backend.Server.Log.log
-import backend.properties.ApplicationProperties
 import java.security.Key
 import java.util.*
 import kotlin.text.Charsets.UTF_8
@@ -29,11 +29,9 @@ class TokenProvider(
     private val properties: ApplicationProperties
 ) : InitializingBean {
 
-//    companion object {
-        private var key: Key? = null
-        private var tokenValidityInMilliseconds: Long = 0
-        private var tokenValidityInMillisecondsForRememberMe: Long = 0
-//    }
+    private var key: Key? = null
+    private var tokenValidityInMilliseconds: Long = 0
+    private var tokenValidityInMillisecondsForRememberMe: Long = 0
 
     @Throws(Exception::class)
     override fun afterPropertiesSet() {
@@ -46,11 +44,11 @@ class TokenProvider(
                 key = hmacShaKeyFor(
                     if (!hasLength(this))
                         log.warn(
-                            "Warning: the JWT key used is not Base64-encoded. " +
+                            "Warning: the Jwt key used is not Base64-encoded. " +
                                     "We recommend using the `backend.security.authentication.jwt.base64-secret`" +
                                     " key for optimum security."
                         ).run { toByteArray(UTF_8) }
-                    else log.debug("Using a Base64-encoded JWT secret key").run {
+                    else log.debug("Using a Base64-encoded Jwt secret key").run {
                         BASE64.decode(
                             properties
                                 .security
@@ -125,11 +123,11 @@ class TokenProvider(
                 .parseClaimsJws(token)
             return VALID_TOKEN
         } catch (e: JwtException) {
-            log.info("Invalid JWT token.")
-            log.trace("Invalid JWT token trace. $e")
+            log.info("Invalid Jwt token.")
+            log.trace("Invalid Jwt token trace. $e")
         } catch (e: IllegalArgumentException) {
-            log.info("Invalid JWT token.")
-            log.trace("Invalid JWT token trace. $e")
+            log.info("Invalid Jwt token.")
+            log.trace("Invalid Jwt token trace. $e")
         }
         return INVALID_TOKEN
     }

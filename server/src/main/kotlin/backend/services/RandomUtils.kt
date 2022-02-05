@@ -3,12 +3,10 @@ package backend.services
 import org.apache.commons.lang3.RandomStringUtils.random
 import java.security.SecureRandom
 
-object RandomUtil {
+object RandomUtils {
     private const val DEF_COUNT = 20
     private val SECURE_RANDOM: SecureRandom by lazy {
-        SecureRandom().apply {
-            nextBytes(ByteArray(64))
-        }
+        SecureRandom().apply { nextBytes(ByteArray(size = 64)) }
     }
 
     private val generateRandomAlphanumericString: String

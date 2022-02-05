@@ -139,7 +139,7 @@ class UserServiceFuncTest : AbstractBaseFunctionalTest() {
     @Test
     @WithMockUser(DataTest.USER_LOGIN)
     fun `test resetKey d'un user activé ne doit pas avoir plus de 24 heures`(): Unit = runBlocking {
-        RandomUtil.generateResetKey.apply {
+        RandomUtils.generateResetKey.apply {
             saveUserWithAutorities(
                 DataTest.defaultUser.copy(
                     activated = true,
@@ -174,7 +174,7 @@ class UserServiceFuncTest : AbstractBaseFunctionalTest() {
         assertEquals(countUser(), 0)
         assertEquals(countUserAuthority(), 0)
         assertTrue(DataTest.defaultUser.authorities!!.contains(Authority(Constants.ROLE_USER)))
-        RandomUtil.generateResetKey.apply key@{
+        RandomUtils.generateResetKey.apply key@{
             saveUserWithAutorities(
                 DataTest.defaultUser.copy(
                     resetDate = Instant.now().minus(2, ChronoUnit.HOURS),
@@ -206,7 +206,7 @@ class UserServiceFuncTest : AbstractBaseFunctionalTest() {
         assertEquals(countUser(), 0)
         assertEquals(countUserAuthority(), 0)
         assertTrue(DataTest.defaultUser.authorities!!.contains(Authority(Constants.ROLE_USER)))
-        RandomUtil.generateActivationKey.apply key@{
+        RandomUtils.generateActivationKey.apply key@{
             Instant.now().minus(4, ChronoUnit.DAYS).apply fourDaysAgo@{
                 saveUserWithAutorities(
                     DataTest.defaultUser.copy(

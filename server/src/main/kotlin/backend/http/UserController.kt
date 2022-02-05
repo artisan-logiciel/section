@@ -93,9 +93,9 @@ class UserController(
         account.apply requestAccount@{
             log.debug("REST request to save User : {}", account)
             if (id != null) throw AlertProblem(
-                "A new user cannot already have an ID",
-                "userManagement",
-                "idexists"
+                defaultMessage = "A new user cannot already have an ID",
+                entityName = "userManagement",
+                errorKey = "idexists"
             )
             userService.findAccountByLogin(login!!).apply retrieved@{
                 if (this@retrieved?.login?.equals(

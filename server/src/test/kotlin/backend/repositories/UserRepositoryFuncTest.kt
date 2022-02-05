@@ -8,8 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Pageable
 import backend.domain.DataTest.defaultUser
 import backend.domain.DataTest.users
-import backend.services.RandomUtil.generateActivationKey
-import backend.services.RandomUtil.generateResetKey
+import backend.services.RandomUtils.generateActivationKey
+import backend.services.RandomUtils.generateResetKey
 import backend.tdd.functional.AbstractBaseFunctionalTest
 import java.time.LocalDateTime.now
 import java.time.ZoneId.systemDefault

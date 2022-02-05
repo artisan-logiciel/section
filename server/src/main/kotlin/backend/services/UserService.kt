@@ -19,9 +19,9 @@ import backend.domain.Avatar
 import backend.repositories.*
 import backend.repositories.entities.Authority
 import backend.repositories.entities.User
-import backend.services.RandomUtil.generateActivationKey
-import backend.services.RandomUtil.generatePassword
-import backend.services.RandomUtil.generateResetKey
+import backend.services.RandomUtils.generateActivationKey
+import backend.services.RandomUtils.generatePassword
+import backend.services.RandomUtils.generateResetKey
 import backend.services.exceptions.EmailAlreadyUsedException
 import backend.services.exceptions.InvalidPasswordException
 import backend.services.exceptions.UsernameAlreadyUsedException
@@ -30,8 +30,9 @@ import java.time.LocalDateTime.ofInstant
 import java.time.ZoneOffset.UTC
 import java.time.temporal.ChronoUnit.DAYS
 
-@Suppress("unused")
+
 @Service("userService")
+@Suppress("unused")
 class UserService(
     private val passwordEncoder: PasswordEncoder,
     private val userRepository: UserRepository,

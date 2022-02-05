@@ -16,8 +16,9 @@ import backend.services.exceptions.UserNotActivatedException
 import org.springframework.security.core.userdetails.User as UserSecurity
 
 
-@Suppress("unused")
+
 @Component("userDetailsService")
+@Suppress("unused")
 class DomainUserDetailsService(
     private val userRepository: UserRepository
 ) : ReactiveUserDetailsService {

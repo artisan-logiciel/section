@@ -1,12 +1,12 @@
 package backend.services
 
+import backend.config.Constants.ROLE_ANONYMOUS
 import kotlinx.coroutines.reactive.awaitSingle
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.context.ReactiveSecurityContextHolder.getContext
 import org.springframework.security.core.context.SecurityContext
 import org.springframework.security.core.userdetails.UserDetails
-import backend.config.Constants.ROLE_ANONYMOUS
 
 @Suppress("ClassName")
 object SecurityUtils {
@@ -18,7 +18,7 @@ object SecurityUtils {
                 .authentication
         )
 
-    fun extractPrincipal(authentication: Authentication?): String =
+    private fun extractPrincipal(authentication: Authentication?): String =
         if (authentication == null) ""
         else when (val principal = authentication.principal) {
             is UserDetails -> principal.username
@@ -26,7 +26,7 @@ object SecurityUtils {
             else -> ""
         }
 
-    suspend fun getCurrentUserJWT(): String =
+    suspend fun getCurrentUserJwt(): String =
         getContext()
             .map(SecurityContext::getAuthentication)
             .filter { it.credentials is String }
@@ -37,7 +37,7 @@ object SecurityUtils {
         getContext()
             .map(SecurityContext::getAuthentication)
             .map(Authentication::getAuthorities)
-            .map { roles ->
+            .map { roles: Collection<GrantedAuthority> ->
                 roles.map(transform = GrantedAuthority::getAuthority)
                     .none { it == ROLE_ANONYMOUS }
             }.awaitSingle()
@@ -47,7 +47,7 @@ object SecurityUtils {
         getContext()
             .map(SecurityContext::getAuthentication)
             .map(Authentication::getAuthorities)
-            .map { roles ->
+            .map { roles: Collection<GrantedAuthority> ->
                 roles.map(transform = GrantedAuthority::getAuthority)
                     .any { it == authority }
             }.awaitSingle()

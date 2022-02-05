@@ -23,27 +23,27 @@ import javax.validation.Valid
  */
 @RestController
 @RequestMapping("/api")
-class UserJWTController(
+class AuthenticationController(
     private val tokenProvider: TokenProvider,
     private val authenticationManager: ReactiveAuthenticationManager
 ) {
     /**
-     * Object to return as body in JWT Authentication.
+     * Object to return as body in Jwt Authentication.
      */
-    class JWTToken(@JsonProperty(AUTHORIZATION_ID_TOKEN) val idToken: String)
+    class JwtToken(@JsonProperty(AUTHORIZATION_ID_TOKEN) val idToken: String)
 
     @PostMapping("/authenticate")
-    suspend fun authorize(@Valid @RequestBody loginVM: Login)
-            : ResponseEntity<JWTToken> = tokenProvider.createToken(
+    suspend fun authorize(@Valid @RequestBody loginVm: Login)
+            : ResponseEntity<JwtToken> = tokenProvider.createToken(
         authenticationManager.authenticate(
             UsernamePasswordAuthenticationToken(
-                loginVM.username,
-                loginVM.password
+                loginVm.username,
+                loginVm.password
             )
-        ).awaitSingle(), loginVM.rememberMe!!
+        ).awaitSingle(), loginVm.rememberMe!!
     ).run {
-        return ResponseEntity<JWTToken>(
-            JWTToken(idToken = this),
+        return ResponseEntity<JwtToken>(
+            JwtToken(idToken = this),
             HttpHeaders().apply {
                 add(
                     AUTHORIZATION_HEADER,
