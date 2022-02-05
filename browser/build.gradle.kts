@@ -19,9 +19,9 @@ kotlin {
     sourceSets {
         @Suppress("UNUSED_VARIABLE") val jsMain by getting {
             dependencies {
-                implementation(npm("highlight.js", "10.7.2"))
-                implementation(compose.web.core)
-                implementation(compose.runtime)
+                implementation(npm(name = "highlight.js", version = "10.7.2"))
+                implementation(dependencyNotation = compose.web.core)
+                implementation(dependencyNotation = compose.runtime)
             }
         }
     }

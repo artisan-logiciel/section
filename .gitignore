@@ -5,7 +5,6 @@
 /build/js/packages/section-browser/kotlin/
 /common/build/
 /desktop/build/
-/simple-server/build/
 .gradle
 .idea
 gradle/wrapper/gradle-wrapper.jar

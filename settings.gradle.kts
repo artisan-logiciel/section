@@ -26,5 +26,5 @@ pluginManagement {
 rootProject.name = "section"
 include(":common")
 include(":desktop")
-include(":backend")
+include(":server")
 include(":browser")
