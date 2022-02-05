@@ -2,9 +2,7 @@
 
 *kotlin multiplatform project:*
 
-* android
+
 * browser
 * desktop
-* simple-server (ktor)
-* _backend_ (spring-boot)
-* _web-landing_
+* server
