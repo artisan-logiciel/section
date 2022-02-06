@@ -30,7 +30,7 @@ open class Account(
     @field:Size(min = 5, max = 254)
     var email: String? = null,
     @field:Size(max = 256)
-    var imageUrl: String? = null,
+    var imageUrl: String? = "http://placehold.it/50x50",
     var activated: Boolean = false,
     @field:Size(min = 2, max = 10)
     var langKey: String? = null,

@@ -6,6 +6,15 @@
 
 package backend.tdd.functional
 
+import backend.Server.Log.log
+import backend.config.Constants.ROLE_ADMIN
+import backend.config.Constants.ROLE_ANONYMOUS
+import backend.config.Constants.ROLE_USER
+import backend.domain.DataTest.defaultAccount
+import backend.domain.DataTest.defaultUser
+import backend.domain.unlockUser
+import backend.repositories.entities.User
+import backend.repositories.entities.UserAuthority
 import com.fasterxml.jackson.databind.ObjectMapper
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.count
@@ -26,15 +35,6 @@ import org.springframework.r2dbc.core.DatabaseClient
 import org.springframework.r2dbc.core.await
 import org.springframework.r2dbc.core.awaitSingle
 import org.springframework.test.context.ActiveProfiles
-import backend.config.Constants.ROLE_ADMIN
-import backend.config.Constants.ROLE_ANONYMOUS
-import backend.config.Constants.ROLE_USER
-import backend.Server.Log.log
-import backend.domain.DataTest.defaultAccount
-import backend.domain.DataTest.defaultUser
-import backend.domain.unlockUser
-import backend.repositories.entities.User
-import backend.repositories.entities.UserAuthority
 import java.time.LocalDateTime
 import java.util.*
 import java.util.regex.Pattern
@@ -167,8 +167,7 @@ abstract class AbstractBaseFunctionalTest {
                 .allAndAwait()
         }
 
-    suspend fun logCountUser() = log
-        .info("countUser: ${countUser()}")
+    suspend fun logCountUser() = log.info("countUser: ${countUser()}")
 
     suspend fun logCountUserAuthority() = log
         .info("countUserAuthority: ${countUserAuthority()}")
@@ -177,8 +176,8 @@ abstract class AbstractBaseFunctionalTest {
         .insert(u)
         .awaitFirstOrNull()
 
-    suspend fun saveUserWithAutorities(u: User): User? = r2dbcEntityTemplate
-        .insert(u)
+    suspend fun saveUserWithAutorities(user: User): User? = r2dbcEntityTemplate
+        .insert(user)
         .awaitSingle().apply {
             authorities?.forEach {
                 if (id != null)

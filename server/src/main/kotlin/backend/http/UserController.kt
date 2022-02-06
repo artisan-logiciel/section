@@ -111,7 +111,7 @@ class UserController(
                     ) == true
                 ) throw EmailAlreadyUsedProblem()
             }
-            userService.createUser(this).run {
+            userService.createUser(this).apply {
                 mailService.sendActivationEmail(this)
                 try {
                     return created(URI("/api/admin/users/$login"))

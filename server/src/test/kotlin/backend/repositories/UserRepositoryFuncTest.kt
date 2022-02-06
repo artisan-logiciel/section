@@ -155,12 +155,12 @@ class UserRepositoryFuncTest : AbstractBaseFunctionalTest() {
     fun `test findOneByActivationKey user activationKey`(): Unit = runBlocking {
         defaultUser.copy().apply {
             activationKey = generateActivationKey
-            saveUserWithAutorities(this)!!.id.apply {
-                assertNotNull(this)
+            saveUserWithAutorities(user = this)!!.id.apply {
+                assertNotNull(actual = this)
                 assertEquals(
-                    userRepository
+                    expected = userRepository
                         .findOneByActivationKey(activationKey!!)?.id,
-                    this
+                    actual = this
                 )
             }
         }

@@ -30,6 +30,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.test.context.support.WithMockUser
 import java.time.Instant.now
 import kotlin.test.Test
+import kotlin.test.Ignore
 import kotlin.test.assertEquals
 
 class AccountControllerIntTest : AbstractRestIntegrationTest() {
@@ -308,7 +309,6 @@ class AccountControllerIntTest : AbstractRestIntegrationTest() {
                     createdDate = now()
                     lastModifiedBy = defaultAccount.lastModifiedBy
                     lastModifiedDate = now()
-                    imageUrl = "http://placehold.it/50x50"
                 })
             .exchange()
             .expectStatus()
@@ -317,9 +317,11 @@ class AccountControllerIntTest : AbstractRestIntegrationTest() {
         assertEquals(1, countUser())
     }
 
-/*
+    @Ignore
     @Test
-    void testRegisterDuplicateEmail() throws Exception {
+    @Throws(Exception::class)
+    fun `test register account avec un email dupliqué`(): Unit = runBlocking {
+/*
         // First user
         ManagedUserVM firstUser = new ManagedUserVM();
         firstUser.setLogin("test-register-duplicate-email");
@@ -409,9 +411,10 @@ class AccountControllerIntTest : AbstractRestIntegrationTest() {
             .exchange()
             .expectStatus()
             .is4xxClientError();
+        
+ */
     }
-*/
-    //    @org.junit.jupiter.api.Disabled
+
 /*
     @Test
     void testRegisterAdminIsIgnored() throws Exception {
@@ -442,7 +445,7 @@ class AccountControllerIntTest : AbstractRestIntegrationTest() {
             .containsExactly(authorityRepository.findById(AuthoritiesConstants.USER).block());
     }
 */
-    //    @org.junit.jupiter.api.Disabled
+    
 /*
     @Test
     void testActivateAccount() {
@@ -463,7 +466,7 @@ class AccountControllerIntTest : AbstractRestIntegrationTest() {
         assertThat(user.isActivated()).isTrue();
     }
 */
-    //    @org.junit.jupiter.api.Disabled
+    
 /*
     @Test
     void testActivateAccountWithWrongKey() {
@@ -475,7 +478,7 @@ class AccountControllerIntTest : AbstractRestIntegrationTest() {
             .isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
     }
 */
-    //    @org.junit.jupiter.api.Disabled
+    
 /*
     @Test
     @WithMockUser("save-account")
@@ -518,7 +521,7 @@ class AccountControllerIntTest : AbstractRestIntegrationTest() {
         assertThat(updatedUser.getAuthorities()).isEmpty();
     }
 */
-    //    @org.junit.jupiter.api.Disabled
+    
 /*
     @Test
     @WithMockUser("save-invalid-email")
@@ -554,7 +557,7 @@ class AccountControllerIntTest : AbstractRestIntegrationTest() {
         assertThat(userRepository.findOneByEmailIgnoreCase("invalid email").blockOptional()).isNotPresent();
     }
 */
-    //    @org.junit.jupiter.api.Disabled
+    
 /*
     @Test
     @WithMockUser("save-existing-email")
@@ -599,7 +602,7 @@ class AccountControllerIntTest : AbstractRestIntegrationTest() {
         assertThat(updatedUser.getEmail()).isEqualTo("save-existing-email@example.com");
     }
 */
-    //    @org.junit.jupiter.api.Disabled
+    
 /*
     @Test
     @WithMockUser("save-existing-email-and-login")
@@ -635,7 +638,7 @@ class AccountControllerIntTest : AbstractRestIntegrationTest() {
         assertThat(updatedUser.getEmail()).isEqualTo("save-existing-email-and-login@example.com");
     }
 */
-    //    @org.junit.jupiter.api.Disabled
+    
 /*
     @Test
     @WithMockUser("change-password-wrong-existing-password")
@@ -662,7 +665,7 @@ class AccountControllerIntTest : AbstractRestIntegrationTest() {
         assertThat(passwordEncoder.matches(currentPassword, updatedUser.getPassword())).isTrue();
     }
 */
-    //    @org.junit.jupiter.api.Disabled
+    
 /*
     @Test
     @WithMockUser("change-password")
@@ -688,7 +691,7 @@ class AccountControllerIntTest : AbstractRestIntegrationTest() {
         assertThat(passwordEncoder.matches("new password", updatedUser.getPassword())).isTrue();
     }
 */
-    //    @org.junit.jupiter.api.Disabled
+    
 /*
     @Test
     @WithMockUser("change-password-too-small")
@@ -716,7 +719,7 @@ class AccountControllerIntTest : AbstractRestIntegrationTest() {
         assertThat(updatedUser.getPassword()).isEqualTo(user.getPassword());
     }
 */
-    //    @org.junit.jupiter.api.Disabled
+    
 /*
     @Test
     @WithMockUser("change-password-too-long")
@@ -744,7 +747,7 @@ class AccountControllerIntTest : AbstractRestIntegrationTest() {
         assertThat(updatedUser.getPassword()).isEqualTo(user.getPassword());
     }
 */
-    //    @org.junit.jupiter.api.Disabled
+    
 /*
     @Test
     @WithMockUser("change-password-empty")
@@ -770,7 +773,7 @@ class AccountControllerIntTest : AbstractRestIntegrationTest() {
         assertThat(updatedUser.getPassword()).isEqualTo(user.getPassword());
     }
 */
-    //    @org.junit.jupiter.api.Disabled
+    
 /*
     @Test
     void testRequestPasswordReset() {
@@ -791,7 +794,7 @@ class AccountControllerIntTest : AbstractRestIntegrationTest() {
             .isOk();
     }
 */
-    //    @org.junit.jupiter.api.Disabled
+    
 /*
     @Test
     void testRequestPasswordResetUpperCaseEmail() {
@@ -812,7 +815,7 @@ class AccountControllerIntTest : AbstractRestIntegrationTest() {
             .isOk();
     }
 */
-    //    @org.junit.jupiter.api.Disabled
+    
 /*
     @Test
     void testRequestPasswordResetWrongEmail() {
@@ -825,7 +828,7 @@ class AccountControllerIntTest : AbstractRestIntegrationTest() {
             .isOk();
     }
 */
-    //    @org.junit.jupiter.api.Disabled
+    
 /*
     @Test
     void testFinishPasswordReset() throws Exception {
@@ -855,7 +858,7 @@ class AccountControllerIntTest : AbstractRestIntegrationTest() {
         assertThat(passwordEncoder.matches(keyAndPassword.getNewPassword(), updatedUser.getPassword())).isTrue();
     }
 */
-    //    @org.junit.jupiter.api.Disabled
+    
 /*
     @Test
     void testFinishPasswordResetTooSmall() throws Exception {
@@ -885,7 +888,7 @@ class AccountControllerIntTest : AbstractRestIntegrationTest() {
         assertThat(passwordEncoder.matches(keyAndPassword.getNewPassword(), updatedUser.getPassword())).isFalse();
     }
 */
-    //    @org.junit.jupiter.api.Disabled
+    
 /*
     @Test
     void testFinishPasswordResetWrongKey() throws Exception {

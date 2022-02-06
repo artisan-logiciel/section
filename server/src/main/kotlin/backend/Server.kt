@@ -27,10 +27,6 @@ import javax.annotation.PostConstruct
 class Server(
     private val context: ApplicationContext
 ) {
-    @PostConstruct
-    @Suppress("unused")
-    private fun init(): Array<String> = checkProfileLog(context = context)
-
     companion object {
         @JvmStatic
         fun main(args: Array<String>) = start(args)
@@ -53,6 +49,51 @@ class Server(
                     }
                 )
                 setAdditionalProfiles(SPRING_PROFILE_DEVELOPMENT)
+            }
+
+        @JvmStatic
+        fun startupLog(context: ApplicationContext): Unit =
+            log.info(
+                startupLogMessage(
+                    appName = context.environment.getProperty("spring.application.name"),
+                    protocol = if (context.environment.getProperty("server.ssl.key-store") != null) "https"
+                    else "http",
+                    serverPort = context.environment.getProperty("server.port"),
+                    contextPath = context.environment.getProperty("server.servlet.context-path") ?: "/",
+                    hostAddress = evaluatedHostAddress,
+                    profiles = context.environment.activeProfiles.joinToString(separator = ",")
+                )
+            )
+
+        @JvmStatic
+        private fun startupLogMessage(
+            appName: String?,
+            protocol: String,
+            serverPort: String?,
+            contextPath: String,
+            hostAddress: String,
+            profiles: String
+        ): String = """${"\n\n\n"}
+    ----------------------------------------------------------
+    Application '${appName}' is running! Access URLs:
+    Local:      $protocol://localhost:$serverPort$contextPath
+    External:   $protocol://$hostAddress:$serverPort$contextPath
+    Profile(s): $profiles
+    ----------------------------------------------------------
+    ${"\n\n\n"}""".trimIndent()
+
+        @JvmStatic
+        val evaluatedHostAddress: String
+            get() {
+                try {
+                    return getLocalHost().hostAddress
+                } catch (e: UnknownHostException) {
+                    log.warn(
+                        "The host name could not be determined, " +
+                                "using `localhost` as fallback"
+                    )
+                }
+                return DEV_HOST
             }
 
         @JvmStatic
@@ -84,58 +125,15 @@ class Server(
                 )
             }
 
-
-        @JvmStatic
-        fun startupLog(context: ApplicationContext): Unit =
-            log.info(
-                startupLogMessage(
-                    appName = context.environment.getProperty("spring.application.name"),
-                    protocol = if (context.environment.getProperty("server.ssl.key-store") != null) "https"
-                    else "http",
-                    serverPort = context.environment.getProperty("server.port"),
-                    contextPath = context.environment.getProperty("server.servlet.context-path") ?: "/",
-                    hostAddress = evaluatedHostAddress,
-                    profiles = context.environment.activeProfiles.joinToString(separator = ",")
-                )
-            )
-
-
-        @JvmStatic
-        val evaluatedHostAddress: String
-            get() {
-                try {
-                    return getLocalHost().hostAddress
-                } catch (e: UnknownHostException) {
-                    log.warn(
-                        "The host name could not be determined, " +
-                                "using `localhost` as fallback"
-                    )
-                }
-                return DEV_HOST
-            }
-
-
-        @JvmStatic
-        private fun startupLogMessage(
-            appName: String?,
-            protocol: String,
-            serverPort: String?,
-            contextPath: String,
-            hostAddress: String,
-            profiles: String
-        ): String = """${"\n\n\n"}
-    ----------------------------------------------------------
-    Application '${appName}' is running! Access URLs:
-    Local:      $protocol://localhost:$serverPort$contextPath
-    External:   $protocol://$hostAddress:$serverPort$contextPath
-    Profile(s): $profiles
-    ----------------------------------------------------------
-    ${"\n\n\n"}""".trimIndent()
-
     }
 
     object Log {
         @JvmStatic
         val log: Logger by lazy { getLogger(Log.javaClass) }
     }
+
+
+    @PostConstruct
+    @Suppress("unused")
+    fun init(): Array<String> = checkProfileLog(context = context)
 }
