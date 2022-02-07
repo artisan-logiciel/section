@@ -6,7 +6,7 @@ plugins {
 }
 
 repositories {
-    maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
+    maven(url = "https://maven.pkg.jetbrains.space/public/p/compose/dev")
     google()
 }
 

@@ -36,7 +36,7 @@ class AccountController(
      * @param account the managed user View Model.
      * @throws InvalidPasswordException {@code 400 (Bad Request)} if the password is incorrect.
      * @throws EmailAlreadyUsedProblem {@code 400 (Bad Request)} if the email is already used.
-     * @throws LoginAlreadyUsedBadRequestException {@code 400 (Bad Request)} if the login is already used.
+     * @throws LoginAlreadyUsedProblem {@code 400 (Bad Request)} if the login is already used.
      */
     @PostMapping("register")
     @ResponseStatus(CREATED)

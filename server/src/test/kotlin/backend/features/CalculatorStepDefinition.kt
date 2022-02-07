@@ -5,10 +5,10 @@ import backend.calculator.subtract
 import io.cucumber.java8.En
 
 class CalculatorStepDefinition : En {
+
     private var firstNumber: Int = 0
     private var secondNumber: Int = 0
     private var result: Int = 0
-
 
     init {
         Before { _ ->
