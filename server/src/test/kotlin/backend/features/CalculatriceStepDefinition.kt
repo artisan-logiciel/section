@@ -1,36 +1,43 @@
 package backend.features
-//https://github.com/walter-the-coder/spring-boot-cucumber-wiremock-simulator
-import io.cucumber.java.Before
-import io.cucumber.java.en.Then
-import io.cucumber.java.en.And
-import io.cucumber.java.en.Given
-import io.cucumber.java.en.When
 
-class CalculatriceStepDefinition {
+import backend.Server
+import com.fasterxml.jackson.databind.ObjectMapper
+import io.cucumber.java8.En
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.boot.test.context.SpringBootTest.WebEnvironment.DEFINED_PORT
+import org.springframework.http.HttpHeaders.CONTENT_TYPE
+import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
+import org.springframework.test.context.ActiveProfiles
+import org.springframework.web.reactive.function.client.ClientResponse
+import org.springframework.web.reactive.function.client.WebClient
 
-    @Before
-    fun setUp() {
+
+@ActiveProfiles("test")
+@SpringBootTest(
+    classes = [Server::class],
+    webEnvironment = DEFINED_PORT
+)
+@Suppress("unused")
+class CalculatriceStepDefinition : En {
+    @Autowired
+    private lateinit var objectMapper: ObjectMapper
+    private lateinit var response: ClientResponse
+    private val client = WebClient.builder()
+        .baseUrl("http://localhost:8080/api/")
+        .defaultHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+        .build()
+
+    init {
+        Before { _ ->
+        }
+        After { _ ->
+
+        }
+        Given("un entier {int}") { int: Int -> }
+        And("un second entier {int}") { number: Int -> }
+        When("on additionne les nombres") {}
+        When("on soustrait un nombre à l'autre") {}
+        Then("le resultat est {int}") { result: Int -> }
     }
-
-    @Given("un entier {int}")
-    fun `a integer`(number: Int) {
-    }
-
-    @And("un second entier {int}")
-    fun `a second integer`(number: Int) {
-    }
-
-    @When("on additionne les nombres")
-    fun `the numbers are added`() {
-
-    }
-
-    @When("on soustrait un nombre à l'autre")
-    fun `the numbers are subtracted`() {
-    }
-
-    @Then("le resultat est {int}")
-    fun `the result is`(result: Int) {
-    }
-
 }
