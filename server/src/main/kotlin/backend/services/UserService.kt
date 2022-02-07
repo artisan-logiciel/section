@@ -258,7 +258,7 @@ class UserService(
 
 
     @Transactional(readOnly = true)
-    suspend fun getAllPublicUsers(pageable: Pageable)
+    suspend fun getAvatars(pageable: Pageable)
             : Flow<Avatar> = userRepositoryPageable
         .findAllByActivatedIsTrue(pageable)
         .filter { it != null }

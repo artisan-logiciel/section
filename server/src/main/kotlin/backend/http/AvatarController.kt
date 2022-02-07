@@ -20,6 +20,7 @@ import org.springframework.web.util.UriComponentsBuilder.fromHttpRequest
 
 @RestController
 @RequestMapping("/api")
+@Suppress("unused")
 class AvatarController(
     private val userService: UserService
 ) {
@@ -60,7 +61,7 @@ class AvatarController(
                             userService.countUsers()
                         )
                     )
-                ).body(userService.getAllPublicUsers(pageable))
+                ).body(userService.getAvatars(pageable))
             }
         }
 

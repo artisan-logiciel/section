@@ -14,16 +14,15 @@ import backend.services.UserService
 import backend.services.exceptions.EmailAlreadyUsedException
 import backend.services.exceptions.InvalidPasswordException
 import kotlinx.coroutines.reactive.awaitFirstOrNull
-import org.springframework.http.HttpStatus.*
-import org.springframework.http.ResponseEntity.*
+import org.springframework.http.HttpStatus.CREATED
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.server.ServerWebExchange
-import org.springframework.web.util.UriComponentsBuilder.*
 import java.security.Principal
 import javax.validation.Valid
 
 @RestController
 @RequestMapping("api")
+@Suppress("unused")
 class RegistrationController(
     private val userService: UserService,
     private val mailService: MailService
@@ -36,7 +35,7 @@ class RegistrationController(
      * @param account the managed user View Model.
      * @throws InvalidPasswordException {@code 400 (Bad Request)} if the password is incorrect.
      * @throws EmailAlreadyUsedProblem {@code 400 (Bad Request)} if the email is already used.
-     * @throws LoginAlreadyUsedProblem {@code 400 (Bad Request)} if the login is already used.
+     * @throws backend.http.problems.LoginAlreadyUsedProblem {@code 400 (Bad Request)} if the login is already used.
      */
     @PostMapping("register")
     @ResponseStatus(CREATED)

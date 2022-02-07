@@ -4,7 +4,7 @@ import backend.Server
 import backend.calculator.add
 import backend.calculator.subtract
 import com.fasterxml.jackson.databind.ObjectMapper
-import io.cucumber.java8.En
+import io.cucumber.java8.Fr
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment.DEFINED_PORT
@@ -22,7 +22,7 @@ import kotlin.test.assertEquals
 )
 @ActiveProfiles("test")
 @Suppress("unused")
-class CalculatriceStepDefinition : En {
+class CalculatriceStepDefinition : Fr {
     @Autowired
     private lateinit var objectMapper: ObjectMapper
     private lateinit var response: ClientResponse
@@ -35,25 +35,27 @@ class CalculatriceStepDefinition : En {
     private var result: Int = 0
 
     init {
+
         Before { _ ->
             firstNumber = 0
             secondNumber = 0
             result = 0
         }
         After { _ -> }
-        Given("un entier {int}") { number: Int ->
+        
+        Etantdonné("un entier {int}") { number: Int ->
             firstNumber = number
         }
-        And("un second entier {int}") { number: Int ->
+        Et("un second entier {int}") { number: Int ->
             secondNumber = number
         }
-        When("on additionne les nombres") {
+        Quand("on additionne les nombres") {
             result = add(firstNumber, secondNumber)
         }
-        When("on soustrait un nombre à l'autre") {
+        Quand("on soustrait un nombre à l'autre") {
             result = subtract(firstNumber, secondNumber)
         }
-        Then("le resultat est {int}") { expectedResult: Int ->
+        Alors("le resultat est {int}") { expectedResult: Int ->
             assertEquals(
                 expected = expectedResult,
                 actual = result
