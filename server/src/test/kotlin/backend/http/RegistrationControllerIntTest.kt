@@ -33,7 +33,7 @@ import kotlin.test.Test
 import kotlin.test.Ignore
 import kotlin.test.assertEquals
 
-class AccountControllerIntTest : AbstractRestIntegrationTest() {
+class RegistrationControllerIntTest : AbstractRestIntegrationTest() {
 
     @Test
     fun `test post un account valide sur le end point register`()

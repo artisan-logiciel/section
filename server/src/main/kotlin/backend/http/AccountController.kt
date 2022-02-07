@@ -1,171 +1,237 @@
 package backend.http
 
+import kotlinx.coroutines.flow.Flow
+import org.springframework.data.domain.PageImpl
+import org.springframework.data.domain.Pageable
+import org.springframework.data.domain.Sort.Order
+import org.springframework.http.HttpStatus.NOT_FOUND
+import org.springframework.http.HttpStatus.NO_CONTENT
+import org.springframework.http.ResponseEntity
+import org.springframework.http.ResponseEntity.*
+import org.springframework.http.server.reactive.ServerHttpRequest
+import org.springframework.security.access.prepost.PreAuthorize
+import org.springframework.web.bind.annotation.*
+import org.springframework.web.server.ResponseStatusException
+import org.springframework.web.util.UriComponentsBuilder.fromHttpRequest
+import backend.config.Constants.LOGIN_REGEX
+import backend.config.Constants.ROLE_ADMIN
 import backend.Server.Log.log
 import backend.domain.Account
-import backend.domain.AccountPassword
-import backend.domain.KeyAndPassword
-import backend.domain.PasswordChange
+import backend.http.util.HttpHeaderUtil.createAlert
+import backend.http.util.PaginationUtil.generatePaginationHttpHeaders
+import backend.http.problems.AlertProblem
 import backend.http.problems.EmailAlreadyUsedProblem
-import backend.http.problems.InvalidPasswordProblem
+import backend.http.problems.LoginAlreadyUsedProblem
+import backend.properties.ApplicationProperties
 import backend.repositories.entities.User
 import backend.services.MailService
-import backend.services.SecurityUtils.getCurrentUserLogin
 import backend.services.UserService
-import backend.services.exceptions.EmailAlreadyUsedException
-import backend.services.exceptions.InvalidPasswordException
-import kotlinx.coroutines.reactive.awaitFirstOrNull
-import org.springframework.http.HttpStatus.*
-import org.springframework.http.ResponseEntity.*
-import org.springframework.web.bind.annotation.*
-import org.springframework.web.server.ServerWebExchange
-import org.springframework.web.util.UriComponentsBuilder.*
-import java.security.Principal
+import java.net.URI
+import java.net.URISyntaxException
 import javax.validation.Valid
+import javax.validation.constraints.Pattern
 
+/**
+ * REST controller for managing users.
+ * <p>
+ * This class accesses the {@link User} entity, and needs to fetch its collection of authorities.
+ * <p>
+ * For a normal use-case, it would be better to have an eager relationship between User and Authority,
+ * and send everything to the client side: there would be no View Model and DTO, a lot less code, and an outer-join
+ * which would be good for performance.
+ * <p>
+ * We use a View Model and a DTO for 3 reasons:
+ * <ul>
+ * <li>We want to keep a lazy association between the user and the authorities, because people will
+ * quite often do relationships with the user, and we don't want them to get the authorities all
+ * the time for nothing (for performance reasons). This is the #1 goal: we should not impact our users'
+ * application because of this use-case.</li>
+ * <li> Not having an outer join causes n+1 requests to the database. This is not a real issue as
+ * we have by default a second-level cache. This means on the first HTTP call we do the n+1 requests,
+ * but then all authorities come from the cache, so in fact it's much better than doing an outer join
+ * (which will get lots of data from the database, for each HTTP call).</li>
+ * <li> As this manages users, for security reasons, we'd rather have a DTO layer.</li>
+ * </ul>
+ * <p>
+ * Another option would be to have a specific JPA entity graph to handle this case.
+ */
 @RestController
-@RequestMapping("api")
+@RequestMapping("api/admin")
 class AccountController(
     private val userService: UserService,
-    private val mailService: MailService
+    private val mailService: MailService,
+    private val properties: ApplicationProperties
 ) {
-    internal class AccountResourceException(message: String) : RuntimeException(message)
+    companion object {
+        private val ALLOWED_ORDERED_PROPERTIES =
+            arrayOf(
+                "id",
+                "login",
+                "firstName",
+                "lastName",
+                "email",
+                "activated",
+                "langKey"
+            )
+    }
 
     /**
-     * {@code POST  /register} : register the user.
+     * {@code POST  /admin/users}  : Creates a new user.
+     * <p>
+     * Creates a new user if the login and email are not already used, and sends an
+     * mail with an activation link.
+     * The user needs to be activated on creation.
      *
-     * @param account the managed user View Model.
-     * @throws InvalidPasswordException {@code 400 (Bad Request)} if the password is incorrect.
-     * @throws EmailAlreadyUsedProblem {@code 400 (Bad Request)} if the email is already used.
-     * @throws LoginAlreadyUsedProblem {@code 400 (Bad Request)} if the login is already used.
+     * @param account the user to create.
+     * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new user,
+     * or with status {@code 400 (Bad Request)} if the login or email is already in use.
+     * @throws AlertProblem {@code 400 (Bad Request)} if the login or email is already in use.
      */
-    @PostMapping("register")
-    @ResponseStatus(CREATED)
-    suspend fun registerAccount(
-        @Valid @RequestBody account: AccountPassword
-    ): Account = Account(
-        userService.register(account.apply {
-            InvalidPasswordException().apply {
-                if (isPasswordLengthInvalid(password!!)) throw this
+    @PostMapping("users")
+    @PreAuthorize("hasAuthority(\"$ROLE_ADMIN\")")
+    suspend fun createUser(@Valid @RequestBody account: Account): ResponseEntity<User> {
+        account.apply requestAccount@{
+            log.debug("REST request to save User : {}", account)
+            if (id != null) throw AlertProblem(
+                defaultMessage = "A new user cannot already have an ID",
+                entityName = "userManagement",
+                errorKey = "idexists"
+            )
+            userService.findAccountByLogin(login!!).apply retrieved@{
+                if (this@retrieved?.login?.equals(
+                        this@requestAccount.login,
+                        true
+                    ) == true
+                ) throw LoginAlreadyUsedProblem()
             }
-        }, account.password!!)
-            ?.also {
-                if (!userService.getUserWithAuthoritiesByLogin(account.email!!)
-                        ?.activationKey
-                        .isNullOrBlank()
-                ) mailService.sendActivationEmail(it)
-            }!!
-    )
-
-    /**
-     * `GET  /activate` : activate the registered user.
-     *
-     * @param key the activation key.
-     * @throws RuntimeException `500 (Internal Server Error)` if the user couldn't be activated.
-     */
-    @GetMapping("/activate")
-    suspend fun activateAccount(@RequestParam(value = "key") key: String): Unit =
-        userService.activateRegistration(key = key).run {
-            if (this == null) throw AccountResourceException("No user was found for this activation key")
-        }
-
-    /**
-     * `GET  /authenticate` : check if the user is authenticated, and return its login.
-     *
-     * @param request the HTTP request.
-     * @return the login if the user is authenticated.
-     */
-    @GetMapping("/authenticate")
-    suspend fun isAuthenticated(request: ServerWebExchange): String? =
-        request.getPrincipal<Principal>().map(Principal::getName).awaitFirstOrNull().also {
-            log.debug("REST request to check if the current user is authenticated")
-        }
-
-
-    /**
-     * {@code GET  /account} : get the current user.
-     *
-     * @return the current user.
-     * @throws RuntimeException {@code 500 (Internal Server Error)} if the user couldn't be returned.
-     */
-    @GetMapping("account")
-    suspend fun getAccount(): Account = log.info("controller getAccount").run {
-        userService.getUserWithAuthorities().run<User?, Nothing> {
-            if (this == null) throw AccountResourceException("User could not be found")
-            else return Account(user = this)
+            userService.findAccountByEmail(email!!).apply retrieved@{
+                if (this@retrieved?.email?.equals(
+                        this@requestAccount.email,
+                        true
+                    ) == true
+                ) throw EmailAlreadyUsedProblem()
+            }
+            userService.createUser(this).apply {
+                mailService.sendActivationEmail(this)
+                try {
+                    return created(URI("/api/admin/users/$login"))
+                        .headers(
+                            createAlert(
+                                properties.clientApp.name,
+                                "userManagement.created",
+                                login
+                            )
+                        ).body(this)
+                } catch (e: URISyntaxException) {
+                    throw RuntimeException(e)
+                }
+            }
         }
     }
 
     /**
-     * {@code POST  /account} : update the current user information.
+     * {@code PUT /admin/users} : Updates an existing User.
      *
-     * @param account the current user information.
-     * @throws EmailAlreadyUsedProblem {@code 400 (Bad Request)} if the email is already used.
-     * @throws RuntimeException          {@code 500 (Internal Server Error)} if the user login wasn't found.
+     * @param account the user to update.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated user.
+     * @throws EmailAlreadyUsedProblem {@code 400 (Bad Request)} if the email is already in use.
+     * @throws LoginAlreadyUsedProblem {@code 400 (Bad Request)} if the login is already in use.
      */
-    @PostMapping("account")
-    suspend fun saveAccount(@Valid @RequestBody account: Account): Unit {
-        getCurrentUserLogin().apply principal@{
-            if (isBlank()) throw AccountResourceException("Current user login not found")
-            else {
-                userService.findAccountByEmail(account.email!!).apply {
-                    if (!this?.login?.equals(this@principal, true)!!)
-                        throw EmailAlreadyUsedException()
-                }
-                userService.findAccountByLogin(account.login!!).apply {
-                    if (this == null)
-                        throw AccountResourceException("User could not be found")
-                }
-                userService.updateUser(
-                    account.firstName,
-                    account.lastName,
-                    account.email,
-                    account.langKey,
-                    account.imageUrl
+    @PutMapping("/users")
+    @PreAuthorize("hasAuthority(\"$ROLE_ADMIN\")")
+    suspend fun updateUser(@Valid @RequestBody account: Account): ResponseEntity<Account> {
+        log.debug("REST request to update User : {}", account)
+        userService.findAccountByEmail(account.email!!).apply {
+            if (this == null) throw ResponseStatusException(NOT_FOUND)
+            if (id != account.id) throw EmailAlreadyUsedProblem()
+        }
+        userService.findAccountByLogin(account.login!!).apply {
+            if (this == null) throw ResponseStatusException(NOT_FOUND)
+            if (id != account.id) throw LoginAlreadyUsedProblem()
+        }
+        return ok()
+            .headers(
+                createAlert(
+                    properties.clientApp.name,
+                    "userManagement.updated",
+                    account.login
                 )
-            }
-        }
+            ).body(userService.updateUser(account))
     }
 
     /**
-     * {@code POST  /account/change-password} : changes the current user's password.
+     * {@code GET /admin/users} : get all users with all the details -
+     * calling this are only allowed for the administrators.
      *
-     * @param passwordChange current and new password.
-     * @throws InvalidPasswordProblem {@code 400 (Bad Request)} if the new password is incorrect.
+     * @param request a {@link ServerHttpRequest} request.
+     * @param pageable the pagination information.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body all users.
      */
-    @PostMapping("account/change-password")
-    suspend fun changePassword(@RequestBody passwordChange: PasswordChange): Unit =
-        passwordChange.run {
-            InvalidPasswordException().apply { if (isPasswordLengthInvalid(newPassword)) throw this }
-            if (currentPassword != null && newPassword != null)
-                userService.changePassword(currentPassword, newPassword)
+    @GetMapping("/users")
+    @PreAuthorize("hasAuthority(\"$ROLE_ADMIN\")")
+    suspend fun getAllUsers(request: ServerHttpRequest, pageable: Pageable): ResponseEntity<Flow<Account>> =
+        log.debug("REST request to get all User for an admin").run {
+            return if (!onlyContainsAllowedProperties(pageable)) {
+                badRequest().build()
+            } else ok()
+                .headers(
+                    generatePaginationHttpHeaders(
+                        fromHttpRequest(request),
+                        PageImpl<Account>(
+                            mutableListOf(),
+                            pageable,
+                            userService.countUsers()
+                        )
+                    )
+                ).body(userService.getAllManagedUsers(pageable))
+        }
+
+
+    private fun onlyContainsAllowedProperties(pageable: Pageable): Boolean = pageable
+        .sort
+        .stream()
+        .map(Order::getProperty)
+        .allMatch(ALLOWED_ORDERED_PROPERTIES::contains)
+
+
+    /**
+     * {@code GET /admin/users/:login} : get the "login" user.
+     *
+     * @param login the login of the user to find.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)}
+     * and with body the "login" user, or with status {@code 404 (Not Found)}.
+     */
+    @GetMapping("/users/{login}")
+    @PreAuthorize("hasAuthority(\"$ROLE_ADMIN\")")
+    suspend fun getUser(@PathVariable login: String): Account =
+        log.debug("REST request to get User : {}", login).run {
+            return Account(userService.getUserWithAuthoritiesByLogin(login).apply {
+                if (this == null) throw ResponseStatusException(NOT_FOUND)
+            }!!)
         }
 
     /**
-     * {@code POST   /account/reset-password/init} : Send an email to reset the password of the user.
+     * {@code DELETE /admin/users/:login} : delete the "login" User.
      *
-     * @param mail the mail of the user.
+     * @param login the login of the user to delete.
+     * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
      */
-    @PostMapping("account/reset-password/init")
-    suspend fun requestPasswordReset(@RequestBody mail: String): Unit =
-        userService.requestPasswordReset(mail).run {
-            if (this == null) log.warn("Password reset requested for non existing mail")
-            else mailService.sendPasswordResetMail(this)
-        }
-
-    /**
-     * {@code POST   /account/reset-password/finish} : Finish to reset the password of the user.
-     *
-     * @param keyAndPassword the generated key and the new password.
-     * @throws InvalidPasswordProblem {@code 400 (Bad Request)} if the password is incorrect.
-     * @throws RuntimeException         {@code 500 (Internal Server Error)} if the password could not be reset.
-     */
-    @PostMapping("account/reset-password/finish")
-    suspend fun finishPasswordReset(@RequestBody keyAndPassword: KeyAndPassword): Unit {
-        keyAndPassword.run {
-            InvalidPasswordException().apply { if (isPasswordLengthInvalid(newPassword)) throw this }
-            if (newPassword != null && key != null)
-                if (userService.completePasswordReset(newPassword, key) == null)
-                    throw AccountResourceException("No user was found for this reset key")
+    @DeleteMapping("/users/{login}")
+    @PreAuthorize("hasAuthority(\"$ROLE_ADMIN\")")
+    @ResponseStatus(code = NO_CONTENT)
+    suspend fun deleteUser(
+        @PathVariable @Pattern(regexp = LOGIN_REGEX) login: String
+    ): ResponseEntity<Unit> {
+        log.debug("REST request to delete User: {}", login).run {
+            userService.deleteUser(login).run {
+                return noContent().headers(
+                    createAlert(
+                        properties.clientApp.name,
+                        "userManagement.deleted",
+                        login
+                    )
+                ).build()
+            }
         }
     }
 }

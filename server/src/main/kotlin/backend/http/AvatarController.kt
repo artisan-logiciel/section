@@ -1,5 +1,9 @@
 package backend.http
 
+import backend.Server.Log.log
+import backend.domain.Avatar
+import backend.http.util.PaginationUtil.generatePaginationHttpHeaders
+import backend.services.UserService
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.toCollection
 import org.springframework.data.domain.PageImpl
@@ -13,14 +17,10 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.util.UriComponentsBuilder.fromHttpRequest
-import backend.Server.Log.log
-import backend.domain.Avatar
-import backend.http.util.PaginationUtil.generatePaginationHttpHeaders
-import backend.services.UserService
 
 @RestController
 @RequestMapping("/api")
-class PublicUserController(
+class AvatarController(
     private val userService: UserService
 ) {
     companion object {
@@ -44,7 +44,7 @@ class PublicUserController(
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body all users.
      */
     @GetMapping("/users")
-    suspend fun getAllPublicUsers(
+    suspend fun getAllAvatars(
         request: ServerHttpRequest,
         pageable: Pageable
     ): ResponseEntity<Flow<Avatar>> = log
@@ -77,8 +77,7 @@ class PublicUserController(
      * @return a string list of all roles.
      */
     @GetMapping("/authorities")
-    suspend fun getAuthorities()
-            : List<String> = userService
+    suspend fun getAuthorities(): List<String> = userService
         .getAuthorities()
         .toCollection(mutableListOf())
 }
