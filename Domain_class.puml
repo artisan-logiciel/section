@@ -1,52 +1,53 @@
 @startuml
 'https://plantuml.com/class-diagram
-
-abstract class AbstractList
-abstract AbstractCollection
-interface List
-interface Collection
-
-List <|-- AbstractList
-Collection <|-- AbstractCollection
-
-Collection <|- List
-AbstractCollection <|- AbstractList
-AbstractList <|-- ArrayList
-
-class ArrayList {
-Object[] elementData
-size()
-}
-
-enum TimeUnit {
-DAYS
-HOURS
-MINUTES
-}
-
 scale 750 width
-package backend.service <<Node>> {
-  class Class1
-}
-
-package backend.config <<Rectangle>> {
-  class Class2
-}
 
 package backend.domain <<Folder>> {
   class Class3
-}
+  abstract class AbstractList
+  abstract AbstractCollection
+  interface List
+  interface Collection
 
-package backend <<Frame>> {
-  class Class4
+  List <|-- AbstractList
+  Collection <|-- AbstractCollection
+
+  Collection <|- List
+  AbstractCollection <|- AbstractList
+  AbstractList <|-- ArrayList
+
+  class ArrayList {
+  Object[] elementData
+  size()
+  }
+
 }
 
 package backend.http <<Cloud>> {
   class Class5
 }
 
+package backend.service <<Node>> {
+  class Class1
+}
+
 package backend.repositories.entities <<Database>> {
   class Class6
+  abstract class AbstractList
+}
+
+package backend.config <<Rectangle>> {
+  class Class2
+  enum TimeUnit {
+  DAYS
+  HOURS
+  MINUTES
+  }
+
+}
+
+package backend <<Frame>> {
+  class Class4
 }
 
 @enduml
