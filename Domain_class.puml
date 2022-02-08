@@ -21,6 +21,32 @@ package backend.domain <<Folder>> {
   size()
   }
 
+  class Account{
+    var id: UUID? = null,
+'    @NotBlank
+'    @Pattern(regexp = LOGIN_REGEX)
+'    @Size(min = 1, max = 50)
+    var login: String? = null,
+'    @field:Size(max = 50)
+    var firstName: String? = null,
+'    @field:Size(max = 50)
+    var lastName: String? = null,
+'    @field:EmailConstraint
+'    @field:Size(min = 5, max = 254)
+    var email: String? = null,
+'    @field:Size(max = 256)
+    var imageUrl: String?
+    ' = "http://placehold.it/50x50",
+    var activated: Boolean = false,
+'    @field:Size(min = 2, max = 10)
+    var langKey: String? = null,
+    var createdBy: String? = null,
+    var createdDate: Instant? = null,
+    var lastModifiedBy: String? = null,
+    var lastModifiedDate: Instant? = null,
+    var authorities: Set<String>? = null
+  }
+
 }
 
 package backend.http <<Cloud>> {
