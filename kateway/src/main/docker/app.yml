@@ -15,7 +15,7 @@ services:
     # If you want to expose these ports outside your dev PC,
     # remove the "127.0.0.1:" prefix
     ports:
-      - 127.0.0.1:8081:8081
+      - 127.0.0.1:8080:8080
   gateway-postgresql:
     image: postgres:13.5
     # volumes:

@@ -43,7 +43,7 @@
     "prettier:format": "prettier --write \"{,src/**/}*.{md,json,yml,html,java}\""
   },
   "config": {
-    "backend_port": "8081",
+    "backend_port": "8080",
     "default_environment": "prod",
     "packaging": "jar"
   },
