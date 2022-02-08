@@ -1,8 +1,12 @@
 = Section IT
 
-*kotlin multiplatform project:*
-
+== *kotlin multiplatform project:*
 
 * browser
 * desktop
 * server
+
+
+
+=== server classes diagram :
+image::images/Domain_class.png[backend classes]

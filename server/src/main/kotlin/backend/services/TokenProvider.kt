@@ -4,7 +4,7 @@ import backend.Server.Log.log
 import backend.config.Constants.AUTHORITIES_KEY
 import backend.config.Constants.INVALID_TOKEN
 import backend.config.Constants.VALID_TOKEN
-import backend.properties.ApplicationProperties
+import backend.config.ApplicationProperties
 import io.jsonwebtoken.JwtException
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.Jwts.parserBuilder

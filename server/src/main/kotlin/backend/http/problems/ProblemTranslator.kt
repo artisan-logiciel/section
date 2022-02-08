@@ -8,7 +8,7 @@ import backend.config.Constants.ERR_CONCURRENCY_FAILURE
 import backend.config.Constants.ERR_VALIDATION
 import backend.config.Constants.SPRING_PROFILE_PRODUCTION
 import backend.http.util.HttpHeaderUtil.createFailureAlert
-import backend.properties.ApplicationProperties
+import backend.config.ApplicationProperties
 import backend.services.exceptions.EmailAlreadyUsedException
 import backend.services.exceptions.InvalidPasswordException
 import backend.services.exceptions.UsernameAlreadyUsedException

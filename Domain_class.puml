@@ -24,4 +24,29 @@ HOURS
 MINUTES
 }
 
+scale 750 width
+package backend.service <<Node>> {
+  class Class1
+}
+
+package backend.config <<Rectangle>> {
+  class Class2
+}
+
+package backend.domain <<Folder>> {
+  class Class3
+}
+
+package backend <<Frame>> {
+  class Class4
+}
+
+package backend.http <<Cloud>> {
+  class Class5
+}
+
+package backend.repositories.entities <<Database>> {
+  class Class6
+}
+
 @enduml

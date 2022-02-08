@@ -21,8 +21,10 @@ import javax.validation.Valid
 /**
  * Controller to authenticate users.
  */
+
 @RestController
 @RequestMapping("/api")
+@Suppress("unused")
 class AuthenticationController(
     private val tokenProvider: TokenProvider,
     private val authenticationManager: ReactiveAuthenticationManager

@@ -20,7 +20,6 @@ import org.springframework.transaction.ReactiveTransactionManager
 import org.springframework.transaction.annotation.EnableTransactionManagement
 import org.springframework.transaction.reactive.TransactionalOperator
 import org.springframework.transaction.reactive.TransactionalOperator.create
-import backend.properties.ApplicationProperties
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.LocalDateTime.ofInstant

@@ -175,7 +175,7 @@ tasks.register<DefaultTask>("cucumber") {
                 "--plugin",
                 "pretty",
                 "--glue",
-                "backend.features",
+                "features",
                 "src/test/resources/features"
             )
             // Configure jacoco agent for the test coverage in the string interpolation.

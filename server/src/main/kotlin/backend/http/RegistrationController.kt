@@ -27,7 +27,7 @@ class RegistrationController(
     private val userService: UserService,
     private val mailService: MailService
 ) {
-    internal class AccountResourceException(message: String) : RuntimeException(message)
+    internal class AccountException(message: String) : RuntimeException(message)
 
     /**
      * {@code POST  /register} : register the user.
@@ -64,7 +64,7 @@ class RegistrationController(
     @GetMapping("/activate")
     suspend fun activateAccount(@RequestParam(value = "key") key: String): Unit =
         userService.activateRegistration(key = key).run {
-            if (this == null) throw AccountResourceException("No user was found for this activation key")
+            if (this == null) throw AccountException("No user was found for this activation key")
         }
 
     /**
@@ -89,7 +89,7 @@ class RegistrationController(
     @GetMapping("account")
     suspend fun getAccount(): Account = log.info("controller getAccount").run {
         userService.getUserWithAuthorities().run<User?, Nothing> {
-            if (this == null) throw AccountResourceException("User could not be found")
+            if (this == null) throw AccountException("User could not be found")
             else return Account(user = this)
         }
     }
@@ -104,7 +104,7 @@ class RegistrationController(
     @PostMapping("account")
     suspend fun saveAccount(@Valid @RequestBody account: Account): Unit {
         getCurrentUserLogin().apply principal@{
-            if (isBlank()) throw AccountResourceException("Current user login not found")
+            if (isBlank()) throw AccountException("Current user login not found")
             else {
                 userService.findAccountByEmail(account.email!!).apply {
                     if (!this?.login?.equals(this@principal, true)!!)
@@ -112,7 +112,7 @@ class RegistrationController(
                 }
                 userService.findAccountByLogin(account.login!!).apply {
                     if (this == null)
-                        throw AccountResourceException("User could not be found")
+                        throw AccountException("User could not be found")
                 }
                 userService.updateUser(
                     account.firstName,
@@ -164,7 +164,7 @@ class RegistrationController(
             InvalidPasswordException().apply { if (isPasswordLengthInvalid(newPassword)) throw this }
             if (newPassword != null && key != null)
                 if (userService.completePasswordReset(newPassword, key) == null)
-                    throw AccountResourceException("No user was found for this reset key")
+                    throw AccountException("No user was found for this reset key")
         }
     }
 }

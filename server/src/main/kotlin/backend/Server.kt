@@ -7,7 +7,7 @@ import backend.config.Constants.SPRING_PROFILE_CONF_DEFAULT_KEY
 import backend.config.Constants.SPRING_PROFILE_DEVELOPMENT
 import backend.config.Constants.SPRING_PROFILE_PRODUCTION
 import backend.config.Constants.STARTUP_LOG_MSG_KEY
-import backend.properties.ApplicationProperties
+import backend.config.ApplicationProperties
 import org.apache.logging.log4j.LogManager.getLogger
 import org.apache.logging.log4j.Logger
 import org.springframework.beans.factory.getBean

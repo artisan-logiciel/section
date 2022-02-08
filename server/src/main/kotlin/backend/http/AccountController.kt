@@ -22,7 +22,7 @@ import backend.http.util.PaginationUtil.generatePaginationHttpHeaders
 import backend.http.problems.AlertProblem
 import backend.http.problems.EmailAlreadyUsedProblem
 import backend.http.problems.LoginAlreadyUsedProblem
-import backend.properties.ApplicationProperties
+import backend.config.ApplicationProperties
 import backend.repositories.entities.User
 import backend.services.MailService
 import backend.services.UserService

@@ -11,7 +11,7 @@ import org.thymeleaf.spring5.SpringWebFluxTemplateEngine
 import backend.config.Constants.BASE_URL
 import backend.config.Constants.USER
 import backend.Server.Log.log
-import backend.properties.ApplicationProperties
+import backend.config.ApplicationProperties
 import backend.repositories.entities.User
 import java.nio.charset.StandardCharsets.UTF_8
 import java.util.Locale.forLanguageTag

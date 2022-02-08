@@ -9,7 +9,7 @@ import org.springframework.mail.MailSendException
 import org.springframework.mail.javamail.JavaMailSenderImpl
 import org.thymeleaf.spring5.SpringWebFluxTemplateEngine
 import backend.config.Constants
-import backend.properties.ApplicationProperties
+import backend.config.ApplicationProperties
 import backend.repositories.entities.User
 import backend.tdd.functional.AbstractBaseFunctionalTest
 import java.io.ByteArrayOutputStream
