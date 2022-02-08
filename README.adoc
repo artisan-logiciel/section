@@ -6,7 +6,3 @@
 * desktop
 * server
 
-
-
-=== server classes diagram :
-image::images/Domain_class.png[backend classes]
