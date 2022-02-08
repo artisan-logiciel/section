@@ -1,10 +1,10 @@
 package backend.repositories.entities
 
+import backend.config.Constants.LOGIN_REGEX
 import com.fasterxml.jackson.annotation.JsonIgnore
 import org.springframework.data.annotation.*
 import org.springframework.data.relational.core.mapping.Column
 import org.springframework.data.relational.core.mapping.Table
-import backend.config.Constants.LOGIN_REGEX
 import java.time.Instant
 import java.util.*
 import javax.validation.constraints.NotNull

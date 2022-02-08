@@ -5,16 +5,12 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.6.10")
-        classpath("com.android.tools.build:gradle:4.1.3")
+        classpath(dependencyNotation = "org.jetbrains.kotlin:kotlin-gradle-plugin:${properties["kotlin.version"]}")
+        classpath(dependencyNotation = "com.android.tools.build:gradle:${properties["android_gradle.version"]}")
     }
 }
 
-group = "education.cccp"
-version = "0.0.1"
+group = properties["artifact.group"].toString()
+version = properties["artifact.version"].toString()
 
-allprojects {
-    repositories {
-        mavenCentral()
-    }
-}
+allprojects { repositories { mavenCentral() } }
