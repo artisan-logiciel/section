@@ -1,12 +1,6 @@
 package backend.services
 
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.runBlocking
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.security.test.context.support.WithMockUser
 import backend.config.Constants
-import backend.domain.DataTest
 import backend.domain.DataTest.USER_LOGIN
 import backend.domain.DataTest.defaultAccount
 import backend.domain.DataTest.defaultUser
@@ -17,6 +11,11 @@ import backend.repositories.entities.User
 import backend.services.exceptions.EmailAlreadyUsedException
 import backend.services.exceptions.UsernameAlreadyUsedException
 import backend.tdd.functional.AbstractBaseFunctionalTest
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.runBlocking
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.security.test.context.support.WithMockUser
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneOffset
@@ -57,11 +56,11 @@ class UserServiceFuncTest : AbstractBaseFunctionalTest() {
         runBlocking {
             saveUserWithAutorities(
                 defaultUser.copy(
-                login = defaultUser.login!!.reversed(),
-                activated = true
-            ).apply {
-                assertNull(findOneUserByLogin(login!!))
-            })?.apply {
+                    login = defaultUser.login!!.reversed(),
+                    activated = true
+                ).apply {
+                    assertNull(findOneUserByLogin(login!!))
+                })?.apply {
                 assertNotNull(id)
                 assertTrue(activated)
                 assertEquals(defaultAccount.email, email)
@@ -212,31 +211,33 @@ class UserServiceFuncTest : AbstractBaseFunctionalTest() {
 
     @Test
     @WithMockUser(USER_LOGIN)
-    fun `test un user non activé avec une activationKey de plus de 3jours est détruit`(): Unit = runBlocking {
-        assertEquals(countUser(), 0)
-        assertEquals(countUserAuthority(), 0)
-        assertTrue(defaultUser.authorities!!.contains(Authority(Constants.ROLE_USER)))
-        RandomUtils.generateActivationKey.apply key@{
-            Instant.now().minus(4, ChronoUnit.DAYS).apply fourDaysAgo@{
-                saveUserWithAutorities(
-                    defaultUser.copy(
-                        activated = false,
-                        createdDate = this,
-                        activationKey = this@key
-                    )
-                ).apply user@{
-                    assertEquals(countUser(), 1)
-                    assertEquals(countUserAuthority(), 1)
-                    assertNotNull(this)
-                    assertNotNull(createdDate)
-                    assertNotNull(activationKey)
-                    assertEquals(defaultUser.password, password)
-                    assertTrue(authorities!!.contains(Authority(Constants.ROLE_USER)))
-                    LocalDateTime.ofInstant(Instant.now().minus(3, ChronoUnit.DAYS), ZoneOffset.UTC)
-                        .apply threeDaysAgo@{
+    fun `test un user non activé avec une activationKey de plus de 3jours est détruit`(): Unit =
+        runBlocking {
+            assertEquals(countUser(), 0)
+            assertEquals(countUserAuthority(), 0)
+            assertTrue(defaultUser.authorities!!.contains(Authority(Constants.ROLE_USER)))
+            RandomUtils.generateActivationKey.apply key@{
+                Instant.now().minus(4, ChronoUnit.DAYS).apply fourDaysAgo@{
+                    saveUserWithAutorities(
+                        user = defaultUser.copy(
+                            activated = false,
+                            activationKey = this@key
+                        ).apply { createdDate = this@fourDaysAgo }
+                    ).apply user@{
+                        assertEquals(countUser(), 1)
+                        assertEquals(countUserAuthority(), 1)
+                        assertNotNull(this)
+                        assertNotNull(createdDate)
+                        assertNotNull(activationKey)
+                        assertEquals(defaultUser.password, password)
+                        assertTrue(authorities!!.contains(Authority(Constants.ROLE_USER)))
+                        LocalDateTime.ofInstant(
+                            Instant.now().minus(3, ChronoUnit.DAYS),
+                            ZoneOffset.UTC
+                        ).apply threeDaysAgo@{
                             mutableListOf<User>().apply {
                                 findAllByActivatedIsFalseAndActivationKeyIsNotNullAndCreatedDateBefore(
-                                    this@threeDaysAgo
+                                    dateTime = this@threeDaysAgo
                                 ).map { add(it) }
                                     .collect()
                                 assertTrue(isNotEmpty())
@@ -244,18 +245,18 @@ class UserServiceFuncTest : AbstractBaseFunctionalTest() {
                             userService.removeNotActivatedUsers()
                             mutableListOf<User>().apply {
                                 findAllByActivatedIsFalseAndActivationKeyIsNotNullAndCreatedDateBefore(
-                                    this@threeDaysAgo
+                                    dateTime = this@threeDaysAgo
                                 ).map { add(it) }
                                     .collect()
                                 assertTrue(isEmpty())
                             }
                         }
+                    }
                 }
             }
+            assertEquals(countUser(), 0)
+            assertEquals(countUserAuthority(), 0)
         }
-        assertEquals(countUser(), 0)
-        assertEquals(countUserAuthority(), 0)
-    }
 
     @Test
     @WithMockUser(USER_LOGIN)
@@ -264,12 +265,13 @@ class UserServiceFuncTest : AbstractBaseFunctionalTest() {
             assertEquals(countUser(), 0)
             assertEquals(countUserAuthority(), 0)
             assertTrue(defaultUser.authorities!!.contains(Authority(Constants.ROLE_USER)))
-            Instant.now().minus(4, ChronoUnit.DAYS).apply {
+            Instant.now().minus(4, ChronoUnit.DAYS).apply daysAgo@{
                 saveUserWithAutorities(
                     defaultUser.copy(
-                        activated = false,
-                        createdDate = this
-                    )
+                        activated = false
+                    ).apply {
+                        createdDate = this@daysAgo
+                    }
                 ).apply {
                     assertNotNull(actual = this)
                     assertNotNull(actual = createdDate)

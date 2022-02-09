@@ -1,5 +1,18 @@
 package backend.http
 
+import backend.Server.Log.log
+import backend.config.ApplicationProperties
+import backend.config.Constants.LOGIN_REGEX
+import backend.config.Constants.ROLE_ADMIN
+import backend.domain.Account
+import backend.domain.UserData
+import backend.http.problems.AlertProblem
+import backend.http.problems.EmailAlreadyUsedProblem
+import backend.http.problems.LoginAlreadyUsedProblem
+import backend.http.util.HttpHeaderUtil.createAlert
+import backend.http.util.PaginationUtil.generatePaginationHttpHeaders
+import backend.services.MailService
+import backend.services.UserService
 import kotlinx.coroutines.flow.Flow
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
@@ -13,19 +26,6 @@ import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.server.ResponseStatusException
 import org.springframework.web.util.UriComponentsBuilder.fromHttpRequest
-import backend.config.Constants.LOGIN_REGEX
-import backend.config.Constants.ROLE_ADMIN
-import backend.Server.Log.log
-import backend.domain.Account
-import backend.http.util.HttpHeaderUtil.createAlert
-import backend.http.util.PaginationUtil.generatePaginationHttpHeaders
-import backend.http.problems.AlertProblem
-import backend.http.problems.EmailAlreadyUsedProblem
-import backend.http.problems.LoginAlreadyUsedProblem
-import backend.config.ApplicationProperties
-import backend.repositories.entities.User
-import backend.services.MailService
-import backend.services.UserService
 import java.net.URI
 import java.net.URISyntaxException
 import javax.validation.Valid
@@ -57,6 +57,7 @@ import javax.validation.constraints.Pattern
  */
 @RestController
 @RequestMapping("api/admin")
+@Suppress("unused")
 class AccountController(
     private val userService: UserService,
     private val mailService: MailService,
@@ -88,8 +89,8 @@ class AccountController(
      * @throws AlertProblem {@code 400 (Bad Request)} if the login or email is already in use.
      */
     @PostMapping("users")
-    @PreAuthorize("hasAuthority(\"$ROLE_ADMIN\")")
-    suspend fun createUser(@Valid @RequestBody account: Account): ResponseEntity<User> {
+    @PreAuthorize(value = "hasAuthority(\"$ROLE_ADMIN\")")
+    suspend fun createUser(@Valid @RequestBody account: Account): ResponseEntity<UserData> {
         account.apply requestAccount@{
             log.debug("REST request to save User : {}", account)
             if (id != null) throw AlertProblem(
@@ -99,27 +100,27 @@ class AccountController(
             )
             userService.findAccountByLogin(login!!).apply retrieved@{
                 if (this@retrieved?.login?.equals(
-                        this@requestAccount.login,
-                        true
+                        other = this@requestAccount.login,
+                        ignoreCase = true
                     ) == true
                 ) throw LoginAlreadyUsedProblem()
             }
             userService.findAccountByEmail(email!!).apply retrieved@{
                 if (this@retrieved?.email?.equals(
                         this@requestAccount.email,
-                        true
+                        ignoreCase = true
                     ) == true
                 ) throw EmailAlreadyUsedProblem()
             }
-            userService.createUser(this).apply {
-                mailService.sendActivationEmail(this)
-                try {
-                    return created(URI("/api/admin/users/$login"))
+            userService.createUser(account = this).apply {
+                mailService.sendActivationEmail(user = this)
+                return try {
+                    created(URI("/api/admin/users/$login"))
                         .headers(
                             createAlert(
-                                properties.clientApp.name,
-                                "userManagement.created",
-                                login
+                                applicationName = properties.clientApp.name,
+                                message = "userManagement.created",
+                                param = login
                             )
                         ).body(this)
                 } catch (e: URISyntaxException) {
@@ -169,7 +170,10 @@ class AccountController(
      */
     @GetMapping("/users")
     @PreAuthorize("hasAuthority(\"$ROLE_ADMIN\")")
-    suspend fun getAllUsers(request: ServerHttpRequest, pageable: Pageable): ResponseEntity<Flow<Account>> =
+    suspend fun getAllUsers(
+        request: ServerHttpRequest,
+        pageable: Pageable
+    ): ResponseEntity<Flow<Account>> =
         log.debug("REST request to get all User for an admin").run {
             return if (!onlyContainsAllowedProperties(pageable)) {
                 badRequest().build()

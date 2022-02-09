@@ -70,17 +70,18 @@ open class Account(
         langKey = if (langKey.isNullOrEmpty() || langKey.isNullOrBlank())
             DEFAULT_LANGUAGE
         else langKey,
-        createdBy = createdBy,
-        createdDate = createdDate,
-        lastModifiedBy = lastModifiedBy,
-        lastModifiedDate = lastModifiedDate,
         authorities = if (authorities.isNullOrEmpty()) mutableSetOf()
         else authorities!!
             .stream()
-            .map {
-                Authority(role = it)
-            }.collect(toSet())
-    )
+            .map { Authority(role = it) }
+            .collect(toSet())
+    ).apply a@{
+        this@a.createdDate = this@Account.createdDate
+        this@a.lastModifiedBy = this@Account.lastModifiedBy
+        this@a.lastModifiedDate = this@Account.lastModifiedDate
+        this@a.createdBy = this@Account.createdBy
+    }
+
     @Suppress("unused")
     fun isActivated(): Boolean = activated
 }

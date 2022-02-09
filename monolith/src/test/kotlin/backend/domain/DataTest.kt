@@ -2,13 +2,13 @@
 
 package backend.domain
 
-import org.apache.commons.lang3.StringUtils.stripAccents
 import backend.config.Constants.DEFAULT_LANGUAGE
 import backend.config.Constants.ROLE_ADMIN
 import backend.config.Constants.ROLE_USER
 import backend.config.Constants.SYSTEM_USER
 import backend.repositories.entities.Authority
 import backend.repositories.entities.User
+import org.apache.commons.lang3.StringUtils.stripAccents
 import java.time.Instant.now
 
 fun User.unlockUser() {
@@ -37,10 +37,12 @@ object DataTest {
         email = "$USER_LOGIN@acme.com"
         langKey = DEFAULT_LANGUAGE
         createdBy = SYSTEM_USER
-        createdDate = now()
         lastModifiedBy = SYSTEM_USER
-        lastModifiedDate = now()
         imageUrl = "http://placehold.it/50x50"
+        now().apply {
+            lastModifiedDate = this
+            createdDate = this
+        }
     }
     val adminAccount = AccountPassword(
         password = ADMIN_LOGIN
@@ -51,9 +53,11 @@ object DataTest {
         email = "$ADMIN_LOGIN@acme.com"
         langKey = DEFAULT_LANGUAGE
         createdBy = SYSTEM_USER
-        createdDate = now()
         lastModifiedBy = SYSTEM_USER
-        lastModifiedDate = now()
+        now().apply {
+            createdDate = this
+            lastModifiedDate = this
+        }
     }
 
     val userTest1Account = AccountPassword(
@@ -65,9 +69,11 @@ object DataTest {
         email = "$USER1_LOGIN@acme.com"
         langKey = DEFAULT_LANGUAGE
         createdBy = SYSTEM_USER
-        createdDate = now()
         lastModifiedBy = SYSTEM_USER
-        lastModifiedDate = now()
+        now().apply {
+            createdDate = this
+            lastModifiedDate = this
+        }
     }
 
     val userTest2Account = AccountPassword(
@@ -79,9 +85,11 @@ object DataTest {
         email = "$USER2_LOGIN@acme.com"
         langKey = DEFAULT_LANGUAGE
         createdBy = SYSTEM_USER
-        createdDate = now()
         lastModifiedBy = SYSTEM_USER
-        lastModifiedDate = now()
+        now().apply {
+            createdDate = this
+            lastModifiedDate = this
+        }
     }
 
     val userTest3Account = AccountPassword(
@@ -93,9 +101,11 @@ object DataTest {
         email = "$USER3_LOGIN@acme.com"
         langKey = DEFAULT_LANGUAGE
         createdBy = SYSTEM_USER
-        createdDate = now()
         lastModifiedBy = SYSTEM_USER
-        lastModifiedDate = now()
+        now().apply {
+            createdDate = this
+            lastModifiedDate = this
+        }
     }
 
     val defaultUser = User(
@@ -105,14 +115,16 @@ object DataTest {
         lastName = defaultAccount.lastName,
         email = defaultAccount.email,
         langKey = defaultAccount.langKey,
-        createdBy = defaultAccount.createdBy,
-        createdDate = defaultAccount.createdDate,
-        lastModifiedBy = defaultAccount.lastModifiedBy,
-        lastModifiedDate = defaultAccount.lastModifiedDate,
+
         authorities = mutableSetOf<Authority>().apply {
             add(Authority(role = ROLE_USER))
         }
-    )
+    ).apply {
+        createdBy = defaultAccount.createdBy
+        createdDate = defaultAccount.createdDate
+        lastModifiedBy = defaultAccount.lastModifiedBy
+        lastModifiedDate = defaultAccount.lastModifiedDate
+    }
 
     val admin = User(
         login = adminAccount.login,
@@ -121,15 +133,17 @@ object DataTest {
         lastName = adminAccount.lastName,
         email = adminAccount.email,
         langKey = adminAccount.langKey,
-        createdBy = adminAccount.createdBy,
-        createdDate = adminAccount.createdDate,
-        lastModifiedBy = adminAccount.lastModifiedBy,
-        lastModifiedDate = adminAccount.lastModifiedDate,
+
         authorities = mutableSetOf<Authority>().apply {
             add(Authority(role = ROLE_USER))
             add(Authority(role = ROLE_ADMIN))
         }
-    )
+    ).apply {
+        createdBy = adminAccount.createdBy
+        createdDate = adminAccount.createdDate
+        lastModifiedBy = adminAccount.lastModifiedBy
+        lastModifiedDate = adminAccount.lastModifiedDate
+    }
 
     val userTest1 = User(
         login = userTest1Account.login,
@@ -138,14 +152,18 @@ object DataTest {
         lastName = userTest1Account.lastName,
         email = userTest1Account.email,
         langKey = DEFAULT_LANGUAGE,
-        createdBy = SYSTEM_USER,
-        createdDate = now(),
-        lastModifiedBy = SYSTEM_USER,
-        lastModifiedDate = now(),
+
         authorities = mutableSetOf<Authority>().apply {
             add(Authority(role = ROLE_USER))
         }
-    )
+    ).apply {
+        createdBy = SYSTEM_USER
+        lastModifiedBy = SYSTEM_USER
+        now().apply {
+            createdDate = this
+            lastModifiedDate = this
+        }
+    }
 
     val userTest2 = User(
         login = userTest2Account.login,
@@ -154,14 +172,17 @@ object DataTest {
         lastName = userTest2Account.lastName,
         email = userTest2Account.email,
         langKey = DEFAULT_LANGUAGE,
-        createdBy = SYSTEM_USER,
-        createdDate = now(),
-        lastModifiedBy = SYSTEM_USER,
-        lastModifiedDate = now(),
         authorities = mutableSetOf<Authority>().apply {
             add(Authority(role = ROLE_USER))
         }
-    )
+    ).apply {
+        createdBy = SYSTEM_USER
+        lastModifiedBy = SYSTEM_USER
+        now().apply {
+            createdDate = this
+            lastModifiedDate = this
+        }
+    }
 
     val userTest3 = User(
         login = userTest3Account.login,
@@ -170,14 +191,17 @@ object DataTest {
         lastName = userTest3Account.lastName,
         email = userTest3Account.email,
         langKey = DEFAULT_LANGUAGE,
-        createdBy = SYSTEM_USER,
-        createdDate = now(),
-        lastModifiedBy = SYSTEM_USER,
-        lastModifiedDate = now(),
         authorities = mutableSetOf<Authority>().apply {
             add(Authority(role = ROLE_USER))
         }
-    )
+    ).apply {
+        createdBy = SYSTEM_USER
+        lastModifiedBy = SYSTEM_USER
+        now().apply {
+            createdDate = this
+            lastModifiedDate = this
+        }
+    }
     val users = listOf(
         admin, defaultUser, userTest1, userTest2, userTest3
     )
@@ -216,5 +240,5 @@ val writers = listOf(
 
 @Suppress("unused")
 fun nameToLogin(userList: List<String>): List<String> = userList.map {
-    stripAccents(it.lowercase().replace(' ', '.'))
+    stripAccents(it.lowercase().replace(oldChar = ' ', newChar = '.'))
 }

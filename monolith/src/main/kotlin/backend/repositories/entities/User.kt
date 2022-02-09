@@ -1,8 +1,13 @@
 package backend.repositories.entities
 
 import backend.config.Constants.LOGIN_REGEX
+import backend.domain.Account
+import backend.domain.UserData
 import com.fasterxml.jackson.annotation.JsonIgnore
-import org.springframework.data.annotation.*
+import org.springframework.data.annotation.Id
+import org.springframework.data.annotation.PersistenceConstructor
+import org.springframework.data.annotation.Transient
+import org.springframework.data.annotation.Version
 import org.springframework.data.relational.core.mapping.Column
 import org.springframework.data.relational.core.mapping.Table
 import java.time.Instant
@@ -14,47 +19,39 @@ import javax.validation.constraints.Email as EmailConstraint
 
 @Table("`user`")
 data class User(
-    @Id var id: UUID? = null,
+    @Id override var id: UUID? = null,
     @field:NotNull
     @field:Pattern(regexp = LOGIN_REGEX)
     @field:Size(min = 1, max = 50)
-    var login: String? = null,
+    override var login: String? = null,
     @JsonIgnore @Column("password_hash")
     @field:NotNull
     @field:Size(min = 60, max = 60)
-    var password: String? = null,
+    override var password: String? = null,
     @field:Size(max = 50)
-    var firstName: String? = null,
+    override var firstName: String? = null,
     @field:Size(max = 50)
-    var lastName: String? = null,
+    override var lastName: String? = null,
     @field:EmailConstraint
     @field:Size(min = 5, max = 254)
-    var email: String? = null,
+    override var email: String? = null,
     @field:NotNull
-    var activated: Boolean = false,
+    override var activated: Boolean = false,
     @field:Size(min = 2, max = 10)
-    var langKey: String? = null,
+    override var langKey: String? = null,
     @field:Size(max = 256)
-    var imageUrl: String? = null,
+    override var imageUrl: String? = null,
     @JsonIgnore
     @field:Size(max = 20)
-    var activationKey: String? = null,
+    override var activationKey: String? = null,
     @JsonIgnore
     @field:Size(max = 20)
-    var resetKey: String? = null,
+    override var resetKey: String? = null,
     var resetDate: Instant? = null,
     @JsonIgnore @Transient
-    var authorities: MutableSet<Authority>? = mutableSetOf(),
-    @JsonIgnore
-    var createdBy: String? = null,
-    @JsonIgnore @CreatedDate
-    var createdDate: Instant? = Instant.now(),
-    @JsonIgnore
-    var lastModifiedBy: String? = null,
-    @JsonIgnore @LastModifiedDate
-    var lastModifiedDate: Instant? = Instant.now(),
-    @Version @JsonIgnore var version: Long? = null
-) {
+    override var authorities: MutableSet<Authority>? = mutableSetOf(),
+    @Version @JsonIgnore override var version: Long? = null
+) : AbstractAuditingEntity(), UserData {
     @PersistenceConstructor
     constructor(
         id: UUID?,
@@ -87,10 +84,6 @@ data class User(
         resetKey,
         resetDate,
         mutableSetOf(),
-        createdBy,
-        createdDate,
-        lastModifiedBy,
-        lastModifiedDate
     )
 
     fun copyAuthorities(that: User): User = this.apply {
@@ -98,6 +91,27 @@ data class User(
         else authorities!!.clear()
         that.authorities?.forEach {
             authorities!!.add(it)
+        }
+    }
+
+    fun toAccount(): Account = Account().apply acc@{
+        this@acc.activated = this@User.activated
+        this@acc.createdBy = this@User.createdBy
+        this@acc.createdDate = this@User.createdDate
+        this@acc.lastModifiedBy = this@User.lastModifiedBy
+        this@acc.lastModifiedDate = this@User.lastModifiedDate
+        this@acc.id = this@User.id
+        this@acc.email = this@User.email
+        this@acc.login = this@User.login
+        this@acc.firstName = this@User.firstName
+        this@acc.lastName = this@User.lastName
+        this@acc.langKey = this@User.langKey
+        this@acc.imageUrl = this@User.imageUrl
+        mutableSetOf<String>().apply {
+            this@acc.authorities = this
+            this@User.authorities?.forEach {
+                (this@acc.authorities!! as MutableSet).add(it.role)
+            }
         }
     }
 }
