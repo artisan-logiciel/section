@@ -33,7 +33,6 @@ class RegistrationStepDefinition : Fr {
     private var accounts: List<Account> = mutableListOf()
 
     init {
-
         Etantdonné("une liste d'accounts") { dataTable: DataTable ->
             if (accounts.isNotEmpty()) (accounts as MutableList).clear()
             dataTable.asMaps().map {
@@ -49,15 +48,12 @@ class RegistrationStepDefinition : Fr {
                 )
             }
         }
-
         Etantdonné("un utilisateur qui a pour login {string}") { login: String ->
             currentAccount = accounts.first { it.login.equals(login, ignoreCase = true) }
         }
-
         Quand("on inscrit {string}") { login: String ->
             assertEquals(expected = currentAccount.login, actual = login)
         }
-
         Alors("le resultat est un nouveau compte") {
         }
     }

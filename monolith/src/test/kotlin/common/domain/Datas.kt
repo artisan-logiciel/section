@@ -1,11 +1,10 @@
-package backend.domain
+package common.domain
 
 
-import org.apache.commons.lang3.StringUtils.stripAccents
+//import backend.repositories.entities.User
 import common.config.Constants.DEFAULT_LANGUAGE
 import common.config.Constants.SYSTEM_USER
-import common.domain.AccountPassword
-//import backend.repositories.entities.User
+import org.apache.commons.lang3.StringUtils.stripAccents
 import java.time.Instant.now
 
 //fun User.unlockUser() {
