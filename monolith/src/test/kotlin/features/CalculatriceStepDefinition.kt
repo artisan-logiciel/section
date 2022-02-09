@@ -13,6 +13,8 @@ import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.web.reactive.function.client.ClientResponse
 import org.springframework.web.reactive.function.client.WebClient
+import org.springframework.web.reactive.function.client.awaitBody
+import reactor.kotlin.core.publisher.toMono
 import kotlin.test.assertEquals
 
 
@@ -43,11 +45,11 @@ class CalculatriceStepDefinition : Fr {
         }
         After { _ -> }
         
-        Etantdonné("un entier {int}") { number: Int ->
-            firstNumber = number
+        Etantdonné("un entier {int}") { nombre: Int ->
+            firstNumber = nombre
         }
-        Et("un second entier {int}") { number: Int ->
-            secondNumber = number
+        Et("un second entier {int}") { nombre: Int ->
+            secondNumber = nombre
         }
         Quand("on additionne les nombres") {
             result = add(firstNumber, secondNumber)
@@ -55,7 +57,7 @@ class CalculatriceStepDefinition : Fr {
         Quand("on soustrait un nombre à l'autre") {
             result = subtract(firstNumber, secondNumber)
         }
-        Alors("le resultat est {int}") { expectedResult: Int ->
+        Alors("le résultat est {int}") { expectedResult: Int ->
             assertEquals(
                 expected = expectedResult,
                 actual = result

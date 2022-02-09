@@ -1,4 +1,4 @@
-package backend.domain
+package common.domain
 
 import javax.validation.constraints.NotNull
 import javax.validation.constraints.Size

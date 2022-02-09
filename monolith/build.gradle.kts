@@ -87,9 +87,9 @@ dependencies {
     //testImplementation("com.tngtech.archunit:archunit-junit5-api:${properties["archunit_junit5_version"]}")
     //testRuntimeOnly("com.tngtech.archunit:archunit-junit5-engine:${properties["archunit_junit5_version"]}")
     // Spring Security
-    implementation(dependencyNotation = "org.springframework.boot:spring-boot-starter-security")
-    implementation(dependencyNotation = "org.springframework.security:spring-security-data")
-    testImplementation(dependencyNotation = "org.springframework.security:spring-security-test")
+//    implementation(dependencyNotation = "org.springframework.boot:spring-boot-starter-security")
+//    implementation(dependencyNotation = "org.springframework.security:spring-security-data")
+//    testImplementation(dependencyNotation = "org.springframework.security:spring-security-test")
     // JWT authentication
     implementation(dependencyNotation = "io.jsonwebtoken:jjwt-impl:${properties["jsonwebtoken.version"]}")
     implementation(dependencyNotation = "io.jsonwebtoken:jjwt-jackson:${properties["jsonwebtoken.version"]}")

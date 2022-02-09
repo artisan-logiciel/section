@@ -1,7 +1,6 @@
-package backend.config
+package common.config
 
 import java.net.URI
-import java.net.URI.create
 
 object Constants {
     //Spring profiles
@@ -88,17 +87,17 @@ object Constants {
     const val USER_INITIAL_ACTIVATED_VALUE = false
 
     @JvmField
-    val DEFAULT_TYPE: URI = create("$PROBLEM_BASE_URL/problem-with-message")
+    val DEFAULT_TYPE: URI = URI.create("$PROBLEM_BASE_URL/problem-with-message")
 
     @JvmField
-    val CONSTRAINT_VIOLATION_TYPE: URI = create("$PROBLEM_BASE_URL/constraint-violation")
+    val CONSTRAINT_VIOLATION_TYPE: URI = URI.create("$PROBLEM_BASE_URL/constraint-violation")
 
     @JvmField
-    val INVALID_PASSWORD_TYPE: URI = create("$PROBLEM_BASE_URL/invalid-password")
+    val INVALID_PASSWORD_TYPE: URI = URI.create("$PROBLEM_BASE_URL/invalid-password")
 
     @JvmField
-    val EMAIL_ALREADY_USED_TYPE: URI = create("$PROBLEM_BASE_URL/email-already-used")
+    val EMAIL_ALREADY_USED_TYPE: URI = URI.create("$PROBLEM_BASE_URL/email-already-used")
 
     @JvmField
-    val LOGIN_ALREADY_USED_TYPE: URI = create("$PROBLEM_BASE_URL/login-already-used")
+    val LOGIN_ALREADY_USED_TYPE: URI = URI.create("$PROBLEM_BASE_URL/login-already-used")
 }

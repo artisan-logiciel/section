@@ -1,6 +1,5 @@
-package backend.domain
+package common.domain
 
-import backend.repositories.entities.User
 import java.util.*
 
 /**
@@ -10,8 +9,8 @@ data class Avatar(
     var id: UUID? = null,
     var login: String? = null
 ) {
-    constructor(user: User) : this() {
-        id = user.id
-        login = user.login
-    }
+//    constructor(user: User) : this() {
+//        id = user.id
+//        login = user.login
+//    }
 }

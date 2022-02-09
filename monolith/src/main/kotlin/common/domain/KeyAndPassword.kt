@@ -1,4 +1,4 @@
-package backend.domain
+package common.domain
 
 data class KeyAndPassword(
     val key: String? = null,

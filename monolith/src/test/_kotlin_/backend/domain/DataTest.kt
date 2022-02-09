@@ -8,17 +8,17 @@ import backend.config.Constants.ROLE_ADMIN
 import backend.config.Constants.ROLE_USER
 import backend.config.Constants.SYSTEM_USER
 import backend.repositories.entities.Authority
-import backend.repositories.entities.User
+//import backend.repositories.entities.User
 import java.time.Instant.now
 
-fun User.unlockUser() {
-    apply {
-        if (id != null) {
-            id = null
-            version = null
-        }
-    }
-}
+//fun User.unlockUser() {
+//    apply {
+//        if (id != null) {
+//            id = null
+//            version = null
+//        }
+//    }
+//}
 
 @Suppress("HttpUrlsUsage")
 object DataTest {
