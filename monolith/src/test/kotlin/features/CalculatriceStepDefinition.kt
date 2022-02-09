@@ -13,8 +13,6 @@ import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.web.reactive.function.client.ClientResponse
 import org.springframework.web.reactive.function.client.WebClient
-import org.springframework.web.reactive.function.client.awaitBody
-import reactor.kotlin.core.publisher.toMono
 import kotlin.test.assertEquals
 
 
@@ -44,7 +42,7 @@ class CalculatriceStepDefinition : Fr {
             result = 0
         }
         After { _ -> }
-        
+
         Etantdonné("un entier {int}") { nombre: Int ->
             firstNumber = nombre
         }
