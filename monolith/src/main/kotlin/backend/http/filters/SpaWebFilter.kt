@@ -1,5 +1,3 @@
-@file:Suppress("unused")
-
 package backend.http.filters
 
 
@@ -11,6 +9,7 @@ import reactor.core.publisher.Mono
 
 
 @Component
+@Suppress("unused")
 class SpaWebFilter : WebFilter {
     override fun filter(exchange: ServerWebExchange, chain: WebFilterChain): Mono<Void> {
         exchange.request.uri.path.apply {

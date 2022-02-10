@@ -24,9 +24,7 @@ import javax.annotation.PostConstruct
 
 @SpringBootApplication
 @EnableConfigurationProperties(ApplicationProperties::class)
-class Server(
-    private val context: ApplicationContext
-) {
+class Server(private val context: ApplicationContext) {
     companion object {
         @JvmStatic
         fun main(args: Array<String>) = start(args)

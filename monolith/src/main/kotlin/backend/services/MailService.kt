@@ -1,21 +1,21 @@
 package backend.services
 
-import org.springframework.context.MessageSource
-import org.springframework.mail.MailException
-import org.springframework.mail.javamail.JavaMailSender
-import org.springframework.mail.javamail.MimeMessageHelper
-import org.springframework.scheduling.annotation.Async
-import org.springframework.stereotype.Service
-import org.thymeleaf.context.Context
-import org.thymeleaf.spring5.SpringWebFluxTemplateEngine
-import common.config.Constants.BASE_URL
-import common.config.Constants.USER
-import backend.Server.Log.log
-import backend.config.ApplicationProperties
+//import org.springframework.context.MessageSource
+//import org.springframework.mail.MailException
+//import org.springframework.mail.javamail.JavaMailSender
+//import org.springframework.mail.javamail.MimeMessageHelper
+//import org.springframework.scheduling.annotation.Async
+//import org.springframework.stereotype.Service
+//import org.thymeleaf.context.Context
+//import org.thymeleaf.spring5.SpringWebFluxTemplateEngine
+//import common.config.Constants.BASE_URL
+//import common.config.Constants.USER
+//import backend.Server.Log.log
+//import backend.config.ApplicationProperties
 //import backend.repositories.entities.User
-import java.nio.charset.StandardCharsets.UTF_8
-import java.util.Locale.forLanguageTag
-import javax.mail.MessagingException
+//import java.nio.charset.StandardCharsets.UTF_8
+//import java.util.Locale.forLanguageTag
+//import javax.mail.MessagingException
 
 
 //@Service("mailService")

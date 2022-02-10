@@ -1,16 +1,16 @@
 package backend.repositories.entities
 
-import common.config.Constants.LOGIN_REGEX
-import com.fasterxml.jackson.annotation.JsonIgnore
-import org.springframework.data.annotation.*
-import org.springframework.data.relational.core.mapping.Column
-import org.springframework.data.relational.core.mapping.Table
-import java.time.Instant
-import java.util.*
-import javax.validation.constraints.NotNull
-import javax.validation.constraints.Pattern
-import javax.validation.constraints.Size
-import javax.validation.constraints.Email as EmailConstraint
+//import common.config.Constants.LOGIN_REGEX
+//import com.fasterxml.jackson.annotation.JsonIgnore
+//import org.springframework.data.annotation.*
+//import org.springframework.data.relational.core.mapping.Column
+//import org.springframework.data.relational.core.mapping.Table
+//import java.time.Instant
+//import java.util.*
+//import javax.validation.constraints.NotNull
+//import javax.validation.constraints.Pattern
+//import javax.validation.constraints.Size
+//import javax.validation.constraints.Email as EmailConstraint
 
 //@Table("`user`")
 //data class User(

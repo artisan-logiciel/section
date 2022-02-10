@@ -12,6 +12,7 @@ import org.springframework.lang.Nullable
 import backend.repositories.entities.UserAuthority
 import java.util.*
 
+@Suppress("unused")
 interface UserAuthRepository : CoroutineCrudRepository<UserAuthority, Long> {
     @Nullable
     @Query("INSERT INTO `user_authority`(user_id,`role`) VALUES(:userId, :role)")

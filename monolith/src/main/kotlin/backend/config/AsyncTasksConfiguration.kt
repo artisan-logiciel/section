@@ -17,9 +17,12 @@ import java.util.concurrent.Callable
 import java.util.concurrent.Executor
 import java.util.concurrent.Future
 
-@Configuration
+
+
 @EnableAsync
+@Configuration
 @EnableScheduling
+@Suppress("unused")
 class AsyncTasksConfiguration(
     private val taskExecutionProperties: TaskExecutionProperties
 ) : AsyncConfigurer {
