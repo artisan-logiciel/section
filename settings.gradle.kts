@@ -23,8 +23,8 @@ pluginManagement {
 }
 
 rootProject.name = "section"
-include(":common")
-include(":desktop")
-include(":server")
+//include(":common")
+//include(":desktop")
+//include(":server")
 include(":monolith")
-include(":browser")
+//include(":browser")

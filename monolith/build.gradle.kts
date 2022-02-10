@@ -31,7 +31,7 @@ repositories {
 
 @Suppress("GradlePackageUpdate")
 dependencies {
-    implementation(project(path = ":common"))
+//    implementation(project(path = ":common"))
     //Kotlin lib: jdk8, reflexion, coroutines
     implementation(dependencyNotation = "org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     implementation(dependencyNotation = "org.jetbrains.kotlin:kotlin-reflect")
