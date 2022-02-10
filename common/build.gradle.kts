@@ -4,7 +4,6 @@ import org.jetbrains.compose.compose
 plugins {
     kotlin(module = "multiplatform")
     id("org.jetbrains.compose")
-    id( "io.spring.dependency-management")
 }
 
 repositories {
@@ -13,9 +12,6 @@ repositories {
     maven(url = "https://maven.pkg.jetbrains.space/public/p/compose/dev")
     maven(url = "https://maven.pkg.jetbrains.space/public/p/kotlinx-html/maven")
     maven(url = "https://maven.pkg.jetbrains.space/kotlin/p/kotlin/bootstrap/")
-    maven(url = "https://repo.spring.io/milestone")
-    maven(url = "https://repo.spring.io/snapshot")
-
 }
 
 kotlin {
@@ -29,7 +25,6 @@ kotlin {
                 api(dependencyNotation = compose.runtime)
                 api(dependencyNotation = compose.foundation)
                 api(dependencyNotation = compose.material)
-                api(dependencyNotation = "org.springframework.boot:spring-boot-starter-validation:${properties["springboot.version"]}")
             }
         }
         val commonTest by getting {

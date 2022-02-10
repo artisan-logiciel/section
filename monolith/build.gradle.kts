@@ -126,7 +126,7 @@ configurations {
 
 tasks.withType<KotlinCompile> {
     kotlinOptions {
-        freeCompilerArgs = listOf(properties["free_compiler_args_value"] as String)
+        freeCompilerArgs = listOf(properties["free_compiler_args_value"].toString())
         jvmTarget = VERSION_1_8.toString()
     }
 }
