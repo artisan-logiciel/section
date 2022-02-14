@@ -62,6 +62,13 @@ abstract class AbstractRestIntegrationTest {
         }
     }
 
+    @AfterAll
+    @Suppress("unused")
+    fun `arrête le serveur`() {
+        context.close()
+    }
+
+
     @Suppress("MemberVisibilityCanBePrivate")
     suspend fun deleteAllUserAuthorityByUserLogin(login: String) = db
         .sql(
@@ -69,13 +76,6 @@ abstract class AbstractRestIntegrationTest {
         )
         .bind("login", login)
         .await()
-
-
-    @AfterAll
-    @Suppress("unused")
-    fun `arrête le serveur`() {
-        context.close()
-    }
 
     @Suppress("MemberVisibilityCanBePrivate")
     suspend fun saveUserWithAutorities(u: User): User? = r2dbcEntityTemplate

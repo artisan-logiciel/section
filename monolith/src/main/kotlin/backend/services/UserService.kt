@@ -5,14 +5,16 @@ package backend.services
 
 //@Service("userService")
 //@Suppress("unused")
-//class UserService(
+class UserService
+// (
 //    private val passwordEncoder: PasswordEncoder,
 //    private val userRepository: UserRepository,
 //    private val iUserRepository: IUserRepository,
 //    private val userRepositoryPageable: UserRepositoryPageable,
 //    private val userAuthRepository: UserAuthRepository,
 //    private val authorityRepository: AuthorityRepository
-//) {
+//)
+ {
 //
 //    @Transactional
 //    suspend fun activateRegistration(key: String): User? =
@@ -300,4 +302,4 @@ package backend.services
 //                }
 //            }
 //        }
-//}
+}

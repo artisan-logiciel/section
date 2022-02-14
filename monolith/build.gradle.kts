@@ -47,7 +47,7 @@ dependencies {
     // String manipulation
     implementation(dependencyNotation = "org.apache.commons:commons-lang3:${properties["commons_lang3.version"]}")
     //Http Request Exception Response
-    implementation(dependencyNotation = "org.zalando:problem-spring-webflux:${properties["zalando_problem.version"]}")
+//    implementation(dependencyNotation = "org.zalando:problem-spring-webflux:${properties["zalando_problem.version"]}")
     //spring conf
     annotationProcessor(dependencyNotation = "org.springframework.boot:spring-boot-configuration-processor")
     //spring dev tools

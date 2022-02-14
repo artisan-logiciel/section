@@ -1,18 +1,23 @@
 package features
 
 import backend.Server
+import backend.Server.Log.log
+import backend.services.RandomUtils
 import com.fasterxml.jackson.databind.ObjectMapper
 import common.domain.Account
+import common.domain.Account.AccountCredentials
 import io.cucumber.datatable.DataTable
 import io.cucumber.java8.Fr
+import kotlinx.coroutines.reactor.mono
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment.DEFINED_PORT
 import org.springframework.http.HttpHeaders.CONTENT_TYPE
 import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
 import org.springframework.test.context.ActiveProfiles
-import org.springframework.web.reactive.function.client.ClientResponse
-import org.springframework.web.reactive.function.client.WebClient
+import org.springframework.test.web.reactive.server.WebTestClient
+import org.springframework.test.web.reactive.server.returnResult
+import reactor.kotlin.core.publisher.toMono
 import kotlin.test.assertEquals
 
 @SpringBootTest(
@@ -24,37 +29,64 @@ import kotlin.test.assertEquals
 class RegistrationStepDefinition : Fr {
     @Autowired
     private lateinit var objectMapper: ObjectMapper
-    private lateinit var response: ClientResponse
-    private val client = WebClient.builder()
-        .baseUrl("http://localhost:8080/api/")
+
+    //    private lateinit var response: org.springframework.web.reactive.function.client.ClientResponse
+    private lateinit var response: WebTestClient.ResponseSpec
+    private val client = WebTestClient.bindToServer()
+        .baseUrl("http://localhost:8080")
         .defaultHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
         .build()
-    private lateinit var currentAccount: Account
-    private var accounts: List<Account> = mutableListOf()
+    private lateinit var currentAccount: AccountCredentials
+    private var accounts: List<AccountCredentials> = mutableListOf()
 
     init {
+//initialiser un coroutine context reactor
+
         Etantdonné("une liste d'accounts") { dataTable: DataTable ->
             if (accounts.isNotEmpty()) (accounts as MutableList).clear()
             dataTable.asMaps().map {
                 (accounts as MutableList).add(
-                    Account(
-                        login = it["login"],
-                        email = it["email"],
-                        firstName = it["firstName"],
-                        lastName = it["lastName"],
-                        activated = false,
-                        authorities = mutableSetOf(),
-                    )
+                    AccountCredentials(
+                        activationKey = RandomUtils.generateActivationKey
+                    ).apply {
+                        login = it["login"]
+                        email = it["email"]
+                        password = it["password"]
+                        firstName = it["firstName"]
+                        lastName = it["lastName"]
+                        activated = false
+                        authorities = mutableSetOf()
+                    }
                 )
             }
         }
-        Etantdonné("un utilisateur qui a pour login {string}") { login: String ->
+        Etantdonné("un utilisateur qui à pour login {string}") { login: String ->
             currentAccount = accounts.first { it.login.equals(login, ignoreCase = true) }
         }
         Quand("on inscrit {string}") { login: String ->
             assertEquals(expected = currentAccount.login, actual = login)
+            mono {
+                client.post().uri("/api/register")
+                    .bodyValue(currentAccount)
+                    ?.toMono()
+                    ?.block()
+                    ?.exchange().apply { response = this!! }
+                    ?.returnResult<Account>().apply { log.info(this!!.status) }
+            }
         }
-        Alors("le resultat est un nouveau compte") {
+
+        Alors("le résultat est un nouveau compte") {
+//                response.expectStatus().isCreated
+//            response.returnResult<Account>().status
+//            log.info(response.status)
+//            mono {
+//                mono { log.info(response.awaitEntity<Account>().statusCode) }.block()
+//            println("passé par ici")
+//            log.info("passé par ici")
+//            }
         }
     }
+
 }
+
+

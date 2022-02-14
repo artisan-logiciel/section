@@ -18,14 +18,14 @@ package backend.config
 //import org.springframework.security.web.server.util.matcher.ServerWebExchangeMatchers.pathMatchers
 
 import backend.Server.Log.log
-import com.fasterxml.jackson.databind.ObjectMapper
+//import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import org.apache.commons.mail.EmailConstants.*
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Profile
-import org.springframework.core.annotation.Order
+//import org.springframework.core.annotation.Order
 import org.springframework.data.web.ReactivePageableHandlerMethodArgumentResolver
 import org.springframework.data.web.ReactiveSortHandlerMethodArgumentResolver
 import org.springframework.format.FormatterRegistry
@@ -38,12 +38,11 @@ import org.springframework.web.cors.reactive.CorsWebFilter
 import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource
 import org.springframework.web.reactive.config.EnableWebFlux
 import org.springframework.web.reactive.config.WebFluxConfigurer
-import org.springframework.web.server.WebExceptionHandler
-import org.zalando.problem.jackson.ProblemModule
-import org.zalando.problem.spring.webflux.advice.ProblemExceptionHandler
-import org.zalando.problem.spring.webflux.advice.ProblemHandling
-import org.zalando.problem.spring.webflux.advice.security.SecurityProblemSupport
-import org.zalando.problem.violations.ConstraintViolationProblemModule
+//import org.springframework.web.server.WebExceptionHandler
+//import org.zalando.problem.jackson.ProblemModule
+//import org.zalando.problem.spring.webflux.advice.ProblemExceptionHandler
+//import org.zalando.problem.spring.webflux.advice.ProblemHandling
+//import org.zalando.problem.violations.ConstraintViolationProblemModule
 import reactor.core.publisher.Hooks
 
 @Configuration
@@ -56,7 +55,7 @@ class WebConfiguration(
     private val properties: ApplicationProperties,
 //    private val userDetailsService: ReactiveUserDetailsService,
 //    private val tokenProvider: TokenProvider,
-    private val problemSupport: SecurityProblemSupport,
+//    private val problemSupport: org.zalando.problem.spring.webflux.advice.security.SecurityProblemSupport,
 ) : WebFluxConfigurer {
 
     override fun addFormatters(registry: FormatterRegistry) {
@@ -96,18 +95,18 @@ class WebConfiguration(
      * WebFluxResponseStatusExceptionHandler
      * and Spring Boot's ErrorWebExceptionHandler
      */
-    @Bean
-    @Order(-2)
-    fun problemHandler(
-        mapper: ObjectMapper,
-        problemHandling: ProblemHandling
-    ): WebExceptionHandler = ProblemExceptionHandler(mapper, problemHandling)
+//    @Bean
+//    @Order(-2)
+//    fun problemHandler(
+//        mapper: ObjectMapper,
+//        problemHandling: ProblemHandling
+//    ): WebExceptionHandler = ProblemExceptionHandler(mapper, problemHandling)
 
-    @Bean
-    fun problemModule(): ProblemModule = ProblemModule()
+//    @Bean
+//    fun problemModule(): ProblemModule = ProblemModule()
 
-    @Bean
-    fun constraintViolationProblemModule() = ConstraintViolationProblemModule()
+//    @Bean
+//    fun constraintViolationProblemModule() = ConstraintViolationProblemModule()
 
     @Profile("!${common.config.Constants.SPRING_PROFILE_PRODUCTION}")
     fun reactorConfiguration() = Hooks.onOperatorDebug()

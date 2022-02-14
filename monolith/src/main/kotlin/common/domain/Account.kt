@@ -1,12 +1,11 @@
 package common.domain
 
 import common.config.Constants.LOGIN_REGEX
+import common.config.Constants.PASSWORD_MAX_LENGTH
+import common.config.Constants.PASSWORD_MIN_LENGTH
 import java.time.Instant
 import java.util.*
-import javax.validation.constraints.Email
-import javax.validation.constraints.NotBlank
-import javax.validation.constraints.Pattern
-import javax.validation.constraints.Size
+import javax.validation.constraints.*
 
 /**
  * Représente le user view model
@@ -16,25 +15,27 @@ open class Account(
     @field:NotBlank
     @field:Pattern(regexp = LOGIN_REGEX)
     @field:Size(min = 1, max = 50)
-    var login: String? = null,
+    open var login: String? = null,
     @field:Size(max = 50)
-    var firstName: String? = null,
+    open var firstName: String? = null,
     @field:Size(max = 50)
-    var lastName: String? = null,
+    open var lastName: String? = null,
     @field:Email
     @field:Size(min = 5, max = 254)
-    var email: String? = null,
+    open var email: String? = null,
     @field:Size(max = 256)
-    var imageUrl: String? = "http://placehold.it/50x50",
-    var activated: Boolean = false,
+    open var imageUrl: String? = "http://placehold.it/50x50",
+    open var activated: Boolean = false,
     @field:Size(min = 2, max = 10)
-    var langKey: String? = null,
+    open var langKey: String? = null,
     var createdBy: String? = null,
     var createdDate: Instant? = null,
     var lastModifiedBy: String? = null,
     var lastModifiedDate: Instant? = null,
-    var authorities: Set<String>? = null
+    open var authorities: Set<String>? = null
 ) {
+    @Suppress("unused")
+    fun isActivated(): Boolean = activated
 //    constructor(user: User) : this() {
 //        id = user.id
 //        login = user.login
@@ -52,9 +53,7 @@ open class Account(
 //            .stream()
 //            .map(Authority::role)
 //            .collect(toSet())
-//    }
-
-    //    fun toUser(): User = User(
+//    fun toUser(): User = User(
 //        id = id,
 //        login = login,
 //        firstName = firstName,
@@ -76,6 +75,53 @@ open class Account(
 //                Authority(role = it)
 //            }.collect(toSet())
 //    )
-    @Suppress("unused")
-    fun isActivated(): Boolean = activated
+//    }
+
+    /**
+     * Représente l'account view model avec le password
+     */
+    data class AccountCredentials(
+        @field:NotNull
+        @field:Size(
+            min = PASSWORD_MIN_LENGTH,
+            max = PASSWORD_MAX_LENGTH
+        ) var password: String? = null,
+        var activationKey: String? = null
+    ) : Account()
+
+
+    /**
+     * représente le user view model minimaliste pour la view
+     */
+    data class Avatar(
+        var id: UUID? = null,
+        var login: String? = null
+    ) {
+//    constructor(user: User) : this() {
+//        id = user.id
+//        login = user.login
+//    }
+    }
+
+    data class KeyAndPassword(
+        val key: String? = null,
+        val newPassword: String? = null
+    )
+
+    data class Login(
+        @field:NotNull
+        val username:
+        @Size(min = 1, max = 50)
+        String? = null,
+        @field:NotNull
+        @field:Size(min = 4, max = 100)
+        val password:
+        String? = null,
+        val rememberMe: Boolean? = null
+    )
+
+    data class PasswordChange(
+        val currentPassword: String? = null,
+        val newPassword: String? = null
+    )
 }

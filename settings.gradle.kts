@@ -13,18 +13,18 @@ pluginManagement {
         kotlin(module = "plugin.allopen").version(extra["kotlin.version"].toString())
         kotlin(module = "plugin.noarg").version(extra["kotlin.version"].toString())
         kotlin(module = "plugin.spring").version(extra["kotlin.version"].toString())
+        kotlin("multiplatform").version(extra["kotlin.version"].toString())
+        id("org.jetbrains.compose").version(extra["compose.version"].toString())
+        id("org.springframework.boot").version(extra["springboot.version"].toString())
         id("io.spring.dependency-management")
             .version(extra["spring_dependency_management.version"].toString())
         id("com.google.cloud.tools.jib").version(extra["jib.version"].toString())
-        id("org.springframework.boot").version(extra["springboot.version"].toString())
-        kotlin("multiplatform").version(extra["kotlin.version"].toString())
-        id("org.jetbrains.compose").version(extra["compose.version"].toString())
     }
 }
 
 rootProject.name = "section"
+//include(":browser")
+include(":monolith")
+//include(":server")
 //include(":common")
 //include(":desktop")
-//include(":server")
-include(":monolith")
-//include(":browser")

@@ -1,32 +1,53 @@
 package backend.http
 
+import backend.services.AccountService
+import common.domain.Account
+import common.domain.Account.AccountCredentials
+import org.springframework.http.HttpStatus.CREATED
+import org.springframework.web.bind.annotation.*
+import java.util.*
+import javax.validation.Valid
+
 //import backend.repositories.entities.User
 //import backend.services.MailService
 //import backend.services.SecurityUtils.getCurrentUserLogin
 //import backend.services.UserService
 
-//@RestController
-//@RequestMapping("api")
-//@Suppress("unused")
-//class RegistrationController(
-//    private val userService: UserService,
-//    private val mailService: MailService
-//) {
-//    internal class AccountException(message: String) : RuntimeException(message)
-//
-//    /**
-//     * {@code POST  /register} : register the user.
-//     *
-//     * @param account the managed user View Model.
-//     * @throws InvalidPasswordException {@code 400 (Bad Request)} if the password is incorrect.
-//     * @throws EmailAlreadyUsedProblem {@code 400 (Bad Request)} if the email is already used.
-//     * @throws backend.http.problems.LoginAlreadyUsedProblem {@code 400 (Bad Request)} if the login is already used.
-//     */
-//    @PostMapping("register")
-//    @ResponseStatus(CREATED)
-//    suspend fun registerAccount(
-//        @Valid @RequestBody account: AccountPassword
-//    ): Account = Account(
+@RestController
+@RequestMapping("api")
+@Suppress("unused")
+class RegistrationController(
+    private val accountService: AccountService
+) {
+    companion object {
+        private val ALLOWED_ORDERED_PROPERTIES =
+            arrayOf(
+                "id",
+                "login",
+                "firstName",
+                "lastName",
+                "email",
+                "activated",
+                "langKey"
+            )
+    }
+
+    internal class AccountException(message: String) : RuntimeException(message)
+
+    /**
+     * {@code POST  /register} : register the user.
+     *
+     * @param account the managed user View Model.
+     * @throws InvalidPasswordException {@code 400 (Bad Request)} if the password is incorrect.
+     * @throws EmailAlreadyUsedProblem {@code 400 (Bad Request)} if the email is already used.
+     * @throws backend.http.problems.LoginAlreadyUsedProblem {@code 400 (Bad Request)} if the login is already used.
+     */
+    @PostMapping("register")
+    @ResponseStatus(CREATED)
+    suspend fun registerAccount(
+        @Valid @RequestBody accountCredentials: AccountCredentials
+    ): Account = accountService.register(accountCredentials)
+
 //        userService.register(account.apply {
 //            InvalidPasswordException().apply {
 //                if (isPasswordLengthInvalid(password!!)) throw this
@@ -38,8 +59,8 @@ package backend.http
 //                        .isNullOrBlank()
 //                ) mailService.sendActivationEmail(it)
 //            }!!
-//    )
-//
+
+
 //    /**
 //     * `GET  /activate` : activate the registered user.
 //     *
@@ -152,4 +173,4 @@ package backend.http
 //                    throw AccountException("No user was found for this reset key")
 //        }
 //    }
-//}
+}

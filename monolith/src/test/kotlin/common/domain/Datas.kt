@@ -4,6 +4,7 @@ package common.domain
 //import backend.repositories.entities.User
 import common.config.Constants.DEFAULT_LANGUAGE
 import common.config.Constants.SYSTEM_USER
+import common.domain.Account.AccountCredentials
 import org.apache.commons.lang3.StringUtils.stripAccents
 import java.time.Instant.now
 
@@ -24,7 +25,7 @@ object Datas {
     const val USER2_LOGIN = "test2"
     const val USER3_LOGIN = "test3"
 
-    val defaultAccount = AccountPassword(
+    val defaultAccount = AccountCredentials(
         password = USER_LOGIN
     ).apply {
         login = USER_LOGIN
@@ -38,7 +39,7 @@ object Datas {
         lastModifiedDate = now()
         imageUrl = "http://placehold.it/50x50"
     }
-    val adminAccount = AccountPassword(
+    val adminAccount = AccountCredentials(
         password = ADMIN_LOGIN
     ).apply {
         login = ADMIN_LOGIN
@@ -52,7 +53,7 @@ object Datas {
         lastModifiedDate = now()
     }
 
-    val userTest1Account = AccountPassword(
+    val userTest1Account = AccountCredentials(
         password = USER1_LOGIN
     ).apply {
         login = USER1_LOGIN
@@ -66,7 +67,7 @@ object Datas {
         lastModifiedDate = now()
     }
 
-    val userTest2Account = AccountPassword(
+    val userTest2Account = AccountCredentials(
         password = USER2_LOGIN
     ).apply {
         login = USER2_LOGIN
@@ -80,7 +81,7 @@ object Datas {
         lastModifiedDate = now()
     }
 
-    val userTest3Account = AccountPassword(
+    val userTest3Account = AccountCredentials(
         password = USER3_LOGIN
     ).apply {
         login = USER3_LOGIN
