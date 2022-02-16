@@ -1,8 +1,9 @@
 package backend.repositories.entities
 
-import common.config.Constants.LOGIN_REGEX
 import com.fasterxml.jackson.annotation.JsonIgnore
+import common.config.Constants.LOGIN_REGEX
 import common.domain.Account
+import common.domain.Account.AccountCredentials
 import org.springframework.data.annotation.*
 import org.springframework.data.relational.core.mapping.Column
 import org.springframework.data.relational.core.mapping.Table
@@ -94,6 +95,26 @@ data class User(
         lastModifiedDate
     )
 
+
+    constructor(account: AccountCredentials) : this() {
+        User().apply {
+            id = account.id
+            login = account.login
+            email = account.email
+            firstName = account.firstName
+            lastName = account.lastName
+            langKey = account.langKey
+            activated = account.activated
+            createdBy=account.createdBy
+            createdDate=account.createdDate
+            lastModifiedBy=account.lastModifiedBy
+            lastModifiedDate=account.lastModifiedDate
+            imageUrl=account.imageUrl
+            authorities =account.authorities?.map { Authority(it) }?.toMutableSet()
+            password=account.password
+        }
+    }
+
     fun toAccount(): Account = Account(
         id = id,
         login = login,
@@ -107,9 +128,7 @@ data class User(
         createdDate = createdDate,
         lastModifiedBy = lastModifiedBy,
         lastModifiedDate = lastModifiedDate,
-        authorities = mutableSetOf<String>().apply {
-            authorities?.map { this.add(it.role) }
-        }
+        authorities =  authorities?.map { it.role }?.toMutableSet()
     )
 
     fun copyAuthorities(that: User): User = this.apply {
@@ -120,3 +139,4 @@ data class User(
         }
     }
 }
+

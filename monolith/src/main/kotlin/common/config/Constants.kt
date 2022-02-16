@@ -3,6 +3,17 @@ package common.config
 import java.net.URI
 
 object Constants {
+    //registerController
+    val ALLOWED_ORDERED_PROPERTIES =
+        arrayOf(
+            "id",
+            "login",
+            "firstName",
+            "lastName",
+            "email",
+            "activated",
+            "langKey"
+        )
     //Spring profiles
     const val SPRING_PROFILE_DEVELOPMENT = "dev"
     const val SPRING_PROFILE_PRODUCTION = "prod"

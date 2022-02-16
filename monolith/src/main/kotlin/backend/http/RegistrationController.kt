@@ -1,17 +1,13 @@
 package backend.http
 
 import backend.services.AccountService
-import common.domain.Account
 import common.domain.Account.AccountCredentials
 import org.springframework.http.HttpStatus.CREATED
 import org.springframework.web.bind.annotation.*
 import java.util.*
 import javax.validation.Valid
 
-//import backend.repositories.entities.User
-//import backend.services.MailService
 //import backend.services.SecurityUtils.getCurrentUserLogin
-//import backend.services.UserService
 
 @RestController
 @RequestMapping("api")
@@ -19,47 +15,21 @@ import javax.validation.Valid
 class RegistrationController(
     private val accountService: AccountService
 ) {
-    companion object {
-        private val ALLOWED_ORDERED_PROPERTIES =
-            arrayOf(
-                "id",
-                "login",
-                "firstName",
-                "lastName",
-                "email",
-                "activated",
-                "langKey"
-            )
-    }
-
     internal class AccountException(message: String) : RuntimeException(message)
 
     /**
      * {@code POST  /register} : register the user.
      *
-     * @param account the managed user View Model.
-     * @throws InvalidPasswordException {@code 400 (Bad Request)} if the password is incorrect.
-     * @throws EmailAlreadyUsedProblem {@code 400 (Bad Request)} if the email is already used.
+     * @param accountCredentials the managed user View Model.
+     * @throws backend.services.exceptions.InvalidPasswordException {@code 400 (Bad Request)} if the password is incorrect.
+     * @throws backend.http.problems.EmailAlreadyUsedProblem {@code 400 (Bad Request)} if the email is already used.
      * @throws backend.http.problems.LoginAlreadyUsedProblem {@code 400 (Bad Request)} if the login is already used.
      */
     @PostMapping("register")
     @ResponseStatus(CREATED)
     suspend fun registerAccount(
-        @Valid @RequestBody accountCredentials: AccountCredentials
-    ): Account = accountService.register(accountCredentials)
-
-//        userService.register(account.apply {
-//            InvalidPasswordException().apply {
-//                if (isPasswordLengthInvalid(password!!)) throw this
-//            }
-//        }, account.password!!)
-//            ?.also {
-//                if (!userService.getUserWithAuthoritiesByLogin(account.email!!)
-//                        ?.activationKey
-//                        .isNullOrBlank()
-//                ) mailService.sendActivationEmail(it)
-//            }!!
-
+        @RequestBody accountCredentials: @Valid AccountCredentials
+    ) = accountService.register(accountCredentials)
 
 //    /**
 //     * `GET  /activate` : activate the registered user.

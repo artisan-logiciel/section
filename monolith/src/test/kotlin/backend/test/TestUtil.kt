@@ -2,18 +2,24 @@
 
 package backend.test
 
+import backend.repositories.entities.Authority
+import backend.repositories.entities.User
 import com.fasterxml.jackson.annotation.JsonInclude.Include.NON_EMPTY
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.SerializationFeature.WRITE_DURATIONS_AS_TIMESTAMPS
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
+import common.config.Constants
 import org.assertj.core.api.Assertions.assertThat
 import org.hamcrest.Description
 import org.hamcrest.TypeSafeDiagnosingMatcher
 import org.springframework.boot.SpringApplication
 import common.config.Constants.SPRING_PROFILE_CONF_DEFAULT_KEY
 import common.config.Constants.SPRING_PROFILE_TEST
+import common.domain.Account
+import org.apache.commons.lang3.StringUtils
 import java.io.IOException
 import java.lang.Byte.parseByte
+import java.time.Instant
 import java.time.ZonedDateTime
 import java.time.ZonedDateTime.parse
 import java.time.format.DateTimeParseException
@@ -21,6 +27,15 @@ import kotlin.reflect.KClass
 import kotlin.reflect.full.createInstance
 
 const val TEST_USER_LOGIN = "test"
+
+fun User.unlockUser() {
+    apply {
+        if (id != null) {
+            id = null
+            version = null
+        }
+    }
+}
 
 fun testLoader(app: SpringApplication) = with(app) {
     setDefaultProperties(
@@ -106,3 +121,4 @@ fun <T : Any> equalsVerifier(clazz: KClass<T>) {
     // HashCodes are equals because the objects are not persisted yet
     assertThat(domainObject1.hashCode()).isEqualTo(domainObject2.hashCode())
 }
+

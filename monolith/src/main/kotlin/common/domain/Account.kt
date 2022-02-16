@@ -10,6 +10,8 @@ import javax.validation.constraints.*
 /**
  * Représente le user view model
  */
+//password
+
 open class Account(
     var id: UUID? = null,
     @field:NotBlank
@@ -36,46 +38,6 @@ open class Account(
 ) {
     @Suppress("unused")
     fun isActivated(): Boolean = activated
-//    constructor(user: User) : this() {
-//        id = user.id
-//        login = user.login
-//        firstName = user.firstName
-//        lastName = user.lastName
-//        email = user.email
-//        activated = user.activated
-//        imageUrl = user.imageUrl
-//        langKey = user.langKey
-//        createdBy = user.createdBy
-//        createdDate = user.createdDate
-//        lastModifiedBy = user.lastModifiedBy
-//        lastModifiedDate = user.lastModifiedDate
-//        authorities = user.authorities!!
-//            .stream()
-//            .map(Authority::role)
-//            .collect(toSet())
-//    fun toUser(): User = User(
-//        id = id,
-//        login = login,
-//        firstName = firstName,
-//        lastName = lastName,
-//        email = email,
-//        activated = activated,
-//        imageUrl = imageUrl,
-//        langKey = if (langKey.isNullOrEmpty() || langKey.isNullOrBlank())
-//            DEFAULT_LANGUAGE
-//        else langKey,
-//        createdBy = createdBy,
-//        createdDate = createdDate,
-//        lastModifiedBy = lastModifiedBy,
-//        lastModifiedDate = lastModifiedDate,
-//        authorities = if (authorities.isNullOrEmpty()) mutableSetOf()
-//        else authorities!!
-//            .stream()
-//            .map {
-//                Authority(role = it)
-//            }.collect(toSet())
-//    )
-//    }
 
     /**
      * Représente l'account view model avec le password
@@ -85,7 +47,8 @@ open class Account(
         @field:Size(
             min = PASSWORD_MIN_LENGTH,
             max = PASSWORD_MAX_LENGTH
-        ) var password: String? = null,
+        )
+        var password: String? = null,
         var activationKey: String? = null
     ) : Account()
 
@@ -96,12 +59,7 @@ open class Account(
     data class Avatar(
         var id: UUID? = null,
         var login: String? = null
-    ) {
-//    constructor(user: User) : this() {
-//        id = user.id
-//        login = user.login
-//    }
-    }
+    )
 
     data class KeyAndPassword(
         val key: String? = null,

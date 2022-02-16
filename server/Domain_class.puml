@@ -2,74 +2,162 @@
 'https://plantuml.com/class-diagram
 scale 750 width
 
-package backend.domain <<Folder>> {
-  class Class3
-  abstract class AbstractList
-  abstract AbstractCollection
-  interface List
-  interface Collection
-
-  List <|-- AbstractList
-  Collection <|-- AbstractCollection
-
-  Collection <|- List
-  AbstractCollection <|- AbstractList
-  AbstractList <|-- ArrayList
-
-  class ArrayList {
-  Object[] elementData
-  size()
-  }
-
-  class Account{
-    var id: UUID? = null,
-'    @NotBlank
-'    @Pattern(regexp = LOGIN_REGEX)
-'    @Size(min = 1, max = 50)
-    var login: String? = null,
-'    @field:Size(max = 50)
-    var firstName: String? = null,
-'    @field:Size(max = 50)
-    var lastName: String? = null,
-'    @field:EmailConstraint
-'    @field:Size(min = 5, max = 254)
-    var email: String? = null,
-'    @field:Size(max = 256)
-    var imageUrl: String?
-    ' = "http://placehold.it/50x50",
-    var activated: Boolean = false,
-'    @field:Size(min = 2, max = 10)
-    var langKey: String? = null,
-    var createdBy: String? = null,
-    var createdDate: Instant? = null,
-    var lastModifiedBy: String? = null,
-    var lastModifiedDate: Instant? = null,
-    var authorities: Set<String>? = null
-  }
-
-}
-
 package backend.http <<Cloud>> {
-  class Class5
+
+  class RegistrationController{
+    private val accountService: AccountService
+    + suspend fun registerAccount(ac: AccountCredentials): Account
+  }
+
+  class AccountException{
+    message: String
+  }
+
+'     : RuntimeException(message)
+  RegistrationController +-- AccountException
+  java.lang.RuntimeException <|-- AccountException
 }
 
 package backend.service <<Node>> {
-  class Class1
+  class AccountService
+}
+
+package backend.repositories <<Node>>{
+  interface AccountRepository{
+    + suspend fun findOneByLogin(login: String): Account
+    + suspend fun findOneByEmail(email: String): Account
+    + suspend fun save(accountCredentials: AccountCredentials): Account
+    + suspend fun delete(account: Account)
+    + suspend fun findActivationKeyByLogin(login: String): String
+  }
+
+  class AccountRepositoryR2dbc{
+      private val userRepository: UserRepository
+  }
+  AccountRepository <|-- AccountRepositoryR2dbc
+
+  class UserRepository
+}
+
+package common.domain <<Folder>> {
+
+  class Account{
+    var id: UUID?
+    var login: String?
+    var firstName: String?
+    var lastName: String?
+    var email: String?
+    var imageUrl: String?
+    var activated = false
+    var langKey: String?
+    var createdBy: String?
+    var createdDate: Instant?
+    var lastModifiedBy: String?
+    var lastModifiedDate: Instant?
+    var authorities: Set<String>?
+    + fun isActivated(): Boolean
+  }
+
+  class AccountCredential{
+    var password:String?
+    var activationKey:String?
+  }
+
+  class Avatar{
+    var id: UUID?
+    var login: String?
+  }
+
+  class KeyAndPassword{
+    val key: String?
+    val newPassword: String?
+  }
+
+  class Login{
+   val username: String?
+   val password: String?
+   val rememberMe: Boolean?
+  }
+
+  class PasswordChange{
+   val currentPassword: String?
+   val newPassword: String?
+  }
+
+'  inner
+  Account +-- AccountCredential
+  Account +-- Avatar
+  Account +-- KeyAndPassword
+  Account +-- Login
+  Account +-- PasswordChange
+
+'  extends
+  Account <|-- AccountCredential
+
 }
 
 package backend.repositories.entities <<Database>> {
-  class Class6
-  abstract class AbstractList
+
+  interface org.springframework.data.domain.Persistable<ID>
+
+  class Authority{
+    val role: String
+    + override fun getId() = role
+    + override fun isNew() = true
+  }
+
+  class Email{
+    val value: String
+    + override fun getId() = value
+    + override fun isNew() = true
+  }
+
+  org.springframework.data.domain.Persistable <|-- Authority
+  org.springframework.data.domain.Persistable <|-- Email
+
+  class Phone{
+      var id: UUID?
+      var value: String? = null
+  }
+
+  class User{
+    var id: UUID?
+    var login: String?
+    var password: String?
+    var lastName: String?
+    var email: String?
+    var activated: Boolean?
+    var langKey: String?
+    var imageUrl: String?
+    var activationKey: String?
+    var resetKey: String?
+    var resetDate: Instant?
+    var authorities: MutableSet<Authority>?
+    var createdBy: String?
+    var createdDate: Instant?
+    var lastModifiedBy: String?
+    var lastModifiedDate: Instant?
+    var version: Long?
+    + fun toAccount(): common.domain.Account
+  }
+
+  class UserAuthority{
+      var id: Long?
+      val userId: UUID
+      val role: String
+  }
+
 }
 
 package backend.config <<Rectangle>> {
-  class Class2
-  enum TimeUnit {
-  DAYS
-  HOURS
-  MINUTES
-  }
 
+  class Class2
+
+  enum TimeUnit {
+    DAYS
+    HOURS
+    MINUTES
+  }
 }
 
 package backend <<Frame>> {

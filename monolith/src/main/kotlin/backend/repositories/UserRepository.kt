@@ -5,14 +5,15 @@
 
 package backend.repositories
 
+import backend.repositories.entities.Authority
+import backend.repositories.entities.User
+import backend.repositories.entities.UserAuthority
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.map
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Repository
-import backend.repositories.entities.Authority
-import backend.repositories.entities.User
 import java.time.LocalDateTime
 
 @Repository("userRepository")
@@ -27,8 +28,7 @@ class UserRepository(
             authorities.apply auths@{
                 if (!isNullOrEmpty() && id != null)
                     userAuthRepository.apply {
-//                        filter { findByUserIdAndRole(id!!, it.role) == null }
-//                            .
+//                        filter { findByUserIdAndRole(id!!, it.role) == null }.
                         map { saveUserAuthority(id!!, it.role) }
                             .run {
                                 findAllByUserId(id!!)
@@ -100,11 +100,10 @@ class UserRepository(
             : Flow<User> = iUserRepository
         .findAll(pageable.sort)
         .apply {
-            map {
-                userAuthRepository.findAllByUserId(it.id!!)
-                    .map { ua ->
-                        it.authorities?.add(Authority(ua.role))
-                    }
+            map { u: User ->
+                userAuthRepository.findAllByUserId(u.id!!).map { ua: UserAuthority ->
+                    u.authorities?.add(Authority(ua.role))
+                }
             }
         }
 }

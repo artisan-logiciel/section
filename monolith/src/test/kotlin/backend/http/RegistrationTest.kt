@@ -1,9 +1,9 @@
 package backend.http
 
 import backend.Server
+import backend.test.Datas.defaultAccount
 import backend.test.testLoader
 import common.domain.Account
-import common.domain.Datas.defaultAccount
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
 import org.springframework.boot.runApplication
@@ -19,11 +19,12 @@ class RegistrationTest {
 
     lateinit var context: ConfigurableApplicationContext
 
-    val client: WebTestClient by lazy {
+    private val client: WebTestClient by lazy {
         WebTestClient.bindToServer()
             .baseUrl("http://localhost:8080")
             .build()
     }
+
 
     @BeforeAll
     @Suppress("unused")
@@ -39,6 +40,7 @@ class RegistrationTest {
 
     @Test
     fun `register user`() {
+//        val doc1= mockk<>()
         assertEquals(
             expected = CREATED,
             actual = client.post().uri("/api/register")
@@ -48,4 +50,5 @@ class RegistrationTest {
                 .status
         )
     }
+    //TODO: faire un mock de UserRepository, AuthorityRepository, UserAuthRepository
 }

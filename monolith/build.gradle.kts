@@ -15,6 +15,13 @@ plugins {
     jacoco
 }
 
+allOpen{
+    annotation("javax.validation.constraints.NotBlank")
+    annotation("javax.validation.constraints.Pattern")
+    annotation("javax.validation.constraints.Size")
+    annotation("javax.validation.constraints.Email")
+    annotation("javax.validation.constraints.NotNull")
+}
 repositories {
     mavenCentral()
     maven(url = "https://maven.pkg.jetbrains.space/kotlin/p/kotlin/bootstrap/")
@@ -22,12 +29,12 @@ repositories {
     maven(url = "https://repo.spring.io/snapshot")
 }
 
-//dependencyManagement {
-//    imports {
-//        mavenBom("org.testcontainers:testcontainers-bom:${properties["testcontainers_version"]}")
-//        mavenBom("org.springframework.cloud:spring-cloud-dependencies:${properties["spring_cloud_version"]}")
-//    }
-//}
+dependencyManagement {
+    imports {
+        mavenBom("org.testcontainers:testcontainers-bom:${properties["testcontainers.version"]}")
+        mavenBom("org.springframework.cloud:spring-cloud-dependencies:${properties["spring_cloud.version"]}")
+    }
+}
 
 @Suppress("GradlePackageUpdate")
 dependencies {
@@ -45,7 +52,7 @@ dependencies {
     //jackson mapping (json/xml)
     implementation(dependencyNotation = "com.fasterxml.jackson.module:jackson-module-kotlin")
     // String manipulation
-    implementation(dependencyNotation = "org.apache.commons:commons-lang3:${properties["commons_lang3.version"]}")
+    implementation(dependencyNotation = "org.apache.commons:commons-lang3")
     //Http Request Exception Response
 //    implementation(dependencyNotation = "org.zalando:problem-spring-webflux:${properties["zalando_problem.version"]}")
     //spring conf
@@ -73,10 +80,12 @@ dependencies {
     //SSL
     implementation(dependencyNotation = "io.netty:netty-tcnative-boringssl-static:${properties["boring_ssl.version"]}")
     // spring Test dependencies
-    testImplementation(dependencyNotation = "org.springframework.boot:spring-boot-starter-test")
+    testImplementation(dependencyNotation = "org.springframework.boot:spring-boot-starter-test") { exclude(module = "mockito-core") }
     // Mocking
     testImplementation(dependencyNotation = "io.mockk:mockk:${properties["mockk.version"]}")
     testImplementation(dependencyNotation = "com.github.tomakehurst:wiremock-jre8:${properties["wiremock.version"]}")
+    testImplementation(dependencyNotation = "com.ninja-squad:springmockk:3.1.0")
+
     // BDD - Cucumber
     testImplementation(dependencyNotation = "io.cucumber:cucumber-java8:${properties["cucumber_java.version"]}")
     testImplementation(dependencyNotation = "io.cucumber:cucumber-java:${properties["cucumber_java.version"]}")
@@ -93,8 +102,7 @@ dependencies {
     // JWT authentication
     implementation(dependencyNotation = "io.jsonwebtoken:jjwt-impl:${properties["jsonwebtoken.version"]}")
     implementation(dependencyNotation = "io.jsonwebtoken:jjwt-jackson:${properties["jsonwebtoken.version"]}")
-//    implementation("org.springframework.cloud:spring-cloud-config-server")
-//    testImplementation("org.springframework.cloud:spring-cloud-starter-contract-verifier")
+    testImplementation(dependencyNotation = "org.springframework.cloud:spring-cloud-starter-contract-verifier")
     // to get Constants
     implementation(dependencyNotation = "org.apache.commons:commons-email:${properties["commons_email.version"]}") {
         exclude(group = "junit")

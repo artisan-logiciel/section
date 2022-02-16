@@ -31,7 +31,7 @@ repositories {
 
 @Suppress("GradlePackageUpdate")
 dependencies {
-    implementation(project(path = ":common"))
+//    implementation(project(path = ":common"))
     //Kotlin lib: jdk8, reflexion, coroutines
     implementation(dependencyNotation = "org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     implementation(dependencyNotation = "org.jetbrains.kotlin:kotlin-reflect")
@@ -45,7 +45,7 @@ dependencies {
     //jackson mapping (json/xml)
     implementation(dependencyNotation = "com.fasterxml.jackson.module:jackson-module-kotlin")
     // String manipulation
-    implementation(dependencyNotation = "org.apache.commons:commons-lang3:${properties["commons_lang3.version"]}")
+    implementation(dependencyNotation = "org.apache.commons:commons-lang3")
     //Http Request Exception Response
     implementation(dependencyNotation = "org.zalando:problem-spring-webflux:${properties["zalando_problem.version"]}")
     //spring conf
