@@ -13,7 +13,6 @@ package backend.http <<Cloud>> {
     message: String
   }
 
-'     : RuntimeException(message)
   RegistrationController +-- AccountException
   java.lang.RuntimeException <|-- AccountException
 }
