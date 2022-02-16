@@ -1,9 +1,13 @@
 package backend.http
 
 import backend.Server
+import backend.repositories.AuthorityRepository
+import backend.repositories.UserAuthRepository
+import backend.repositories.UserRepository
 import backend.test.Datas.defaultAccount
 import backend.test.testLoader
 import common.domain.Account
+import io.mockk.mockk
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
 import org.springframework.boot.runApplication
@@ -40,7 +44,10 @@ class RegistrationTest {
 
     @Test
     fun `register user`() {
-//        val doc1= mockk<>()
+        val userRepository= mockk<UserRepository>(relaxed = true)
+        val authorityRepository= mockk<AuthorityRepository>(relaxed = true)
+        val userAuthorityRepository= mockk<UserAuthRepository>(relaxed = true)
+
         assertEquals(
             expected = CREATED,
             actual = client.post().uri("/api/register")
