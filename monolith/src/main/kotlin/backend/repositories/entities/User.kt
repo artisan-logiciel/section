@@ -98,20 +98,20 @@ data class User(
 
     constructor(account: AccountCredentials) : this() {
         User().apply {
-            id = account.id
-            login = account.login
-            email = account.email
-            firstName = account.firstName
-            lastName = account.lastName
-            langKey = account.langKey
-            activated = account.activated
-            createdBy=account.createdBy
-            createdDate=account.createdDate
-            lastModifiedBy=account.lastModifiedBy
-            lastModifiedDate=account.lastModifiedDate
-            imageUrl=account.imageUrl
-            authorities =account.authorities?.map { Authority(it) }?.toMutableSet()
-            password=account.password
+            this@User.id = account.id
+            this@User.login = account.login
+            this@User.email = account.email
+            this@User.firstName = account.firstName
+            this@User.lastName = account.lastName
+            this@User.langKey = account.langKey
+            this@User.activated = account.activated
+            this@User.createdBy = account.createdBy
+            this@User.createdDate = account.createdDate
+            this@User.lastModifiedBy = account.lastModifiedBy
+            this@User.lastModifiedDate = account.lastModifiedDate
+            this@User.imageUrl = account.imageUrl
+            this@User.authorities = account.authorities?.map { Authority(it) }?.toMutableSet()
+            this@User.password = account.password
         }
     }
 
@@ -128,7 +128,7 @@ data class User(
         createdDate = createdDate,
         lastModifiedBy = lastModifiedBy,
         lastModifiedDate = lastModifiedDate,
-        authorities =  authorities?.map { it.role }?.toMutableSet()
+        authorities = authorities?.map { it.role }?.toMutableSet()
     )
 
     fun copyAuthorities(that: User): User = this.apply {

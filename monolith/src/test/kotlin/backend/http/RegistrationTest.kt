@@ -1,13 +1,9 @@
 package backend.http
 
 import backend.Server
-import backend.repositories.AuthorityRepository
-import backend.repositories.UserAuthRepository
-import backend.repositories.UserRepository
 import backend.test.Datas.defaultAccount
 import backend.test.testLoader
 import common.domain.Account
-import io.mockk.mockk
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
 import org.springframework.boot.runApplication
@@ -18,17 +14,16 @@ import org.springframework.test.web.reactive.server.returnResult
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-
 class RegistrationTest {
 
     lateinit var context: ConfigurableApplicationContext
 
     private val client: WebTestClient by lazy {
-        WebTestClient.bindToServer()
+        WebTestClient
+            .bindToServer()
             .baseUrl("http://localhost:8080")
             .build()
     }
-
 
     @BeforeAll
     @Suppress("unused")
@@ -44,18 +39,26 @@ class RegistrationTest {
 
     @Test
     fun `register user`() {
-        val userRepository= mockk<UserRepository>(relaxed = true)
-        val authorityRepository= mockk<AuthorityRepository>(relaxed = true)
-        val userAuthorityRepository= mockk<UserAuthRepository>(relaxed = true)
-
-        assertEquals(
-            expected = CREATED,
-            actual = client.post().uri("/api/register")
-                .bodyValue(defaultAccount)
-                .exchange()
-                .returnResult<Account>()
-                .status
-        )
+        client
+            .post().uri("/api/register")
+            .bodyValue(defaultAccount)
+            .exchange()
+            .returnResult<Account>()
+            .apply {
+                assertEquals(
+                    expected = CREATED,
+                    actual = status
+                )
+                responseBody.blockFirst().apply {
+                    assertEquals(
+                        expected = defaultAccount.login,
+                        actual = this?.login
+                    )
+                    assertEquals(
+                        expected = defaultAccount.email,
+                        actual = this?.email
+                    )
+                }
+            }
     }
-    //TODO: faire un mock de UserRepository, AuthorityRepository, UserAuthRepository
 }

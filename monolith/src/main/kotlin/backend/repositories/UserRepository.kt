@@ -41,17 +41,13 @@ class UserRepository(
 
     suspend fun count(): Long = iUserRepository.count()
 
-    suspend fun findOneWithAuthoritiesByLogin(login: String): User? =
-        iUserRepository
-            .findOneByLogin(login)
-            .apply {
-                if (this != null)
-                    userAuthRepository
-                        .findAllByUserId(this.id!!)
-                        .collect {
-                            authorities?.add(Authority(it.role))
-                        }
-            }
+    suspend fun findOneWithAuthoritiesByLogin(login: String): User? = iUserRepository
+        .findOneByLogin(login)
+        .apply {
+            if (this != null) userAuthRepository
+                .findAllByUserId(userId = id!!)
+                .collect { authorities?.add(Authority(it.role)) }
+        }
 
     suspend fun findOneWithAuthoritiesByEmail(
         email: String

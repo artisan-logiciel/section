@@ -17,19 +17,23 @@ class AccountRepositoryR2dbc(
             if (this == null) return Account()
         }!!.toAccount()
 
-    override suspend fun findOneByEmail(email: String): Account {
-        return userRepository.findOneByEmail(email).apply {
+    override suspend fun findOneByEmail(email: String): Account =
+        userRepository.findOneByEmail(email).apply {
             if (this == null) return Account()
         }?.toAccount()!!
-    }
 
     override suspend fun findActivationKeyByLogin(login: String): String =
         userRepository.findOneByLogin(login)?.activationKey.toString()
 
-    override suspend fun delete(account: Account) =
-        userRepository.findOneByLogin(account.login!!).apply u@{
-            userRepository.delete(user = this@u!!)
-        }.run { log.debug("Changed Information for User: $this") }
+    override suspend fun delete(account: Account) = account.run {
+        if (login == null) return@run
+        else {
+            userRepository.findOneByLogin(login!!)?.apply u@{
+                userRepository.delete(user = this@u)
+            }.run { log.debug("Changed Information for User: ${this?.login}") }
+        }
+    }
+
 
     override suspend fun save(accountCredentials: AccountCredentials): Account =
         (accountCredentials.login).run currentUserLogin@{
@@ -40,7 +44,7 @@ class AccountRepositoryR2dbc(
                         lastModifiedBy = this@systemUser
                     } else lastModifiedBy = this@currentUserLogin
                 }
-                userRepository.save(User(account = this))
+                return@currentUserLogin userRepository.save(User(account = this)).toAccount()
             }
         }
 //    @Transactional

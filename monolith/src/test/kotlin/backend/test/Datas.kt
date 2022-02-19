@@ -4,6 +4,7 @@ import backend.repositories.entities.Authority
 import backend.repositories.entities.User
 import common.config.Constants
 import common.domain.Account
+import common.domain.Account.AccountCredentials
 import org.apache.commons.lang3.StringUtils
 import java.time.Instant
 
@@ -17,7 +18,7 @@ object Datas {
     const val USER2_LOGIN = "test2"
     const val USER3_LOGIN = "test3"
 
-    val defaultAccount = Account.AccountCredentials(
+    val defaultAccount = AccountCredentials(
         password = USER_LOGIN
     ).apply {
         login = USER_LOGIN
@@ -31,7 +32,7 @@ object Datas {
         lastModifiedDate = Instant.now()
         imageUrl = "http://placehold.it/50x50"
     }
-    val adminAccount = Account.AccountCredentials(
+    val adminAccount = AccountCredentials(
         password = ADMIN_LOGIN
     ).apply {
         login = ADMIN_LOGIN
@@ -45,7 +46,7 @@ object Datas {
         lastModifiedDate = Instant.now()
     }
 
-    val userTest1Account = Account.AccountCredentials(
+    val userTest1Account = AccountCredentials(
         password = USER1_LOGIN
     ).apply {
         login = USER1_LOGIN
@@ -59,7 +60,7 @@ object Datas {
         lastModifiedDate = Instant.now()
     }
 
-    val userTest2Account = Account.AccountCredentials(
+    val userTest2Account = AccountCredentials(
         password = USER2_LOGIN
     ).apply {
         login = USER2_LOGIN
@@ -73,7 +74,7 @@ object Datas {
         lastModifiedDate = Instant.now()
     }
 
-    val userTest3Account = Account.AccountCredentials(
+    val userTest3Account = AccountCredentials(
         password = USER3_LOGIN
     ).apply {
         login = USER3_LOGIN

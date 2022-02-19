@@ -11,17 +11,17 @@ plugins {
     kotlin(module = "plugin.serialization")
     id("org.springframework.boot")
     id( "io.spring.dependency-management")
-    id( "com.google.cloud.tools.jib")
+//    id( "com.google.cloud.tools.jib")
     jacoco
 }
 
-allOpen{
-    annotation("javax.validation.constraints.NotBlank")
-    annotation("javax.validation.constraints.Pattern")
-    annotation("javax.validation.constraints.Size")
-    annotation("javax.validation.constraints.Email")
-    annotation("javax.validation.constraints.NotNull")
-}
+//allOpen{
+//    annotation("javax.validation.constraints.NotBlank")
+//    annotation("javax.validation.constraints.Pattern")
+//    annotation("javax.validation.constraints.Size")
+//    annotation("javax.validation.constraints.Email")
+//    annotation("javax.validation.constraints.NotNull")
+//}
 repositories {
     mavenCentral()
     maven(url = "https://maven.pkg.jetbrains.space/kotlin/p/kotlin/bootstrap/")
@@ -29,12 +29,12 @@ repositories {
     maven(url = "https://repo.spring.io/snapshot")
 }
 
-dependencyManagement {
-    imports {
-        mavenBom("org.testcontainers:testcontainers-bom:${properties["testcontainers.version"]}")
-        mavenBom("org.springframework.cloud:spring-cloud-dependencies:${properties["spring_cloud.version"]}")
-    }
-}
+//dependencyManagement {
+//    imports {
+//        mavenBom("org.testcontainers:testcontainers-bom:${properties["testcontainers.version"]}")
+//        mavenBom("org.springframework.cloud:spring-cloud-dependencies:${properties["spring_cloud.version"]}")
+//    }
+//}
 
 @Suppress("GradlePackageUpdate")
 dependencies {
@@ -102,7 +102,7 @@ dependencies {
     // JWT authentication
     implementation(dependencyNotation = "io.jsonwebtoken:jjwt-impl:${properties["jsonwebtoken.version"]}")
     implementation(dependencyNotation = "io.jsonwebtoken:jjwt-jackson:${properties["jsonwebtoken.version"]}")
-    testImplementation(dependencyNotation = "org.springframework.cloud:spring-cloud-starter-contract-verifier")
+//    testImplementation(dependencyNotation = "org.springframework.cloud:spring-cloud-starter-contract-verifier")
     // to get Constants
     implementation(dependencyNotation = "org.apache.commons:commons-email:${properties["commons_email.version"]}") {
         exclude(group = "junit")

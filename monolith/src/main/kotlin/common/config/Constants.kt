@@ -4,16 +4,16 @@ import java.net.URI
 
 object Constants {
     //registerController
-    val ALLOWED_ORDERED_PROPERTIES =
-        arrayOf(
-            "id",
-            "login",
-            "firstName",
-            "lastName",
-            "email",
-            "activated",
-            "langKey"
-        )
+    val ALLOWED_ORDERED_PROPERTIES = arrayOf(
+        "id",
+        "login",
+        "firstName",
+        "lastName",
+        "email",
+        "activated",
+        "langKey"
+    )
+
     //Spring profiles
     const val SPRING_PROFILE_DEVELOPMENT = "dev"
     const val SPRING_PROFILE_PRODUCTION = "prod"
@@ -59,8 +59,8 @@ object Constants {
     const val AUTHORIZATION_HEADER = "Authorization"
     const val BEARER_START_WITH = "Bearer "
     const val AUTHORIZATION_ID_TOKEN = "id_token"
-    const val VALID_TOKEN:Boolean = true
-    const val INVALID_TOKEN:Boolean = false
+    const val VALID_TOKEN: Boolean = true
+    const val INVALID_TOKEN: Boolean = false
 
 
     //properties
@@ -76,7 +76,7 @@ object Constants {
     const val PROP_MAIL_PROPERTY_SMTP_AUTH = "backend.mail.property.smtp.auth"
     const val PROP_MAIL_PROPERTY_SMTP_STARTTLS_ENABLE = "backend.mail.property.smtp.starttls.enable"
     const val PROP_DATABASE_POPULATOR_PATH = "backend.database.populator-path"
-    const val STARTUP_LOG_MSG_KEY="startup.log.msg"
+    const val STARTUP_LOG_MSG_KEY = "startup.log.msg"
 
 
     //Email activation
@@ -84,7 +84,8 @@ object Constants {
     const val BASE_URL = "baseUrl"
 
     // Regex for acceptable logins
-    const val LOGIN_REGEX = "^(?>[a-zA-Z0-9!$&*+=?^_`{|}~.-]+@[a-zA-Z0-9-]+(?:\\.[a-zA-Z0-9-]+)*)|(?>[_.@A-Za-z0-9-]+)$"
+    const val LOGIN_REGEX =
+        "^(?>[a-zA-Z0-9!$&*+=?^_`{|}~.-]+@[a-zA-Z0-9-]+(?:\\.[a-zA-Z0-9-]+)*)|(?>[_.@A-Za-z0-9-]+)$"
     const val SYSTEM_USER = "system"
 
     @Suppress("unused")

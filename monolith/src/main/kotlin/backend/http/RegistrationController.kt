@@ -1,6 +1,8 @@
 package backend.http
 
+import backend.Server.Log.log
 import backend.services.AccountService
+import common.domain.Account
 import common.domain.Account.AccountCredentials
 import org.springframework.http.HttpStatus.CREATED
 import org.springframework.web.bind.annotation.*
@@ -29,19 +31,19 @@ class RegistrationController(
     @ResponseStatus(CREATED)
     suspend fun registerAccount(
         @RequestBody accountCredentials: @Valid AccountCredentials
-    ) = accountService.register(accountCredentials)
+    ): Account = accountService.register(accountCredentials)
 
-//    /**
-//     * `GET  /activate` : activate the registered user.
-//     *
-//     * @param key the activation key.
-//     * @throws RuntimeException `500 (Internal Server Error)` if the user couldn't be activated.
-//     */
-//    @GetMapping("/activate")
-//    suspend fun activateAccount(@RequestParam(value = "key") key: String): Unit =
-//        userService.activateRegistration(key = key).run {
-//            if (this == null) throw AccountException("No user was found for this activation key")
-//        }
+    /**
+     * `GET  /activate` : activate the registered user.
+     *
+     * @param key the activation key.
+     * @throws RuntimeException `500 (Internal Server Error)` if the user couldn't be activated.
+     */
+    @GetMapping("/activate")
+    suspend fun activateAccount(@RequestParam(value = "key") key: String): Unit =
+        accountService.activateRegistration(key = key).run {
+            if (this == null) throw AccountException("No user was found for this activation key")
+        }
 //
 //    /**
 //     * `GET  /authenticate` : check if the user is authenticated, and return its login.
