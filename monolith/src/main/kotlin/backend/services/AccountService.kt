@@ -22,7 +22,7 @@ class AccountService(
     suspend fun register(
         accountCredentials: AccountCredentials
     ): Account = accountCredentials.apply {
-        log.info("created user: $this")
+        log.info("service.register user: ${this.login}, ${this.email}, ${this.firstName}, ${this.lastName}")
         log.info("test is password valid")
         InvalidPasswordException().run { if (isPasswordLengthInvalid(password)) throw this }
         accountRepository.findOneByLogin(accountCredentials.login!!).apply byLogin@{
@@ -36,17 +36,18 @@ class AccountService(
         return accountRepository.apply {
             log.info("accountCredentials: $accountCredentials")
         }.save(
-            accountCredentials.copy(
-                password = password,
+            accountCredentials.apply{
                 activationKey = generateActivationKey
-            )
-        ).also {
+//                password=encryptPassword(password)
+    }
+        )
+            /*.also {
             if (it.login == null) return@also
             if (accountRepository
                     .findActivationKeyByLogin(login = it.login!!)
                     .isNotEmpty()
             ) mailService.sendActivationEmail(it)
-        }
+        }*/
     }
 
     fun activateRegistration(key: String): Account? {
