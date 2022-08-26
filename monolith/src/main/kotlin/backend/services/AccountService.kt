@@ -5,8 +5,8 @@ import backend.services.RandomUtils.generateActivationKey
 import backend.services.exceptions.EmailAlreadyUsedException
 import backend.services.exceptions.InvalidPasswordException
 import backend.services.exceptions.UsernameAlreadyUsedException
-import common.domain.Account
-import common.domain.Account.AccountCredentials
+import backend.domain.Account
+import backend.domain.Account.AccountCredentials
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -35,8 +35,7 @@ class AccountService(
                 password = password,
                 activationKey = generateActivationKey
             )
-        )
-            .also {
+        ).also {
             if (it.login == null) return@also
             if (accountRepository
                     .findActivationKeyByLogin(login = it.login!!)

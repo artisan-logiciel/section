@@ -4,8 +4,8 @@ import backend.Server
 import backend.Server.Log.log
 import backend.services.RandomUtils
 import com.fasterxml.jackson.databind.ObjectMapper
-import common.domain.Account
-import common.domain.Account.AccountCredentials
+import backend.domain.Account
+import backend.domain.Account.AccountCredentials
 import io.cucumber.datatable.DataTable
 import io.cucumber.java8.Fr
 import kotlinx.coroutines.reactor.mono

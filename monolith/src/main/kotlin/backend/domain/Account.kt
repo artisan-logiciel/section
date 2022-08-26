@@ -1,8 +1,6 @@
-package common.domain
+package backend.domain
 
-import common.config.Constants.LOGIN_REGEX
-import common.config.Constants.PASSWORD_MAX_LENGTH
-import common.config.Constants.PASSWORD_MIN_LENGTH
+import backend.config.Constants
 import java.time.Instant
 import java.util.*
 import javax.validation.constraints.*
@@ -15,7 +13,7 @@ import javax.validation.constraints.*
 open class Account(
     var id: UUID? = null,
     @field:NotBlank
-    @field:Pattern(regexp = LOGIN_REGEX)
+    @field:Pattern(regexp = Constants.LOGIN_REGEX)
     @field:Size(min = 1, max = 50)
     open var login: String? = null,
     @field:Size(max = 50)
@@ -45,8 +43,8 @@ open class Account(
     data class AccountCredentials(
         @field:NotNull
         @field:Size(
-            min = PASSWORD_MIN_LENGTH,
-            max = PASSWORD_MAX_LENGTH
+            min = Constants.PASSWORD_MIN_LENGTH,
+            max = Constants.PASSWORD_MAX_LENGTH
         )
         var password: String? = null,
         var activationKey: String? = null

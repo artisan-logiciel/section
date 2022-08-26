@@ -1,6 +1,6 @@
 //package backend.http.problems
 //
-//import common.config.Constants.EMAIL_ALREADY_USED_TYPE
+//import backend.config.Constants.EMAIL_ALREADY_USED_TYPE
 //
 //class EmailAlreadyUsedProblem :
 //    AlertProblem(

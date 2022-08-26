@@ -25,6 +25,25 @@ import java.time.LocalDateTime
 import java.time.LocalDateTime.ofInstant
 import java.time.ZoneOffset.UTC
 
+@Configuration
+@Suppress("unused")
+class DatabaseConnectionConfiguration(
+    private val properties: ApplicationProperties
+) {
+    @Bean
+    fun inMemoryConnectionFactory(
+        @Qualifier("connectionFactory")
+        connectionFactory: ConnectionFactory
+    ): ConnectionFactoryInitializer =
+        ConnectionFactoryInitializer().apply {
+            setConnectionFactory(connectionFactory)
+            setDatabasePopulator(
+                ResourceDatabasePopulator(
+                    ClassPathResource(properties.database.populatorPath)
+                )
+            )
+        }
+}
 
 @Configuration
 @EnableTransactionManagement
@@ -54,19 +73,7 @@ class DatabaseConfiguration(
         override fun convert(localDateTime: LocalDateTime): Instant = localDateTime.toInstant(UTC)!!
     }
 
-    @Bean
-    fun inMemoryConnectionFactory(
-        @Qualifier("connectionFactory")
-        connectionFactory: ConnectionFactory
-    ): ConnectionFactoryInitializer =
-        ConnectionFactoryInitializer().apply {
-            setConnectionFactory(connectionFactory)
-            setDatabasePopulator(
-                ResourceDatabasePopulator(
-                    ClassPathResource(properties.database.populatorPath)
-                )
-            )
-        }
+
 
     @Bean
     fun r2dbcCustomConversions(

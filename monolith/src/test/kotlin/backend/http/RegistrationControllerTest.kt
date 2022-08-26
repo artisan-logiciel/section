@@ -3,7 +3,7 @@ package backend.http
 //import backend.repositories.AccountRepository
 //import backend.services.RandomUtils.generateActivationKey
 //import backend.test.Datas.defaultAccount
-//import common.domain.Account
+//import backend.domain.Account
 //import io.mockk.coEvery
 //import io.mockk.mockk
 //import kotlinx.coroutines.runBlocking

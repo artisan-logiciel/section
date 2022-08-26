@@ -2,12 +2,10 @@ package backend.test
 
 import backend.repositories.entities.Authority
 import backend.repositories.entities.User
-import common.config.Constants
-import common.domain.Account
-import common.domain.Account.AccountCredentials
+import backend.config.Constants
+import backend.domain.Account.AccountCredentials
 import org.apache.commons.lang3.StringUtils
 import java.time.Instant
-
 
 
 @Suppress("HttpUrlsUsage", "MemberVisibilityCanBePrivate")
@@ -18,13 +16,14 @@ object Datas {
     const val USER2_LOGIN = "test2"
     const val USER3_LOGIN = "test3"
 
-    val defaultAccount = AccountCredentials(
-        password = USER_LOGIN
+    fun accountCredentialsFactory(login: String)
+            : AccountCredentials = AccountCredentials(
+        password = login
     ).apply {
-        login = USER_LOGIN
-        firstName = USER_LOGIN
-        lastName = USER_LOGIN
-        email = "$USER_LOGIN@acme.com"
+        this.login = login
+        firstName = login
+        lastName = login
+        email = "$login@acme.com"
         langKey = Constants.DEFAULT_LANGUAGE
         createdBy = Constants.SYSTEM_USER
         createdDate = Instant.now()
@@ -32,145 +31,42 @@ object Datas {
         lastModifiedDate = Instant.now()
         imageUrl = "http://placehold.it/50x50"
     }
-    val adminAccount = AccountCredentials(
-        password = ADMIN_LOGIN
-    ).apply {
-        login = ADMIN_LOGIN
-        firstName = ADMIN_LOGIN
-        lastName = ADMIN_LOGIN
-        email = "$ADMIN_LOGIN@acme.com"
-        langKey = Constants.DEFAULT_LANGUAGE
-        createdBy = Constants.SYSTEM_USER
-        createdDate = Instant.now()
-        lastModifiedBy = Constants.SYSTEM_USER
-        lastModifiedDate = Instant.now()
-    }
 
-    val userTest1Account = AccountCredentials(
-        password = USER1_LOGIN
-    ).apply {
-        login = USER1_LOGIN
-        firstName = USER1_LOGIN
-        lastName = USER1_LOGIN
-        email = "$USER1_LOGIN@acme.com"
-        langKey = Constants.DEFAULT_LANGUAGE
-        createdBy = Constants.SYSTEM_USER
-        createdDate = Instant.now()
-        lastModifiedBy = Constants.SYSTEM_USER
-        lastModifiedDate = Instant.now()
-    }
+    fun userFactory(accountCredentials: AccountCredentials): User = User(
+        login = accountCredentials.login,
+        password = accountCredentials.password,
+        firstName = accountCredentials.firstName,
+        lastName = accountCredentials.lastName,
+        email = accountCredentials.email,
+        langKey = accountCredentials.langKey,
+        createdBy = accountCredentials.createdBy,
+        createdDate = accountCredentials.createdDate,
+        lastModifiedBy = accountCredentials.lastModifiedBy,
+        lastModifiedDate = accountCredentials.lastModifiedDate,
+        authorities = mutableSetOf(Authority(role = Constants.ROLE_USER)).apply {
+            when (accountCredentials.login) {
+                adminAccount.login -> add(Authority(role = Constants.ROLE_ADMIN))
+            }
+        })
 
-    val userTest2Account = AccountCredentials(
-        password = USER2_LOGIN
-    ).apply {
-        login = USER2_LOGIN
-        firstName = USER2_LOGIN
-        lastName = USER2_LOGIN
-        email = "$USER2_LOGIN@acme.com"
-        langKey = Constants.DEFAULT_LANGUAGE
-        createdBy = Constants.SYSTEM_USER
-        createdDate = Instant.now()
-        lastModifiedBy = Constants.SYSTEM_USER
-        lastModifiedDate = Instant.now()
-    }
+    val defaultAccount = accountCredentialsFactory(USER_LOGIN)
+    val adminAccount = accountCredentialsFactory(ADMIN_LOGIN)
+    val userTest1Account = accountCredentialsFactory(USER1_LOGIN)
+    val userTest2Account = accountCredentialsFactory(USER2_LOGIN)
+    val userTest3Account = accountCredentialsFactory(USER3_LOGIN)
 
-    val userTest3Account = AccountCredentials(
-        password = USER3_LOGIN
-    ).apply {
-        login = USER3_LOGIN
-        firstName = USER3_LOGIN
-        lastName = USER3_LOGIN
-        email = "$USER3_LOGIN@acme.com"
-        langKey = Constants.DEFAULT_LANGUAGE
-        createdBy = Constants.SYSTEM_USER
-        createdDate = Instant.now()
-        lastModifiedBy = Constants.SYSTEM_USER
-        lastModifiedDate = Instant.now()
-    }
+    val defaultUser = userFactory(defaultAccount)
+    val admin = userFactory(adminAccount)
+    val userTest1 = userFactory(userTest1Account)
+    val userTest2 = userFactory(userTest2Account)
+    val userTest3 = userFactory(userTest3Account)
 
-    val defaultUser = User(
-        login = defaultAccount.login,
-        password = defaultAccount.password,
-        firstName = defaultAccount.firstName,
-        lastName = defaultAccount.lastName,
-        email = defaultAccount.email,
-        langKey = defaultAccount.langKey,
-        createdBy = defaultAccount.createdBy,
-        createdDate = defaultAccount.createdDate,
-        lastModifiedBy = defaultAccount.lastModifiedBy,
-        lastModifiedDate = defaultAccount.lastModifiedDate,
-        authorities = mutableSetOf<Authority>().apply {
-            add(Authority(role = Constants.ROLE_USER))
-        }
-    )
+    val users = setOf(defaultUser, admin, userTest1, userTest2, userTest3)
+}
 
-    val admin = User(
-        login = adminAccount.login,
-        password = adminAccount.password,
-        firstName = adminAccount.firstName,
-        lastName = adminAccount.lastName,
-        email = adminAccount.email,
-        langKey = adminAccount.langKey,
-        createdBy = adminAccount.createdBy,
-        createdDate = adminAccount.createdDate,
-        lastModifiedBy = adminAccount.lastModifiedBy,
-        lastModifiedDate = adminAccount.lastModifiedDate,
-        authorities = mutableSetOf<Authority>().apply {
-            add(Authority(role = Constants.ROLE_USER))
-            add(Authority(role = Constants.ROLE_ADMIN))
-        }
-    )
-
-    val userTest1 = User(
-        login = userTest1Account.login,
-        password = userTest1Account.password,
-        firstName = userTest1Account.firstName,
-        lastName = userTest1Account.lastName,
-        email = userTest1Account.email,
-        langKey = Constants.DEFAULT_LANGUAGE,
-        createdBy = Constants.SYSTEM_USER,
-        createdDate = Instant.now(),
-        lastModifiedBy = Constants.SYSTEM_USER,
-        lastModifiedDate = Instant.now(),
-        authorities = mutableSetOf<Authority>().apply {
-            add(Authority(role = Constants.ROLE_USER))
-        }
-    )
-
-    val userTest2 = User(
-        login = userTest2Account.login,
-        password = userTest2Account.password,
-        firstName = userTest2Account.firstName,
-        lastName = userTest2Account.lastName,
-        email = userTest2Account.email,
-        langKey = Constants.DEFAULT_LANGUAGE,
-        createdBy = Constants.SYSTEM_USER,
-        createdDate = Instant.now(),
-        lastModifiedBy = Constants.SYSTEM_USER,
-        lastModifiedDate = Instant.now(),
-        authorities = mutableSetOf<Authority>().apply {
-            add(Authority(role = Constants.ROLE_USER))
-        }
-    )
-
-    val userTest3 = User(
-        login = userTest3Account.login,
-        password = userTest3Account.password,
-        firstName = userTest3Account.firstName,
-        lastName = userTest3Account.lastName,
-        email = userTest3Account.email,
-        langKey = Constants.DEFAULT_LANGUAGE,
-        createdBy = Constants.SYSTEM_USER,
-        createdDate = Instant.now(),
-        lastModifiedBy = Constants.SYSTEM_USER,
-        lastModifiedDate = Instant.now(),
-        authorities = mutableSetOf<Authority>().apply {
-            add(Authority(role = Constants.ROLE_USER))
-        }
-    )
-    val users = listOf(
-        admin, defaultUser, userTest1, userTest2, userTest3
-    )
+@Suppress("unused")
+fun nameToLogin(userList: List<String>): List<String> = userList.map { s: String ->
+    StringUtils.stripAccents(s.lowercase().replace(oldChar = ' ', newChar = '.'))
 }
 
 @Suppress("unused")
@@ -204,7 +100,3 @@ val writers = listOf(
     "Michel Clouscard"
 )
 
-@Suppress("unused")
-fun nameToLogin(userList: List<String>): List<String> = userList.map { s: String ->
-    StringUtils.stripAccents(s.lowercase().replace(oldChar = ' ', newChar = '.'))
-}

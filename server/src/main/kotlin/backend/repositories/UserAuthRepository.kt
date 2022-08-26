@@ -15,7 +15,7 @@ import java.util.*
 interface UserAuthRepository : CoroutineCrudRepository<UserAuthority, Long> {
     @Nullable
     @Query("INSERT INTO `user_authority`(user_id,`role`) VALUES(:userId, :role)")
-    suspend fun saveUserAuthority(userId: UUID, role: String): UserAuthRepository?
+    suspend fun saveUserAuthority(userId: UUID, role: String): UserAuthority?
 
     @Query("DELETE FROM user_authority where user_id=:userId")
     suspend fun deleteAllUserAuthoritiesByUser(userId: UUID)
@@ -25,5 +25,5 @@ interface UserAuthRepository : CoroutineCrudRepository<UserAuthority, Long> {
 
     @Nullable
     @Query("select * from user_authority ua where ua.user_id=:userId and ua.role=:role")
-    suspend fun findByUserIdAndRole(userId: UUID, role: String): UserAuthRepository?
+    suspend fun findByUserIdAndRole(userId: UUID, role: String): UserAuthority?
 }

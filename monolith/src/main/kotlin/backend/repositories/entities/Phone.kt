@@ -2,7 +2,7 @@ package backend.repositories.entities
 
 import org.springframework.data.annotation.Id
 import org.springframework.data.relational.core.mapping.Table
-import common.config.Constants.LOGIN_REGEX
+import backend.config.Constants.LOGIN_REGEX
 import java.util.*
 import javax.validation.constraints.NotNull
 import javax.validation.constraints.Pattern

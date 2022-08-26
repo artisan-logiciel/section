@@ -2,9 +2,9 @@ package backend.repositories
 
 import backend.Server.Log.log
 import backend.repositories.entities.User
-import common.config.Constants.SYSTEM_USER
-import common.domain.Account
-import common.domain.Account.AccountCredentials
+import backend.config.Constants.SYSTEM_USER
+import backend.domain.Account
+import backend.domain.Account.AccountCredentials
 import org.springframework.stereotype.Repository
 
 @Repository(value = "accountRepository")

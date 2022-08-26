@@ -1,7 +1,8 @@
-package common.config
+package backend.config
 
 import java.net.URI
 
+@Suppress("unused")
 object Constants {
     //registerController
     val ALLOWED_ORDERED_PROPERTIES = arrayOf(
@@ -19,26 +20,12 @@ object Constants {
     const val SPRING_PROFILE_PRODUCTION = "prod"
     const val SPRING_PROFILE_CLOUD = "cloud"
     const val SPRING_PROFILE_CONF_DEFAULT_KEY = "spring.profiles.default"
-
-    @Suppress("unused")
     const val SPRING_PROFILE_TEST = "test"
-
-    @Suppress("unused")
     const val SPRING_PROFILE_HEROKU = "heroku"
-
-    @Suppress("unused")
     const val SPRING_PROFILE_AWS_ECS = "aws-ecs"
-
-    @Suppress("unused")
     const val SPRING_PROFILE_AZURE = "azure"
-
-    @Suppress("unused")
     const val SPRING_PROFILE_SWAGGER = "swagger"
-
-    @Suppress("unused")
     const val SPRING_PROFILE_NO_LIQUIBASE = "no-liquibase"
-
-    @Suppress("unused")
     const val SPRING_PROFILE_K8S = "k8s"
 
     //Config
@@ -88,7 +75,7 @@ object Constants {
         "^(?>[a-zA-Z0-9!$&*+=?^_`{|}~.-]+@[a-zA-Z0-9-]+(?:\\.[a-zA-Z0-9-]+)*)|(?>[_.@A-Za-z0-9-]+)$"
     const val SYSTEM_USER = "system"
 
-    @Suppress("unused")
+    
     const val ANONYMOUS_USER: String = "anonymoususer"
     const val DEFAULT_LANGUAGE = "en"
     const val PASSWORD_MIN_LENGTH: Int = 4

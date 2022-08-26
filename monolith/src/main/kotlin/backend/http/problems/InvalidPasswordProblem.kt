@@ -1,6 +1,6 @@
 //package backend.http.problems
 //
-//import common.config.Constants.INVALID_PASSWORD_TYPE
+//import backend.config.Constants.INVALID_PASSWORD_TYPE
 //import org.zalando.problem.AbstractThrowableProblem
 //import org.zalando.problem.Exceptional
 //import org.zalando.problem.Status.BAD_REQUEST

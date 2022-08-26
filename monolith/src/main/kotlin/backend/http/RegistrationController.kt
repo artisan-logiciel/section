@@ -2,8 +2,8 @@ package backend.http
 
 import backend.Server.Log.log
 import backend.services.AccountService
-import common.domain.Account
-import common.domain.Account.AccountCredentials
+import backend.domain.Account
+import backend.domain.Account.AccountCredentials
 import org.springframework.http.HttpStatus.CREATED
 import org.springframework.web.bind.annotation.*
 import java.util.*

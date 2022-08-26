@@ -1,9 +1,9 @@
 package backend.repositories.entities
 
 import com.fasterxml.jackson.annotation.JsonIgnore
-import common.config.Constants.LOGIN_REGEX
-import common.domain.Account
-import common.domain.Account.AccountCredentials
+import backend.config.Constants.LOGIN_REGEX
+import backend.domain.Account
+import backend.domain.Account.AccountCredentials
 import org.springframework.data.annotation.*
 import org.springframework.data.relational.core.mapping.Column
 import org.springframework.data.relational.core.mapping.Table
@@ -13,6 +13,10 @@ import javax.validation.constraints.NotNull
 import javax.validation.constraints.Pattern
 import javax.validation.constraints.Size
 import javax.validation.constraints.Email as EmailConstraint
+
+import org.springframework.data.annotation.Id
+import org.springframework.data.domain.Persistable
+
 
 @Table("`user`")
 data class User(
@@ -140,3 +144,22 @@ data class User(
     }
 }
 
+@Table("`authority`")
+data class Authority(
+    @Id
+    @field:NotNull
+    @field:Size(max = 50)
+    val role: String
+) : Persistable<String> {
+    override fun getId() = role
+    override fun isNew() = true
+}
+
+@Table("`user_authority`")
+data class UserAuthority(
+    @Id var id: Long? = null,
+    @field:NotNull
+    val userId: UUID,
+    @field:NotNull
+    val role: String
+)

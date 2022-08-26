@@ -1,7 +1,7 @@
 //package backend.http.problems
 //
 //import org.zalando.problem.Exceptional
-//import common.config.Constants.LOGIN_ALREADY_USED_TYPE
+//import backend.config.Constants.LOGIN_ALREADY_USED_TYPE
 //
 //class LoginAlreadyUsedProblem :
 //    AlertProblem(

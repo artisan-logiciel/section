@@ -108,7 +108,7 @@ class WebConfiguration(
 //    @Bean
 //    fun constraintViolationProblemModule() = ConstraintViolationProblemModule()
 
-    @Profile("!${common.config.Constants.SPRING_PROFILE_PRODUCTION}")
+    @Profile("!${Constants.SPRING_PROFILE_PRODUCTION}")
     fun reactorConfiguration() = Hooks.onOperatorDebug()
 
     @Bean
@@ -146,7 +146,7 @@ class WebConfiguration(
         }
 
         @Bean
-        @Profile(common.config.Constants.SPRING_PROFILE_PRODUCTION)
+        @Profile(backend.config.Constants.SPRING_PROFILE_PRODUCTION)
         public CachingHttpHeadersFilter cachingHttpHeadersFilter() {
             // Use a cache filter that only match selected paths
             return new CachingHttpHeadersFilter(TimeUnit.DAYS.toMillis(ApplicationProperties.getHttp().getCache().getTimeToLiveInDays()));
@@ -188,7 +188,7 @@ class WebConfiguration(
 //            .accessDeniedHandler(problemSupport)
 //            .authenticationEntryPoint(problemSupport)
 //            .and()
-//            .headers().contentSecurityPolicy(common.config.Constants.CONTENT_SECURITY_POLICY)
+//            .headers().contentSecurityPolicy(backend.config.Constants.CONTENT_SECURITY_POLICY)
 //            .and()
 //            .referrerPolicy(STRICT_ORIGIN_WHEN_CROSS_ORIGIN)
 //            .and()

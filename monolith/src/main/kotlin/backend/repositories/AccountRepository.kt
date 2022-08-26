@@ -1,7 +1,7 @@
 package backend.repositories
 
-import common.domain.Account
-import common.domain.Account.AccountCredentials
+import backend.domain.Account
+import backend.domain.Account.AccountCredentials
 
 
 interface AccountRepository {

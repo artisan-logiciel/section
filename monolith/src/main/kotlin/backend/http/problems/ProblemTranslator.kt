@@ -2,11 +2,11 @@
 
 package backend.http.problems
 
-//import common.config.Constants.CONSTRAINT_VIOLATION_TYPE
-//import common.config.Constants.DEFAULT_TYPE
-//import common.config.Constants.ERR_CONCURRENCY_FAILURE
-//import common.config.Constants.ERR_VALIDATION
-//import common.config.Constants.SPRING_PROFILE_PRODUCTION
+//import backend.config.Constants.CONSTRAINT_VIOLATION_TYPE
+//import backend.config.Constants.DEFAULT_TYPE
+//import backend.config.Constants.ERR_CONCURRENCY_FAILURE
+//import backend.config.Constants.ERR_VALIDATION
+//import backend.config.Constants.SPRING_PROFILE_PRODUCTION
 //import backend.http.util.HttpHeaderUtil.createFailureAlert
 //import backend.config.ApplicationProperties
 //import backend.services.exceptions.EmailAlreadyUsedException

@@ -2,9 +2,9 @@ package backend.services
 
 import backend.Server.Log.log
 import backend.config.ApplicationProperties
-import common.config.Constants.BASE_URL
-import common.config.Constants.USER
-import common.domain.Account
+import backend.config.Constants.BASE_URL
+import backend.config.Constants.USER
+import backend.domain.Account
 import org.springframework.context.MessageSource
 import org.springframework.mail.MailException
 import org.springframework.mail.javamail.JavaMailSender

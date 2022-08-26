@@ -11,7 +11,7 @@ plugins {
     kotlin(module = "plugin.serialization")
     id("org.springframework.boot")
     id( "io.spring.dependency-management")
-//    id( "com.google.cloud.tools.jib")
+    id( "com.google.cloud.tools.jib")
     jacoco
 }
 
