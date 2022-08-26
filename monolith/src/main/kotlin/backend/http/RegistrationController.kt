@@ -30,8 +30,10 @@ class RegistrationController(
     @PostMapping("register")
     @ResponseStatus(CREATED)
     suspend fun registerAccount(
-        @RequestBody accountCredentials: @Valid AccountCredentials
-    ): Account = accountService.register(accountCredentials)
+        @RequestBody @Valid accountCredentials: AccountCredentials
+    ): Account = accountService.apply {
+        log.info("controller accountCredentials: $accountCredentials")
+    }.register(accountCredentials)
 
     /**
      * `GET  /activate` : activate the registered user.

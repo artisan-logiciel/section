@@ -1,12 +1,13 @@
 package backend.services
 
+import backend.Server.Log.log
+import backend.domain.Account
+import backend.domain.Account.AccountCredentials
 import backend.repositories.AccountRepository
 import backend.services.RandomUtils.generateActivationKey
 import backend.services.exceptions.EmailAlreadyUsedException
 import backend.services.exceptions.InvalidPasswordException
 import backend.services.exceptions.UsernameAlreadyUsedException
-import backend.domain.Account
-import backend.domain.Account.AccountCredentials
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -21,6 +22,8 @@ class AccountService(
     suspend fun register(
         accountCredentials: AccountCredentials
     ): Account = accountCredentials.apply {
+        log.info("created user: $this")
+        log.info("test is password valid")
         InvalidPasswordException().run { if (isPasswordLengthInvalid(password)) throw this }
         accountRepository.findOneByLogin(accountCredentials.login!!).apply byLogin@{
             if (!activated) return@byLogin accountRepository.delete(account = this)
@@ -30,8 +33,10 @@ class AccountService(
             if (!activated) return@byEmail accountRepository.delete(account = this)
             else throw EmailAlreadyUsedException()
         }
-        return accountRepository.save(
-            AccountCredentials(
+        return accountRepository.apply {
+            log.info("accountCredentials: $accountCredentials")
+        }.save(
+            accountCredentials.copy(
                 password = password,
                 activationKey = generateActivationKey
             )

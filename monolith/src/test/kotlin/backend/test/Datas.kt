@@ -6,6 +6,7 @@ import backend.config.Constants
 import backend.domain.Account.AccountCredentials
 import org.apache.commons.lang3.StringUtils
 import java.time.Instant
+import kotlin.test.assertEquals
 
 
 @Suppress("HttpUrlsUsage", "MemberVisibilityCanBePrivate")
@@ -32,6 +33,21 @@ object Datas {
         imageUrl = "http://placehold.it/50x50"
     }
 
+    val defaultAccount = accountCredentialsFactory(USER_LOGIN).apply {
+        assertEquals("$USER_LOGIN@acme.com", email)
+        assertEquals(Constants.DEFAULT_LANGUAGE, langKey)
+        assertEquals(Constants.SYSTEM_USER,createdBy)
+        assertEquals(Constants.SYSTEM_USER,lastModifiedBy)
+        assertEquals("http://placehold.it/50x50",imageUrl )
+        assert(createdDate!!.isBefore(Instant.now()))
+        assert(lastModifiedDate!!.isBefore(Instant.now()))
+        setOf(login, firstName, lastName).map { assertEquals(USER_LOGIN, it) }
+    }
+    val adminAccount = accountCredentialsFactory(ADMIN_LOGIN)
+    val userTest1Account = accountCredentialsFactory(USER1_LOGIN)
+    val userTest2Account = accountCredentialsFactory(USER2_LOGIN)
+    val userTest3Account = accountCredentialsFactory(USER3_LOGIN)
+
     fun userFactory(accountCredentials: AccountCredentials): User = User(
         login = accountCredentials.login,
         password = accountCredentials.password,
@@ -48,12 +64,6 @@ object Datas {
                 adminAccount.login -> add(Authority(role = Constants.ROLE_ADMIN))
             }
         })
-
-    val defaultAccount = accountCredentialsFactory(USER_LOGIN)
-    val adminAccount = accountCredentialsFactory(ADMIN_LOGIN)
-    val userTest1Account = accountCredentialsFactory(USER1_LOGIN)
-    val userTest2Account = accountCredentialsFactory(USER2_LOGIN)
-    val userTest3Account = accountCredentialsFactory(USER3_LOGIN)
 
     val defaultUser = userFactory(defaultAccount)
     val admin = userFactory(adminAccount)
