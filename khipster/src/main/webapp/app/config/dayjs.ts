@@ -1,12 +1,12 @@
-import dayjs from 'dayjs/esm';
-import customParseFormat from 'dayjs/esm/plugin/customParseFormat';
-import duration from 'dayjs/esm/plugin/duration';
-import relativeTime from 'dayjs/esm/plugin/relativeTime';
+import dayjs from 'dayjs';
+import customParseFormat from 'dayjs/plugin/customParseFormat';
+import duration from 'dayjs/plugin/duration';
+import relativeTime from 'dayjs/plugin/relativeTime';
 
 // jhipster-needle-i18n-language-dayjs-imports - JHipster will import languages from dayjs here
-import 'dayjs/esm/locale/fr';
-import 'dayjs/esm/locale/en';
-import 'dayjs/esm/locale/es';
+import 'dayjs/locale/fr';
+import 'dayjs/locale/en';
+import 'dayjs/locale/es';
 
 // DAYJS CONFIGURATION
 dayjs.extend(customParseFormat);

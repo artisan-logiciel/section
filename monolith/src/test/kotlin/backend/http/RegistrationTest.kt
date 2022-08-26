@@ -1,6 +1,5 @@
 @file:Suppress(
-    "NonAsciiCharacters",
-    "unused"
+    "NonAsciiCharacters", "unused"
 )
 
 package backend.http
@@ -8,10 +7,13 @@ package backend.http
 import backend.Server
 import backend.Server.Log.log
 import backend.domain.Account
+import backend.repositories.UserRepository
 import backend.test.Datas.defaultAccount
 import backend.test.testLoader
+import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
+import org.springframework.beans.factory.getBean
 import org.springframework.boot.runApplication
 import org.springframework.context.ConfigurableApplicationContext
 import org.springframework.http.HttpStatus.CREATED
@@ -25,10 +27,7 @@ class RegistrationTest {
     lateinit var context: ConfigurableApplicationContext
 
     private val client: WebTestClient by lazy {
-        WebTestClient
-            .bindToServer()
-            .baseUrl("http://localhost:8080")
-            .build()
+        WebTestClient.bindToServer().baseUrl("http://localhost:8080").build()
     }
 
     @BeforeAll
@@ -42,18 +41,22 @@ class RegistrationTest {
     fun `arrête le serveur`() = context.close()
 
     @Test
-    fun `register user`() {
+    fun `register user`() = runBlocking {
         log.info("start register user test defaultAccount: $defaultAccount")
+
+        val countBefore = context.getBean<UserRepository>().count()
+        assertEquals(0, countBefore)
+
         client
-            .post().uri("/api/register")
+            .post()
+            .uri("/api/register")
             .bodyValue(defaultAccount)
             .exchange()
-            .returnResult<Account>()
-            .apply {
-                requestBodyContent!!
-                    .map { it.toInt().toChar().toString() }
-                    .reduce { acc: String, s: String -> acc + s }
-                    .apply {
+            .returnResult<Account>().apply {
+                assert(requestBodyContent!!.isNotEmpty())
+                requestBodyContent
+                    ?.map { it.toInt().toChar().toString() }
+                    ?.reduce { acc: String, s: String -> acc + s }.apply requestContent@{
                         //test request contains passed values
                         defaultAccount.run {
                             setOf(
@@ -63,36 +66,14 @@ class RegistrationTest {
                                 "\"lastName\":\"${lastName}\"",
                                 "\"email\":\"${email}\"",
                                 "\"imageUrl\":\"${imageUrl}\""
-                            ).map { assert(contains(it)) }
+                            ).map { assert(this@requestContent?.contains(it) ?: false) }
                         }
+                        log.info("request: $this")
                     }
-
-                log.info("request: ${
-                    requestBodyContent!!
-                        .map { it.toInt().toChar().toString() }
-                        .reduce { acc: String, s: String -> acc + s }
-                }")
-                log.info("response: ${
-                    responseBodyContent?.map { it.toInt().toChar().toString() }
-                        ?.reduce { acc: String, s: String -> acc + s }
-                }")
-
+                responseBodyContent?.isEmpty()?.let { assert(it) }
                 assertEquals(expected = CREATED, actual = status)
-
-                responseBodyContent!!.map { it.toInt().toChar().toString() }
-                    .reduce { acc: String, s: String -> acc + s }.apply {
-                        //test response contains right values
-                        defaultAccount.run {
-                            setOf(
-//                                "\"login\":\"${login}\"",
-//                                "\"password\":\"${password}\"",
-//                                "\"firstName\":\"${firstName}\"",
-//                                "\"lastName\":\"${lastName}\"",
-//                                "\"email\":\"${email}\"",
-                                "\"imageUrl\":\"${imageUrl}\""
-                            ).map { assert(contains(it)) }
-                        }
-                    }
             }
+        assertEquals(countBefore + 1, context.getBean<UserRepository>().count())
+
     }
 }
