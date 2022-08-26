@@ -47,10 +47,10 @@ class RegistrationTest {
             .exchange()
             .returnResult<Account>()
             .apply {
-//                assertEquals(
-//                    expected = CREATED,
-//                    actual = status
-//                )
+                assertEquals(
+                    expected = CREATED,
+                    actual = status
+                )
 //                responseBody.blockFirst().apply {
 //                    assertEquals(
 //                        expected = defaultAccount.login,
@@ -61,15 +61,23 @@ class RegistrationTest {
 //                        actual = this?.email
 //                    )
 //                }
-//                log.info(
-                    requestBodyContent!!.map { it.toInt().toChar().toString() }
-                    .fold("") { acc: String, c: String ->
-                        return@fold acc=acc+c
-                    }
-//                )
-                log.info(requestBodyContent!!.map { it.toInt().toChar().toString() })
-
-                //{"password":"user","activationKey":null,"id":null,"login":"user","firstName":"user","lastName":"user","email":"user@acme.com","imageUrl":"http://placehold.it/50x50","activated":false,"langKey":"en","createdBy":"system","createdDate":1661529098.935499224,"lastModifiedBy":"system","lastModifiedDate":1661529098.935510288,"authorities":null}
+                log.info(
+                    "request: ${
+                        requestBodyContent!!
+                            .map { it.toInt().toChar().toString() }
+                            .reduce { acc: String, s: String -> acc + s }
+                            .apply {
+                                defaultAccount.run {
+                                    assert(contains("\"login\":\"${login}\""))
+                                    assert(contains("\"password\":\"${password}\""))
+                                    assert(contains("\"firstName\":\"${firstName}\""))
+                                    assert(contains("\"lastName\":\"${lastName}\""))
+                                    assert(contains("\"email\":\"${email}\""))
+                                    assert(contains("\"imageUrl\":\"${imageUrl}\""))
+                                }
+                            }
+                    }"
+                )
             }
     }
 }
