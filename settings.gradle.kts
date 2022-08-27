@@ -23,6 +23,7 @@ pluginManagement {
 
 rootProject.name = "section"
 //include(":browser")
+include("webflux-monolith")
 include(":monolith")
 //include(":server")
 //include(":common")
