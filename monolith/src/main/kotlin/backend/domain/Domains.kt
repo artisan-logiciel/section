@@ -1,34 +1,91 @@
-package webflux
+package backend.domain
 
-import org.springframework.boot.autoconfigure.SpringBootApplication
-import org.springframework.boot.runApplication
+import backend.config.Constants
 import java.time.Instant
 import java.util.*
-import javax.validation.constraints.Email
-import javax.validation.constraints.NotBlank
-import javax.validation.constraints.NotNull
-import javax.validation.constraints.Pattern
-import javax.validation.constraints.Size
+import javax.validation.constraints.*
 
-@SpringBootApplication
-class WebfluxMonolithApplication
+/**
+ * Représente le user view model
+ */
+//password
 
-fun main(args: Array<String>) {
-    runApplication<WebfluxMonolithApplication>(*args)
-}
+open class Account(
+    var id: UUID? = null,
+    @field:NotBlank
+    @field:Pattern(regexp = Constants.LOGIN_REGEX)
+    @field:Size(min = 1, max = 50)
+    open var login: String? = null,
+    @field:Size(max = 50)
+    open var firstName: String? = null,
+    @field:Size(max = 50)
+    open var lastName: String? = null,
+    @field:Email
+    @field:Size(min = 5, max = 254)
+    open var email: String? = null,
+    @field:Size(max = 256)
+    open var imageUrl: String? = "http://placehold.it/50x50",
+    open var activated: Boolean = false,
+    @field:Size(min = 2, max = 10)
+    open var langKey: String? = null,
+    var createdBy: String? = null,
+    var createdDate: Instant? = null,
+    var lastModifiedBy: String? = null,
+    var lastModifiedDate: Instant? = null,
+    open var authorities: Set<String>? = null
+) {
+    @Suppress("unused")
+    fun isActivated(): Boolean = activated
 
-object Constants {
-    // Regex for acceptable logins
-    const val LOGIN_REGEX =
-        "^(?>[a-zA-Z0-9!$&*+=?^_`{|}~.-]+@[a-zA-Z0-9-]+(?:\\.[a-zA-Z0-9-]+)*)|(?>[_.@A-Za-z0-9-]+)$"
-    const val PASSWORD_MIN_LENGTH: Int = 4
-    const val PASSWORD_MAX_LENGTH: Int = 100
+    /**
+     * Représente l'account view model avec le password
+     */
+    data class AccountCredentials(
+        @field:NotNull
+        @field:Size(
+            min = Constants.PASSWORD_MIN_LENGTH,
+            max = Constants.PASSWORD_MAX_LENGTH
+        )
+        var password: String? = null,
+        var activationKey: String? = null
+    ) : Account()
+
+
+    /**
+     * représente le user view model minimaliste pour la view
+     */
+    data class Avatar(
+        var id: UUID? = null,
+        var login: String? = null
+    )
+
+    data class KeyAndPassword(
+        val key: String? = null,
+        val newPassword: String? = null
+    )
+
+    data class Login(
+        @field:NotNull
+        val username:
+        @Size(min = 1, max = 50)
+        String? = null,
+        @field:NotNull
+        @field:Size(min = 4, max = 100)
+        val password:
+        String? = null,
+        val rememberMe: Boolean? = null
+    )
+
+    data class PasswordChange(
+        val currentPassword: String? = null,
+        val newPassword: String? = null
+    )
 }
 
 /**
  * Représente le user view model
  */
-data class Account(
+data class AccountDomain(
     val id: UUID? = null,
     @field:NotBlank
     @field:Pattern(regexp = Constants.LOGIN_REGEX)
@@ -58,7 +115,7 @@ data class Account(
 /**
  * Représente l'account view model avec le password
  */
-data class AccountCredentials(
+data class AccountCredentialsDomain(
     @field:NotNull
     @field:Size(
         min = Constants.PASSWORD_MIN_LENGTH,
@@ -92,16 +149,16 @@ data class AccountCredentials(
 /**
  * représente le user view model minimaliste pour la view
  */
-data class Avatar(
-    var id: UUID? = null,
-    var login: String? = null
+data class AvatarDomain(
+    val id: UUID? = null,
+    val login: String? = null
 )
-data class KeyAndPassword(
+data class KeyAndPasswordDomain(
     val key: String? = null,
     val newPassword: String? = null
 )
 
-data class Login(
+data class LoginDomain(
     @field:NotNull
     val username:
     @Size(min = 1, max = 50)
@@ -113,7 +170,7 @@ data class Login(
     val rememberMe: Boolean? = null
 )
 
-data class PasswordChange(
+data class PasswordChangeDomain(
     val currentPassword: String? = null,
     val newPassword: String? = null
 )

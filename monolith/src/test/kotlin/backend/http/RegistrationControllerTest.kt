@@ -23,7 +23,7 @@ import kotlin.test.assertEquals
 
 class RegistrationControllerTest {
 
-    lateinit var context: ConfigurableApplicationContext
+    private lateinit var context: ConfigurableApplicationContext
 
     private val client: WebTestClient by lazy {
         WebTestClient

@@ -61,7 +61,7 @@ data class User(
     var lastModifiedDate: Instant? = Instant.now(),
     @Version @JsonIgnore var version: Long? = null
 ) {
-    @PersistenceConstructor
+    @PersistenceCreator
     constructor(
         id: UUID?,
         login: String?,
