@@ -70,6 +70,7 @@ class RegistrationControllerTest {
                 assertEquals(expected = CREATED, actual = status)
             }
         assertEquals(countBefore + 1, context.getBean<UserRepository>().count())
-
     }
+
+
 }
