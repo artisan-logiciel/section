@@ -26,7 +26,10 @@ class RegistrationControllerTest {
     lateinit var context: ConfigurableApplicationContext
 
     private val client: WebTestClient by lazy {
-        WebTestClient.bindToServer().baseUrl("http://localhost:8080").build()
+        WebTestClient
+            .bindToServer()
+            .baseUrl("http://localhost:8080")
+            .build()
     }
 
     @BeforeAll
