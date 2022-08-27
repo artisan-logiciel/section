@@ -5,7 +5,9 @@
 package backend.http
 
 import backend.Server
+import backend.Server.Log.log
 import backend.domain.Account
+import backend.repositories.UserAuthRepository
 import backend.repositories.UserRepository
 import backend.tdd.Datas.defaultAccount
 import backend.tdd.testLoader
@@ -41,9 +43,11 @@ class RegistrationControllerTest {
 
     @Test
     fun `register user`() = runBlocking {
-        val countBefore = context.getBean<UserRepository>().count()
-        assertEquals(0, countBefore)
-
+        //TODO: compter les user_auth comme avec user
+        //        log.info("count 1 user authorities: ${context.getBean<UserAuthRepository>().count()}")
+        //        log.info("count 2 user authorities: ${context.getBean<UserAuthRepository>().count()}")
+        val countUserBefore = context.getBean<UserRepository>().count()
+        assertEquals(0, countUserBefore)
         client
             .post()
             .uri("/api/register")
@@ -69,7 +73,10 @@ class RegistrationControllerTest {
                 responseBodyContent?.isEmpty()?.let { assert(it) }
                 assertEquals(expected = CREATED, actual = status)
             }
-        assertEquals(countBefore + 1, context.getBean<UserRepository>().count())
+        assertEquals(countUserBefore + 1, context.getBean<UserRepository>().count())
+        //clean after test
+        context.getBean<UserRepository>().deleteAll()
+        assertEquals(countUserBefore, context.getBean<UserRepository>().count())
     }
 
     //TODO: register un user avec un email invalid
