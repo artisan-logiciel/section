@@ -1,7 +1,7 @@
 @file:Suppress(
     "SqlNoDataSourceInspection",
     "SqlResolve",
-    "SqlDialectInspection"
+    "SqlDialectInspection", "unused"
 )
 
 package backend.tdd
@@ -46,7 +46,7 @@ import kotlin.test.assertTrue
 @SpringBootTest
 @ActiveProfiles("test")
 /* AbstractBaseFunctionalTest */
-abstract class AbstractBaseSpringBootTest {
+internal abstract class AbstractBaseSpringBootTest {
     fun User.unlockUser() {
         apply {
             if (id != null) {
@@ -83,7 +83,6 @@ abstract class AbstractBaseSpringBootTest {
     @Autowired
     lateinit var r2dbcEntityTemplate: R2dbcEntityTemplate
 
-    @Suppress("unused")
     @Autowired
     lateinit var objectMapper: ObjectMapper
 

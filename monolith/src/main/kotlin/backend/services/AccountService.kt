@@ -1,5 +1,7 @@
 package backend.services
 
+import backend.Server
+import backend.Server.Log.log
 import backend.domain.Account
 import backend.domain.Account.AccountCredentials
 import backend.repositories.AccountRepository
@@ -18,37 +20,73 @@ class AccountService(
     private val mailService: MailService,
 //    private val passwordEncoder:PasswordEncoder
 ) {
+    //    @Transactional
+//    suspend fun register(accountCredentials: AccountCredentials) {
+//
+//        InvalidPasswordException().apply {
+//            if (isPasswordLengthInvalid(accountCredentials.password)) throw this
+//        }
+//
+//
+//        accountRepository.findOneByLogin(accountCredentials.login!!).run {
+//            when {
+//                !activated -> accountRepository.delete(account = accountCredentials)
+//                else -> throw UsernameAlreadyUsedException()
+//            }
+//        }
+//
+//
+//        accountRepository.findOneByEmail(accountCredentials.email!!).run {
+//            when {
+//                !activated -> accountRepository.delete(account = accountCredentials)
+//                else -> throw EmailAlreadyUsedException()
+//            }
+//        }
+//
+//        accountRepository.save(
+//            accountCredentials.apply {
+//                activationKey = generateActivationKey
+//                //                password=PasswordEncoder(password)
+//            }
+//        )
+//
+//        mailService.sendActivationEmail(accountCredentials)
+//    }
     @Transactional
-    suspend fun register(accountCredentials: AccountCredentials) {
+    suspend fun register(
+        accountCredentials: AccountCredentials
+    ): Unit = accountCredentials.run {
 
-        InvalidPasswordException().apply {
-            if (isPasswordLengthInvalid(accountCredentials.password)) throw this
+        log.info("service.register user: ${this.login}, ${this.email}, ${this.firstName}, ${this.lastName}")
+        log.info("test is password valid")
+
+
+        InvalidPasswordException().run { if (isPasswordLengthInvalid(password)) throw this }
+
+        accountRepository.findOneByLogin(login!!).apply byLogin@{
+            if (!activated) return@byLogin accountRepository.delete(account = this)
+            else throw UsernameAlreadyUsedException()
         }
 
-
-        accountRepository.findOneByLogin(accountCredentials.login!!).run {
-            when {
-                !activated -> accountRepository.delete(account = accountCredentials)
-                else -> throw UsernameAlreadyUsedException()
-            }
+        accountRepository.findOneByEmail(email!!).apply byEmail@{
+            if (!activated) return@byEmail accountRepository.delete(account = this)
+            else throw EmailAlreadyUsedException()
         }
 
-
-        accountRepository.findOneByEmail(accountCredentials.email!!).run {
-            when {
-                !activated -> accountRepository.delete(account = accountCredentials)
-                else -> throw EmailAlreadyUsedException()
-            }
-        }
-
-        accountRepository.save(
-            accountCredentials.apply {
+        accountRepository.apply {
+            log.info("accountCredentials: ${this@run}")
+        }.save(
+            accountCredentials.copy(
+//                password = password,//encrypt
                 activationKey = generateActivationKey
-                //                password=PasswordEncoder(password)
-            }
-        )
-
-        mailService.sendActivationEmail(accountCredentials)
+            )
+        ).also {
+            if (it.login == null) return@also
+            if (accountRepository
+                    .findActivationKeyByLogin(login = it.login!!)
+                    .isNotEmpty()
+            ) mailService.sendActivationEmail(it)
+        }
     }
 
     fun activateRegistration(key: String): Account? {

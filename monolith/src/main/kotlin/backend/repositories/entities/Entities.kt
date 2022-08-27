@@ -28,14 +28,14 @@ data class Phone(
     var value: String? = null
 )
 
-@Table("`country_phone_code`")
-data class CountryPhoneCode(
-    @Id val code: String,
-    val countryCode: String
-) : Persistable<String> {
-    override fun getId() = code
-    override fun isNew() = true
-}
+//@Table("`country_phone_code`")
+//data class CountryPhoneCode(
+//    @Id val code: String,
+//    val countryCode: String
+//) : Persistable<String> {
+//    override fun getId() = code
+//    override fun isNew() = true
+//}
 
 @Table("`email`")
 data class Email(
