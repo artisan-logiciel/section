@@ -1,6 +1,5 @@
 package backend.services
 
-import backend.Server.Log.log
 import backend.domain.Account
 import backend.domain.Account.AccountCredentials
 import backend.repositories.AccountRepository
@@ -19,37 +18,42 @@ class AccountService(
     private val mailService: MailService,
 //    private val passwordEncoder:PasswordEncoder
 ) {
-
     @Transactional
     suspend fun register(accountCredentials: AccountCredentials) {
-        accountCredentials.apply {
-            InvalidPasswordException().run { if (isPasswordLengthInvalid(password)) throw this }
-            accountRepository.findOneByLogin(login!!).run byLogin@{
-                when {
-                    !activated -> return@byLogin accountRepository.delete(account = this)
-                    else -> throw UsernameAlreadyUsedException()
-                }
-            }
-            accountRepository.findOneByEmail(email!!).run byEmail@{
-                when {
-                    !activated -> return@byEmail accountRepository.delete(account = this)
-                    else -> throw EmailAlreadyUsedException()
-                }
-            }
-            accountRepository.save(
-                accountCredentials.apply {
-                    activationKey = generateActivationKey
-                    //                password=PasswordEncoder(password)
-                }
-            )
-            mailService.sendActivationEmail(accountCredentials)
+
+        InvalidPasswordException().apply {
+            if (isPasswordLengthInvalid(accountCredentials.password)) throw this
         }
+
+
+        accountRepository.findOneByLogin(accountCredentials.login!!).run {
+            when {
+                !activated -> accountRepository.delete(account = accountCredentials)
+                else -> throw UsernameAlreadyUsedException()
+            }
+        }
+
+
+        accountRepository.findOneByEmail(accountCredentials.email!!).run {
+            when {
+                !activated -> accountRepository.delete(account = accountCredentials)
+                else -> throw EmailAlreadyUsedException()
+            }
+        }
+
+        accountRepository.save(
+            accountCredentials.apply {
+                activationKey = generateActivationKey
+                //                password=PasswordEncoder(password)
+            }
+        )
+
+        mailService.sendActivationEmail(accountCredentials)
     }
 
-
-fun activateRegistration(key: String): Account? {
-    TODO("Not yet implemented")
-}
+    fun activateRegistration(key: String): Account? {
+        TODO("Not yet implemented")
+    }
 //    @Transactional
 //    suspend fun activateRegistration(key: String): User? =
 //        log.debug("Activating user for activation key {}", key).run {
