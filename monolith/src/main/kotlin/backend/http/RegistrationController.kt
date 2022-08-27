@@ -1,4 +1,4 @@
-@file:Suppress("KDocUnresolvedReference")
+@file:Suppress("KDocUnresolvedReference","unused")
 
 package backend.http
 
@@ -13,7 +13,6 @@ import javax.validation.Valid
 
 @RestController
 @RequestMapping("api")
-@Suppress("unused")
 class RegistrationController(
     private val accountService: AccountService
 ) {

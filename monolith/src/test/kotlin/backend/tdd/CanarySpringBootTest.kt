@@ -8,7 +8,6 @@ import backend.Server.Log.log
 import kotlin.test.Ignore
 import kotlin.test.Test
 
-@Ignore
 @SpringBootTest
 @ActiveProfiles("test")
 class CanarySpringBootTest {

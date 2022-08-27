@@ -9,8 +9,6 @@ import backend.Server.Log.log
 import kotlin.test.Ignore
 import kotlin.test.Test
 
-@Ignore
-@Suppress("unused")
 class CanaryRestClientTest {
     private lateinit var context: ConfigurableApplicationContext
 

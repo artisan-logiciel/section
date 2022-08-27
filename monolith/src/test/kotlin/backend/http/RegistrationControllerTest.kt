@@ -19,8 +19,10 @@ import org.springframework.context.ConfigurableApplicationContext
 import org.springframework.http.HttpStatus.CREATED
 import org.springframework.test.web.reactive.server.WebTestClient
 import org.springframework.test.web.reactive.server.returnResult
+import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.test.assertEquals
+
 
 class RegistrationControllerTest {
 
@@ -43,6 +45,7 @@ class RegistrationControllerTest {
     @AfterAll
     fun `arrête le serveur`() = context.close()
 
+    @Ignore
     @Test
     fun `register user`() = runBlocking {
         //TODO: compter les user_auth comme avec user
@@ -72,13 +75,13 @@ class RegistrationControllerTest {
                             ).map { assert(this@requestContent?.contains(it) ?: false) }
                         }
                     }
-//                responseBodyContent?.isEmpty()?.let { assert(it) }
+                responseBodyContent?.isEmpty()?.let { assert(it) }
                 log.info("responseBodyContent: ${
                     responseBodyContent?.map {
                         it.toInt().toChar().toString()
                     }?.reduce { acc: String, s: String -> acc + s }
                 }")
-//                assertEquals(expected = CREATED, actual = status)
+                assertEquals(expected = CREATED, actual = status)
             }
         assertEquals(countUserBefore + 1, context.getBean<UserRepository>().count())
         //clean after test
