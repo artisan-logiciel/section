@@ -8,10 +8,10 @@ backend:
   mail:
     base-url: http://127.0.0.1:8080
     from: backend-r2dbc-jwt@localhost
+    password: password
     enabled: true
     host: smtp.gmail.com
     port: 587
-    password: password
     property:
       debug: true
       transport:
@@ -20,6 +20,7 @@ backend:
         auth: true
         starttls:
           enable: true
+
   security:
     authentication:
       jwt:

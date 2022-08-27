@@ -86,6 +86,8 @@ class WebConfiguration(
                 this[MAIL_SMTP_AUTH] = properties.mail.property.smtp.auth
                 this[MAIL_TRANSPORT_STARTTLS_ENABLE] = properties.mail.property.smtp.starttls.enable
                 this[MAIL_DEBUG] = properties.mail.property.debug
+                this["spring.mail.test-connection"]=true
+                this["mail.smtp.ssl.trust"]=true
             }
         }
 

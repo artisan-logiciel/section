@@ -1,9 +1,9 @@
 package backend.test
 
-import backend.repositories.entities.Authority
-import backend.repositories.entities.User
 import backend.config.Constants
 import backend.domain.Account.AccountCredentials
+import backend.repositories.entities.Authority
+import backend.repositories.entities.User
 import org.apache.commons.lang3.StringUtils
 import java.time.Instant
 import kotlin.test.assertEquals
@@ -34,11 +34,11 @@ object Datas {
     }
 
     val defaultAccount = accountCredentialsFactory(USER_LOGIN).apply {
-        assertEquals("$USER_LOGIN@acme.com", email)
+//        assertEquals("$USER_LOGIN@acme.com", email)
         assertEquals(Constants.DEFAULT_LANGUAGE, langKey)
-        assertEquals(Constants.SYSTEM_USER,createdBy)
-        assertEquals(Constants.SYSTEM_USER,lastModifiedBy)
-        assertEquals("http://placehold.it/50x50",imageUrl )
+        assertEquals(Constants.SYSTEM_USER, createdBy)
+        assertEquals(Constants.SYSTEM_USER, lastModifiedBy)
+        assertEquals("http://placehold.it/50x50", imageUrl)
         assert(createdDate!!.isBefore(Instant.now()))
         assert(lastModifiedDate!!.isBefore(Instant.now()))
         setOf(login, firstName, lastName).map { assertEquals(USER_LOGIN, it) }

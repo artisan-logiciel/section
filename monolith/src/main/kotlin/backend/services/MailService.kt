@@ -32,7 +32,7 @@ class MailService(
         content: String,
         isMultipart: Boolean,
         isHtml: Boolean
-    ): Unit = mailSender
+    ) = mailSender
         .createMimeMessage().run {
             try {
                 MimeMessageHelper(
@@ -60,11 +60,12 @@ class MailService(
         templateName: String,
         titleKey: String
     ) {
-        if (account.email == null) {
-            log.debug("Email doesn't exist for user '${account.login}'")
-            return
-        } else
-            forLanguageTag(account.langKey).apply {
+        when (account.email) {
+            null -> {
+                log.debug("Email doesn't exist for user '${account.login}'")
+                return
+            }
+            else -> forLanguageTag(account.langKey).apply {
                 sendEmail(
                     account.email!!,
                     messageSource.getMessage(titleKey, null, this),
@@ -79,6 +80,7 @@ class MailService(
                     isHtml = true
                 )
             }
+        }
     }
 
     @Async
