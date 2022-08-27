@@ -30,7 +30,7 @@ class RegistrationController(
     @PostMapping("register")
     @ResponseStatus(CREATED)
     suspend fun registerAccount(
-        @RequestBody @Valid accountCredentials: AccountCredentials
+        @RequestBody accountCredentials: @Valid AccountCredentials
     ) = accountService.register(accountCredentials)
 
     /**
