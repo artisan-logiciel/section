@@ -5,9 +5,7 @@
 package backend.http
 
 import backend.Server
-import backend.Server.Log.log
 import backend.domain.Account
-import backend.repositories.UserAuthRepository
 import backend.repositories.UserRepository
 import backend.tdd.Datas.defaultAccount
 import backend.tdd.testLoader
@@ -84,7 +82,6 @@ class RegistrationControllerTest {
     //TODO: register un user avec un mauvais login
     //TODO: register un user avec un login existant
     //TODO: mocker que l'email est parti en interceptant l'appel et logger l'action(en affichant le mail)
-
 
 
 }
