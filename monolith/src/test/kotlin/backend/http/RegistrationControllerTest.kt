@@ -72,5 +72,12 @@ class RegistrationControllerTest {
         assertEquals(countBefore + 1, context.getBean<UserRepository>().count())
     }
 
+    //TODO: register un user avec un email invalid
+    //TODO: register un user avec un email existant
+    //TODO: register un user avec un mauvais login
+    //TODO: register un user avec un login existant
+    //TODO: mocker que l'email est parti en interceptant l'appel et logger l'action(en affichant le mail)
+
+
 
 }
