@@ -1,6 +1,7 @@
 @file:Suppress(
     "SqlNoDataSourceInspection",
-    "SqlResolve"
+    "SqlResolve",
+    "unused",
 )
 
 package backend.repositories
@@ -10,5 +11,4 @@ import backend.repositories.entities.Email
 import org.springframework.stereotype.Repository
 
 @Repository("emailRepository")
-@Suppress("unused")
 interface EmailRepository : CoroutineSortingRepository<Email, String>

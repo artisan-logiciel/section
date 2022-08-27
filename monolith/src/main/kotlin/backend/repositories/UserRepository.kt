@@ -1,6 +1,7 @@
 @file:Suppress(
     "SqlNoDataSourceInspection",
-    "SqlResolve"
+    "SqlResolve",
+    "unused"
 )
 
 package backend.repositories
@@ -9,7 +10,6 @@ import backend.repositories.entities.Authority
 import backend.repositories.entities.User
 import backend.repositories.entities.UserAuthority
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.map
 import org.springframework.data.domain.Pageable

@@ -31,7 +31,7 @@ class RegistrationController(
     @ResponseStatus(CREATED)
     suspend fun registerAccount(
         @RequestBody @Valid accountCredentials: AccountCredentials
-    ) = accountService.register(accountCredentials)
+    ):Unit = accountService.register(accountCredentials)
 
     /**
      * `GET  /activate` : activate the registered user.

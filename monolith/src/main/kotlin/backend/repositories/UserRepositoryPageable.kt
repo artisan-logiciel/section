@@ -1,6 +1,7 @@
 @file:Suppress(
     "SqlNoDataSourceInspection",
-    "SqlResolve"
+    "SqlResolve",
+    "unused"
 )
 
 package backend.repositories
@@ -11,7 +12,6 @@ import reactor.core.publisher.Flux
 import backend.repositories.entities.User
 import java.util.*
 
-@Suppress("unused")
 interface UserRepositoryPageable : R2dbcRepository<User, UUID> {
     fun findAllByActivatedIsTrue(pageable: Pageable): Flux<User>
     fun findAllByIdNotNull(pageable: Pageable): Flux<User>
