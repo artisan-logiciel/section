@@ -132,6 +132,5 @@ class Server(private val context: ApplicationContext) {
 
 
     @PostConstruct
-    @Suppress("unused")
     fun init(): Array<String> = checkProfileLog(context = context)
 }

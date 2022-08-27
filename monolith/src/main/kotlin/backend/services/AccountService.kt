@@ -11,48 +11,45 @@ import backend.services.exceptions.UsernameAlreadyUsedException
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
+//import org.springframework.security.crypto.password.PasswordEncoder
 @Service(value = "accountService")
 @Suppress("unused")
 class AccountService(
     private val accountRepository: AccountRepository,
-    private val mailService: MailService
+    private val mailService: MailService,
+//    private val passwordEncoder:PasswordEncoder
 ) {
 
     @Transactional
-    suspend fun register(
-        accountCredentials: AccountCredentials
-    ): Account = accountCredentials.apply {
-        log.info("service.register user: ${this.login}, ${this.email}, ${this.firstName}, ${this.lastName}")
-        log.info("test is password valid")
-        InvalidPasswordException().run { if (isPasswordLengthInvalid(password)) throw this }
-        accountRepository.findOneByLogin(accountCredentials.login!!).apply byLogin@{
-            if (!activated) return@byLogin accountRepository.delete(account = this)
-            else throw UsernameAlreadyUsedException()
+    suspend fun register(accountCredentials: AccountCredentials) {
+        accountCredentials.apply {
+            InvalidPasswordException().run { if (isPasswordLengthInvalid(password)) throw this }
+            accountRepository.findOneByLogin(login!!).run byLogin@{
+                when {
+                    !activated -> return@byLogin accountRepository.delete(account = this)
+                    else -> throw UsernameAlreadyUsedException()
+                }
+            }
+            accountRepository.findOneByEmail(email!!).run byEmail@{
+                when {
+                    !activated -> return@byEmail accountRepository.delete(account = this)
+                    else -> throw EmailAlreadyUsedException()
+                }
+            }
+            accountRepository.save(
+                accountCredentials.apply {
+                    activationKey = generateActivationKey
+                    //                password=PasswordEncoder(password)
+                }
+            )
+            mailService.sendActivationEmail(accountCredentials)
         }
-        accountRepository.findOneByEmail(accountCredentials.email!!).apply byEmail@{
-            if (!activated) return@byEmail accountRepository.delete(account = this)
-            else throw EmailAlreadyUsedException()
-        }
-        return accountRepository.apply {
-            log.info("accountCredentials: $accountCredentials")
-        }.save(
-            accountCredentials.apply{
-                activationKey = generateActivationKey
-//                password=encryptPassword(password)
-    }
-        )
-            /*.also {
-            if (it.login == null) return@also
-            if (accountRepository
-                    .findActivationKeyByLogin(login = it.login!!)
-                    .isNotEmpty()
-            ) mailService.sendActivationEmail(it)
-        }*/
     }
 
-    fun activateRegistration(key: String): Account? {
-        TODO("Not yet implemented")
-    }
+
+fun activateRegistration(key: String): Account? {
+    TODO("Not yet implemented")
+}
 //    @Transactional
 //    suspend fun activateRegistration(key: String): User? =
 //        log.debug("Activating user for activation key {}", key).run {

@@ -1,9 +1,9 @@
+@file:Suppress("KDocUnresolvedReference")
+
 package backend.http
 
-import backend.Server.Log.log
-import backend.services.AccountService
-import backend.domain.Account
 import backend.domain.Account.AccountCredentials
+import backend.services.AccountService
 import org.springframework.http.HttpStatus.CREATED
 import org.springframework.web.bind.annotation.*
 import java.util.*
@@ -31,11 +31,7 @@ class RegistrationController(
     @ResponseStatus(CREATED)
     suspend fun registerAccount(
         @RequestBody @Valid accountCredentials: AccountCredentials
-    ): Unit {
-        accountService.apply {
-            log.info("controller accountCredentials: $accountCredentials")
-        }.register(accountCredentials)
-    }
+    ) = accountService.register(accountCredentials)
 
     /**
      * `GET  /activate` : activate the registered user.
