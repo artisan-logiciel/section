@@ -1,15 +1,16 @@
-package backend.tdd.functional
+package backend.tdd
 
+import backend.tdd.Datas.defaultUser
 import kotlinx.coroutines.runBlocking
-import backend.domain.DataTest.defaultUser
-import backend.domain.unlockUser
+import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class TestAbstractBaseFunctionalTests : AbstractBaseFunctionalTest() {
+class TestAbstractBaseSpringBootTest : AbstractBaseSpringBootTest() {
 
+    @Ignore
     @Test
-    fun `test saveUserWithAutorities`() = runBlocking {
+    fun `test saveUserWithAuthorities`():Unit = runBlocking {
         countUser().apply countUserBeforeSave@{
             countUserAuthority().apply countUserAuthorityBeforeSave@{
                 defaultUser.copy().apply userTest@{

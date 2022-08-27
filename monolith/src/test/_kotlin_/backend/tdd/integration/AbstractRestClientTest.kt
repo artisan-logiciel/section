@@ -40,7 +40,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
-abstract class AbstractRestIntegrationTest {
+abstract class AbstractRestClientTest {
     lateinit var context: ConfigurableApplicationContext
     private val db: DatabaseClient by lazy { context.getBean() }
     private val r2dbcEntityTemplate: R2dbcEntityTemplate by lazy { context.getBean() }

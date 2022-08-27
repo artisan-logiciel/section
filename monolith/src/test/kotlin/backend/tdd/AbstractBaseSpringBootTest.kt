@@ -4,17 +4,16 @@
     "SqlDialectInspection"
 )
 
-package backend.tdd.functional
+package backend.tdd
 
 import backend.Server.Log.log
 import backend.config.Constants.ROLE_ADMIN
 import backend.config.Constants.ROLE_ANONYMOUS
 import backend.config.Constants.ROLE_USER
-import backend.domain.DataTest.defaultAccount
-import backend.domain.DataTest.defaultUser
-import backend.domain.unlockUser
 import backend.repositories.entities.User
 import backend.repositories.entities.UserAuthority
+import backend.tdd.Datas.defaultAccount
+import backend.tdd.Datas.defaultUser
 import com.fasterxml.jackson.databind.ObjectMapper
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.count
@@ -43,9 +42,19 @@ import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
+
 @SpringBootTest
 @ActiveProfiles("test")
-abstract class AbstractBaseFunctionalTest {
+/* AbstractBaseFunctionalTest */
+abstract class AbstractBaseSpringBootTest {
+    fun User.unlockUser() {
+        apply {
+            if (id != null) {
+                id = null
+                version = null
+            }
+        }
+    }
 
     companion object {
         val languages = arrayOf(
@@ -236,15 +245,16 @@ abstract class AbstractBaseFunctionalTest {
     }
 
     suspend fun checkInitDatabaseWithDefaultUser(): User =
-        saveUserWithAutorities(defaultUser
-            .copy()
-            .apply {
-                unlockUser()
-                activated = true
-            }.run {
-                deleteUserByLoginWithAuthorities(login!!)
-                return@run this
-            }
+        saveUserWithAutorities(
+            defaultUser
+                .copy()
+                .apply {
+                    unlockUser()
+                    activated = true
+                }.run {
+                    deleteUserByLoginWithAuthorities(login!!)
+                    return@run this
+                }
         )?.apply {
             assertNotNull(id)
             assertTrue(activated)

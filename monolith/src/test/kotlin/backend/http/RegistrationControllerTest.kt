@@ -7,8 +7,8 @@ package backend.http
 import backend.Server
 import backend.domain.Account
 import backend.repositories.UserRepository
-import backend.test.Datas.defaultAccount
-import backend.test.testLoader
+import backend.tdd.Datas.defaultAccount
+import backend.tdd.testLoader
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll

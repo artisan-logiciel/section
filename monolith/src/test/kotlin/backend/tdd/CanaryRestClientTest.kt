@@ -1,4 +1,4 @@
-package backend.tdd.integration
+package backend.tdd
 
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
@@ -9,22 +9,18 @@ import backend.Server.Log.log
 import kotlin.test.Ignore
 import kotlin.test.Test
 
-@Ignore
+//@Ignore
 @Suppress("unused")
-class CanaryIntTest {
+class CanaryRestClientTest {
     private lateinit var context: ConfigurableApplicationContext
 
     @BeforeAll
     fun `lance le server en profile test`() {
-        context = runApplication<Server> {
-            testLoader(app = this)
-        }
+        context = runApplication<Server> { testLoader(app = this) }
     }
 
     @AfterAll
-    fun `arrete le serveur`() {
-        context.close()
-    }
+    fun `arrete le serveur`() = context.close()
 
     @Test
     fun `canary integration test`() = log.info("canary integration test")

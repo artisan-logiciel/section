@@ -1,4 +1,4 @@
-package backend.test
+package backend.tdd
 
 import backend.config.Constants
 import backend.domain.Account.AccountCredentials

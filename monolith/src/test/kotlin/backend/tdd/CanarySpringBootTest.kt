@@ -1,4 +1,4 @@
-package backend.tdd.functional
+package backend.tdd
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -8,10 +8,10 @@ import backend.Server.Log.log
 import kotlin.test.Ignore
 import kotlin.test.Test
 
-@Ignore
+//@Ignore
 @SpringBootTest
 @ActiveProfiles("test")
-class CanaryFuncTest {
+class CanarySpringBootTest {
 
     @Autowired
     lateinit var context: ApplicationContext

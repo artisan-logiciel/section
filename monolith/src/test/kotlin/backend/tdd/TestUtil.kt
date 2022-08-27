@@ -1,6 +1,6 @@
 @file:JvmName("TestUtil")
 
-package backend.test
+package backend.tdd
 
 import backend.repositories.entities.User
 import com.fasterxml.jackson.annotation.JsonInclude.Include.NON_EMPTY
