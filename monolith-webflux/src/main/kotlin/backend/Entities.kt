@@ -3,7 +3,7 @@
 package backend
 
 
-import backend.config.Constants.LOGIN_REGEX
+import backend.Constants.LOGIN_REGEX
 import com.fasterxml.jackson.annotation.JsonIgnore
 import org.springframework.data.annotation.*
 import org.springframework.data.domain.Persistable
