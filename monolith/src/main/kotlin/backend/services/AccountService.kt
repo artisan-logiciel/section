@@ -56,9 +56,7 @@ class AccountService(
     suspend fun register(
         accountCredentials: AccountCredentials
     ) {
-        accountCredentials.apply ac@{
-
-            InvalidPasswordException().run { if (isPasswordLengthInvalid(password)) throw this }
+            InvalidPasswordException().run { if (isPasswordLengthInvalid(accountCredentials.password)) throw this }
 
 //            accountRepository.findOneByLogin(login!!).apply byLogin@{
 //                if (!activated) return@byLogin accountRepository.delete(account = this)
@@ -75,13 +73,13 @@ class AccountService(
                     //                password = password,//encrypt
                     activationKey = generateActivationKey
                 )
-            ).run {
-                if (login != null && accountRepository
-                        .findActivationKeyByLogin(login = login!!)
-                        .isNotEmpty()
-                ) mailService.sendActivationEmail(this)
+            ).also {
+                when {
+                    accountRepository
+                        .findActivationKeyByLogin(login = accountCredentials.login!!)
+                        .isNotEmpty() -> mailService.sendActivationEmail(it)
+                }
             }
-        }
     }
 
     fun activateRegistration(key: String): Account? {

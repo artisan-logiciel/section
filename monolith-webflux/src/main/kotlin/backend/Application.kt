@@ -7,5 +7,5 @@ import org.springframework.boot.runApplication
 class MonolithWebfluxApplication
 
 fun main(args: Array<String>) {
-	runApplication<MonolithWebfluxApplication>(*args)
+    runApplication<MonolithWebfluxApplication>(*args)
 }

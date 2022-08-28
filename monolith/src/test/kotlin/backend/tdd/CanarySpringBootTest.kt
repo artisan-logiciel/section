@@ -15,7 +15,7 @@ internal class CanarySpringBootTest {
     private lateinit var context: ApplicationContext
 
     @Test
-    fun `canary functional test`() = log.info("canary integration test")
+    fun `canary functional test`() = log.info("canary @SpringBootTest")
 
     @Test
     fun contextLoads() = assert(context.beanDefinitionCount > 0)

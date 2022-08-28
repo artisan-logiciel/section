@@ -20,7 +20,7 @@ internal class CanaryRestClientTest {
     fun `arrete le serveur`() = context.close()
 
     @Test
-    fun `canary integration test`() = log.info("canary integration test")
+    fun `canary integration test`() = log.info("canary rest client test")
 
 
     @Test

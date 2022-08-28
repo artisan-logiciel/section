@@ -24,7 +24,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 
 
-class RegistrationControllerTest {
+internal class RegistrationControllerTest {
 
     private lateinit var context: ConfigurableApplicationContext
 
@@ -36,11 +36,9 @@ class RegistrationControllerTest {
     }
 
     @BeforeAll
-    fun `lance le server en profile test`() {
-        runApplication<Server> {
-            testLoader(app = this)
-        }.apply { context = this }
-    }
+    fun `lance le server en profile test`() =
+        runApplication<Server> { testLoader(app = this) }.run { context = this }
+
 
     @AfterAll
     fun `arrête le serveur`() = context.close()
