@@ -64,7 +64,6 @@ class AccountService(
                 else -> throw UsernameAlreadyUsedException()
             }
         }
-
 //        log.info(accountRepository.findOneByEmail(accountCredentials.email!!))
 //            .run {
 //            if (id != null && !activated) accountRepository.delete(account = this)
