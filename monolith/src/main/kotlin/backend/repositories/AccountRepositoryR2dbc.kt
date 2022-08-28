@@ -12,16 +12,18 @@ class AccountRepositoryR2dbc(
     private val userRepository: UserRepository
 ) : AccountRepository {
 
-    override suspend fun findOneByLogin(login: String): Account =
-        userRepository.findOneWithAuthoritiesByLogin(login).apply {
-            if (this == null) return Account()
-        }!!.toAccount()
+    override suspend fun findOneByLogin(login: String) =
+        userRepository.findOneWithAuthoritiesByLogin(login)?.toAccount()
 
+    override suspend fun findOneByEmail(email: String) =
+        userRepository.findOneByEmail(email)?.toAccount()
+/*
     override suspend fun findOneByEmail(email: String): Account =
         userRepository.findOneByEmail(email).apply {
             if (this == null) return Account()
         }?.toAccount()!!
 
+ */
     override suspend fun findActivationKeyByLogin(login: String): String =
         userRepository.findOneByLogin(login)?.activationKey.toString()
 

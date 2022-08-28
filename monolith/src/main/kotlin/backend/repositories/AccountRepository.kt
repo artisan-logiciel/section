@@ -6,9 +6,9 @@ import backend.domain.Account.AccountCredentials
 
 interface AccountRepository {
 
-    suspend fun findOneByLogin(login: String): Account
+    suspend fun findOneByLogin(login: String): Account?
 
-    suspend fun findOneByEmail(email: String): Account
+    suspend fun findOneByEmail(email: String): Account?
 
     suspend fun save(accountCredentials: AccountCredentials): Account
 

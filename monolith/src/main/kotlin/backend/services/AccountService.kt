@@ -56,30 +56,33 @@ class AccountService(
     suspend fun register(
         accountCredentials: AccountCredentials
     ) {
-            InvalidPasswordException().run { if (isPasswordLengthInvalid(accountCredentials.password)) throw this }
+        InvalidPasswordException().run { if (isPasswordLengthInvalid(accountCredentials.password)) throw this }
 
-//            accountRepository.findOneByLogin(login!!).apply byLogin@{
-//                if (!activated) return@byLogin accountRepository.delete(account = this)
-//                else throw UsernameAlreadyUsedException()
-//            }
-
-//            accountRepository.findOneByEmail(email!!).apply byEmail@{
-//                if (!activated) return@byEmail accountRepository.delete(account = this)
-//                else throw EmailAlreadyUsedException()
-//            }
-
-            accountRepository.save(
-                accountCredentials.copy(
-                    //                password = password,//encrypt
-                    activationKey = generateActivationKey
-                )
-            ).also {
-                when {
-                    accountRepository
-                        .findActivationKeyByLogin(login = accountCredentials.login!!)
-                        .isNotEmpty() -> mailService.sendActivationEmail(it)
-                }
+        accountRepository.findOneByLogin(accountCredentials.login!!)?.run {
+            when {
+                !activated -> accountRepository.delete(account = this)
+                else -> throw UsernameAlreadyUsedException()
             }
+        }
+
+//        log.info(accountRepository.findOneByEmail(accountCredentials.email!!))
+//            .run {
+//            if (id != null && !activated) accountRepository.delete(account = this)
+//            else throw EmailAlreadyUsedException()
+//        }
+
+        accountRepository.save(
+            accountCredentials.copy(
+                //                password = password,//encrypt
+                activationKey = generateActivationKey
+            )
+        ).also {
+            when {
+                accountRepository
+                    .findActivationKeyByLogin(login = accountCredentials.login!!)
+                    .isNotEmpty() -> mailService.sendActivationEmail(it)
+            }
+        }
     }
 
     fun activateRegistration(key: String): Account? {
