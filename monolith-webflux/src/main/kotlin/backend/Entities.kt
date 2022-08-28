@@ -1,11 +1,9 @@
 @file:Suppress("unused")
 
-package backend.entities
+package backend
 
 
 import backend.config.Constants.LOGIN_REGEX
-import backend.models.AccountModel
-import backend.models.AccountCredentialsModel
 import com.fasterxml.jackson.annotation.JsonIgnore
 import org.springframework.data.annotation.*
 import org.springframework.data.domain.Persistable
@@ -20,7 +18,7 @@ import javax.validation.constraints.Email as EmailConstraint
 
 
 @Table("`phone`")
-data class Phone(
+data class PhoneEntity(
     @Id var id: UUID? = null,
     @field:NotNull
     @field:Pattern(regexp = LOGIN_REGEX)
@@ -28,17 +26,17 @@ data class Phone(
     var value: String? = null
 )
 
-//@Table("`country_phone_code`")
-//data class CountryPhoneCode(
-//    @Id val code: String,
-//    val countryCode: String
-//) : Persistable<String> {
-//    override fun getId() = code
-//    override fun isNew() = true
-//}
+@Table("`country_phone_code`")
+data class CountryPhoneCodeEntity(
+    @Id val code: String,
+    val countryCode: String
+) : Persistable<String> {
+    override fun getId() = code
+    override fun isNew() = true
+}
 
 @Table("`email`")
-data class Email(
+data class EmailEntity(
     @Id val value: @EmailConstraint String
 ) : Persistable<String> {
     override fun getId() = value
@@ -66,7 +64,7 @@ data class UserAuthority(
 )
 
 @Table("`user`")
-data class User(
+data class UserEntity(
     @Id var id: UUID? = null,
     @field:NotNull
     @field:Pattern(regexp = LOGIN_REGEX)
@@ -147,26 +145,26 @@ data class User(
     )
 
 
-    constructor(account: AccountCredentialsModel) : this() {
-        User().apply {
-            this@User.id = account.id
-            this@User.login = account.login
-            this@User.email = account.email
-            this@User.firstName = account.firstName
-            this@User.lastName = account.lastName
-            this@User.langKey = account.langKey
-            this@User.activated = account.activated
-            this@User.createdBy = account.createdBy
-            this@User.createdDate = account.createdDate
-            this@User.lastModifiedBy = account.lastModifiedBy
-            this@User.lastModifiedDate = account.lastModifiedDate
-            this@User.imageUrl = account.imageUrl
-            this@User.authorities = account.authorities?.map { Authority(it) }?.toMutableSet()
-            this@User.password = account.password
+    constructor(userModel: UserCredentialsModel) : this() {
+        UserEntity().apply {
+            this@UserEntity.id = userModel.id
+            this@UserEntity.login = userModel.login
+            this@UserEntity.email = userModel.email
+            this@UserEntity.firstName = userModel.firstName
+            this@UserEntity.lastName = userModel.lastName
+            this@UserEntity.langKey = userModel.langKey
+            this@UserEntity.activated = userModel.activated
+            this@UserEntity.createdBy = userModel.createdBy
+            this@UserEntity.createdDate = userModel.createdDate
+            this@UserEntity.lastModifiedBy = userModel.lastModifiedBy
+            this@UserEntity.lastModifiedDate = userModel.lastModifiedDate
+            this@UserEntity.imageUrl = userModel.imageUrl
+            this@UserEntity.authorities = userModel.authorities?.map { Authority(it) }?.toMutableSet()
+            this@UserEntity.password = userModel.password
         }
     }
 
-    fun toAccount(): AccountModel = AccountModel(
+    fun toUserModel(): UserModel = UserModel(
         id = id,
         login = login,
         firstName = firstName,
@@ -182,7 +180,7 @@ data class User(
         authorities = authorities?.map { it.role }?.toMutableSet()
     )
 
-    fun copyAuthorities(that: User): User = this.apply {
+    fun copyAuthorities(that: UserEntity): UserEntity = this.apply {
         if (authorities == null) authorities = mutableSetOf()
         else authorities!!.clear()
         that.authorities?.forEach {
@@ -190,6 +188,3 @@ data class User(
         }
     }
 }
-
-
-

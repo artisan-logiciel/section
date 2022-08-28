@@ -1,4 +1,4 @@
-package backend.models
+package backend
 
 import backend.config.Constants
 import java.time.Instant
@@ -8,7 +8,7 @@ import javax.validation.constraints.*
 /**
  * Représente le user view model sans le password
  */
-data class AccountModel(
+data class UserModel(
     val id: UUID? = null,
     @field:NotBlank
     @field:Pattern(regexp = Constants.LOGIN_REGEX)
@@ -38,7 +38,7 @@ data class AccountModel(
 /**
  * Représente l'account view model avec le password
  */
-data class AccountCredentialsModel(
+data class UserCredentialsModel(
     @field:NotNull
     @field:Size(
         min = Constants.PASSWORD_MIN_LENGTH,
