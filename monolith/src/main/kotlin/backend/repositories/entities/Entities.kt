@@ -19,14 +19,14 @@ import javax.validation.constraints.Size
 import javax.validation.constraints.Email as EmailConstraint
 
 
-@Table("`phone`")
-data class Phone(
-    @Id var id: UUID? = null,
-    @field:NotNull
-    @field:Pattern(regexp = LOGIN_REGEX)
-    @field:Size(min = 1, max = 50)
-    var value: String? = null
-)
+//@Table("`phone`")
+//data class Phone(
+//    @Id var id: UUID? = null,
+//    @field:NotNull
+//    @field:Pattern(regexp = LOGIN_REGEX)
+//    @field:Size(min = 1, max = 50)
+//    var value: String? = null
+//)
 
 //@Table("`country_phone_code`")
 //data class CountryPhoneCode(

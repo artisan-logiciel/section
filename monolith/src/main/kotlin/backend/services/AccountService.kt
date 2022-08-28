@@ -55,37 +55,32 @@ class AccountService(
     @Transactional
     suspend fun register(
         accountCredentials: AccountCredentials
-    ): Unit = accountCredentials.run {
+    ) {
+        accountCredentials.apply ac@{
 
-        log.info("service.register user: ${this.login}, ${this.email}, ${this.firstName}, ${this.lastName}")
-        log.info("test is password valid")
+            InvalidPasswordException().run { if (isPasswordLengthInvalid(password)) throw this }
 
+//            accountRepository.findOneByLogin(login!!).apply byLogin@{
+//                if (!activated) return@byLogin accountRepository.delete(account = this)
+//                else throw UsernameAlreadyUsedException()
+//            }
 
-        InvalidPasswordException().run { if (isPasswordLengthInvalid(password)) throw this }
+//            accountRepository.findOneByEmail(email!!).apply byEmail@{
+//                if (!activated) return@byEmail accountRepository.delete(account = this)
+//                else throw EmailAlreadyUsedException()
+//            }
 
-        accountRepository.findOneByLogin(login!!).apply byLogin@{
-            if (!activated) return@byLogin accountRepository.delete(account = this)
-            else throw UsernameAlreadyUsedException()
-        }
-
-        accountRepository.findOneByEmail(email!!).apply byEmail@{
-            if (!activated) return@byEmail accountRepository.delete(account = this)
-            else throw EmailAlreadyUsedException()
-        }
-
-        accountRepository.apply {
-            log.info("accountCredentials: ${this@run}")
-        }.save(
-            accountCredentials.copy(
-//                password = password,//encrypt
-                activationKey = generateActivationKey
-            )
-        ).also {
-            if (it.login == null) return@also
-            if (accountRepository
-                    .findActivationKeyByLogin(login = it.login!!)
-                    .isNotEmpty()
-            ) mailService.sendActivationEmail(it)
+            accountRepository.save(
+                accountCredentials.copy(
+                    //                password = password,//encrypt
+                    activationKey = generateActivationKey
+                )
+            ).run {
+                if (login != null && accountRepository
+                        .findActivationKeyByLogin(login = login!!)
+                        .isNotEmpty()
+                ) mailService.sendActivationEmail(this)
+            }
         }
     }
 

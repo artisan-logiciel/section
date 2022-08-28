@@ -35,8 +35,8 @@ class AccountRepositoryR2dbc(
     }
 
 
-    override suspend fun save(accountCredentials: AccountCredentials): Account =
-        (accountCredentials.login).run currentUserLogin@{
+    override suspend fun save(accountCredentials: AccountCredentials): Account {
+        return (accountCredentials.login).run currentUserLogin@{
             accountCredentials.apply {
                 SYSTEM_USER.apply systemUser@{
                     if (createdBy.isNullOrBlank()) {
@@ -47,6 +47,7 @@ class AccountRepositoryR2dbc(
                 return@currentUserLogin userRepository.save(User(account = this)).toAccount()
             }
         }
+    }
 //    @Transactional
 //    suspend fun saveUser(user: User): User = SecurityUtils.getCurrentUserLogin()
 //        .run currentUserLogin@{
