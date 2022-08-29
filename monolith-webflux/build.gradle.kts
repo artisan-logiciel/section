@@ -45,6 +45,9 @@ dependencies {
 	testImplementation("org.springframework.graphql:spring-graphql-test")
 	testImplementation("org.springframework.security:spring-security-test")
 	testImplementation ("org.mockito.kotlin:mockito-kotlin:${properties["mockito_kotlin_version"]}")
+	testImplementation( "org.jetbrains.kotlin:kotlin-test")
+	testImplementation( "org.jetbrains.kotlin:kotlin-test-junit5")
+	implementation( "org.apache.commons:commons-lang3")
 }
 
 tasks.withType<KotlinCompile> {

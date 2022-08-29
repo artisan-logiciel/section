@@ -1,9 +1,9 @@
-package backend.tdd
+package backend
 
-import backend.config.Constants
-import backend.domain.Account.AccountCredentials
-import backend.repositories.entities.Authority
-import backend.repositories.entities.User
+//import backend.Constants
+//import backend.domain.Account.AccountCredentials
+//import backend.repositories.entities.Authority
+//import backend.repositories.entities.User
 import org.apache.commons.lang3.StringUtils
 import java.time.Instant
 import kotlin.test.assertEquals
