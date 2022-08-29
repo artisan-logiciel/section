@@ -2,6 +2,7 @@
 
 package backend
 
+import backend.RepositoryInMemory.accountAuthorities
 import backend.RepositoryInMemory.accounts
 import org.springframework.stereotype.Repository
 import java.util.*
@@ -46,6 +47,7 @@ class AccountRepositoryInMemory : IAccountModelRepository {
         }.toAccount()
 
     override suspend fun delete(account: AccountModel) {
+        accountAuthorities.apply { filter { it.userId == account.id }.map { remove(it) }}
         accounts.apply { if (isNotEmpty()) remove(find { it.id == account.id }) }
     }
 
