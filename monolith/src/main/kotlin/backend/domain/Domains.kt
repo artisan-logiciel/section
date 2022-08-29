@@ -6,10 +6,8 @@ import java.util.*
 import javax.validation.constraints.*
 
 /**
- * Représente le user view model
+ * Représente le user view model sans le password
  */
-//password
-
 open class Account(
     var id: UUID? = null,
     @field:NotBlank
