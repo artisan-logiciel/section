@@ -3,6 +3,9 @@
 package backend
 
 import backend.Account.AccountCredentials
+import backend.Constants.ROLE_ADMIN
+import backend.Constants.ROLE_USER
+import backend.Data.adminAccount
 import org.apache.commons.lang3.StringUtils
 import java.time.Instant
 
@@ -56,9 +59,9 @@ fun userFactory(accountCredentials: AccountCredentials): User = User(
     createdDate = accountCredentials.createdDate,
     lastModifiedBy = accountCredentials.lastModifiedBy,
     lastModifiedDate = accountCredentials.lastModifiedDate,
-    authorities = mutableSetOf(Authority(role = Constants.ROLE_USER)).apply {
+    authorities = mutableSetOf(Authority(role = ROLE_USER)).apply {
         when (accountCredentials.login) {
-            Data.adminAccount.login -> add(Authority(role = Constants.ROLE_ADMIN))
+            adminAccount.login -> add(Authority(role = ROLE_ADMIN))
         }
     })
 
