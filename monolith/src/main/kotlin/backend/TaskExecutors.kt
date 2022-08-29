@@ -1,4 +1,4 @@
-package backend.config
+package backend
 
 import backend.Log.log
 import org.springframework.aop.interceptor.AsyncUncaughtExceptionHandler

@@ -9,9 +9,9 @@ package backend
 //import backend.Constants.SPRING_PROFILE_PRODUCTION
 //import backend.http.util.HttpHeaderUtil.createFailureAlert
 //import backend.ApplicationProperties
-//import backend.services.exceptions.EmailAlreadyUsedException
-//import backend.services.exceptions.InvalidPasswordException
-//import backend.services.exceptions.UsernameAlreadyUsedException
+//import backend.EmailAlreadyUsedException
+//import backend.InvalidPasswordException
+//import backend.UsernameAlreadyUsedException
 //import org.springframework.core.env.Environment
 //import org.springframework.dao.ConcurrencyFailureException
 //import org.springframework.dao.DataAccessException

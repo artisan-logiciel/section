@@ -6,8 +6,8 @@ import backend.Account
 import backend.Account.AccountCredentials
 import backend.repositories.AccountRepository
 import backend.RandomUtils.generateActivationKey
-import backend.services.exceptions.InvalidPasswordException
-import backend.services.exceptions.UsernameAlreadyUsedException
+import backend.InvalidPasswordException
+import backend.UsernameAlreadyUsedException
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 

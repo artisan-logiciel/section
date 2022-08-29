@@ -1,4 +1,4 @@
-package backend.config
+package backend
 
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.i18n.LocaleContext

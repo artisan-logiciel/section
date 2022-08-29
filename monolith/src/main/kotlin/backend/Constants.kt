@@ -1,8 +1,10 @@
+@file:Suppress("unused")
+
 package backend
 
 import java.net.URI
 
-@Suppress("unused")
+
 object Constants {
     //registerController
     val ALLOWED_ORDERED_PROPERTIES = arrayOf(
@@ -75,7 +77,7 @@ object Constants {
         "^(?>[a-zA-Z0-9!$&*+=?^_`{|}~.-]+@[a-zA-Z0-9-]+(?:\\.[a-zA-Z0-9-]+)*)|(?>[_.@A-Za-z0-9-]+)$"
     const val SYSTEM_USER = "system"
 
-    
+
     const val ANONYMOUS_USER: String = "anonymoususer"
     const val DEFAULT_LANGUAGE = "en"
     const val PASSWORD_MIN_LENGTH: Int = 4
