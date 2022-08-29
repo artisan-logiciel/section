@@ -4,7 +4,7 @@ import backend.Log.log
 import backend.config.ApplicationProperties
 import backend.config.Constants.BASE_URL
 import backend.config.Constants.USER
-import backend.domain.Account
+import backend.Account
 import org.springframework.context.MessageSource
 import org.springframework.mail.MailException
 import org.springframework.mail.javamail.JavaMailSender

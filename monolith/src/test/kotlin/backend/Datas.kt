@@ -3,7 +3,7 @@
 package backend
 
 import backend.config.Constants
-import backend.domain.Account.AccountCredentials
+import backend.Account.AccountCredentials
 import backend.repositories.entities.Authority
 import backend.repositories.entities.User
 import org.apache.commons.lang3.StringUtils

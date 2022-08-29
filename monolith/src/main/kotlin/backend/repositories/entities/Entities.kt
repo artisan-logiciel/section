@@ -3,9 +3,8 @@
 package backend.repositories.entities
 
 
+import backend.Account
 import backend.config.Constants.LOGIN_REGEX
-import backend.domain.Account
-import backend.domain.Account.AccountCredentials
 import com.fasterxml.jackson.annotation.JsonIgnore
 import org.springframework.data.annotation.*
 import org.springframework.data.domain.Persistable
@@ -147,7 +146,7 @@ data class User(
     )
 
 
-    constructor(account: AccountCredentials) : this() {
+    constructor(account: Account.AccountCredentials) : this() {
         User().apply {
             this@User.id = account.id
             this@User.login = account.login

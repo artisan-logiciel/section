@@ -2,8 +2,8 @@
 
 package backend.services
 
-import backend.domain.Account
-import backend.domain.Account.AccountCredentials
+import backend.Account
+import backend.Account.AccountCredentials
 import backend.repositories.AccountRepository
 import backend.services.RandomUtils.generateActivationKey
 import backend.services.exceptions.InvalidPasswordException

@@ -5,8 +5,8 @@ package backend.repositories
 import backend.Log.log
 import backend.repositories.entities.User
 import backend.config.Constants.SYSTEM_USER
-import backend.domain.Account
-import backend.domain.Account.AccountCredentials
+import backend.Account
+import backend.Account.AccountCredentials
 import org.springframework.stereotype.Repository
 
 @Repository(value = "accountRepository")
