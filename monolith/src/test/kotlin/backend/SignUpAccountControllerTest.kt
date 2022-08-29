@@ -75,10 +75,11 @@ internal class SignUpAccountControllerTest {
         assertEquals(countUserBefore + 1, context.getBean<IAccountModelRepository>().count())
 //        assertEquals(countUserAuthBefore + 1, context.getBean<UserAuthRepository>().count())
         //clean after test
+        context.getBean<IAccountModelRepository>().run { delete(findOneByLogin(defaultAccount.login!!)!!) }
 //        context.getBean<UserAuthRepository>().deleteAll()
 //        context.getBean<UserRepository>().deleteAll()
 //        assertEquals(countUserAuthBefore, context.getBean<UserAuthRepository>().count())
-//        assertEquals(countUserBefore, context.getBean<UserRepository>().count())
+        assertEquals(countUserBefore, context.getBean<IAccountModelRepository>().count())
     }
 
     //TODO: register un user avec un email invalid
