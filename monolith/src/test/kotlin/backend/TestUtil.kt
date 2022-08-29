@@ -1,4 +1,4 @@
-@file:JvmName("TestUtil")
+@file:Suppress("unused")
 
 package backend
 

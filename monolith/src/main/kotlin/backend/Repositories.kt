@@ -47,7 +47,7 @@ class AccountRepositoryInMemory : IAccountModelRepository {
         }.toAccount()
 
     override suspend fun delete(account: AccountModel) {
-        accountAuthorities.apply { filter { it.userId == account.id }.map { remove(it) } }
+//        accountAuthorities.apply { filter { it.userId == account.id }.map { remove(it) } }
         accounts.apply { if (isNotEmpty()) remove(find { it.id == account.id }) }
     }
 

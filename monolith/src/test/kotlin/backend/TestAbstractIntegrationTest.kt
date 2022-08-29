@@ -5,7 +5,7 @@ import kotlinx.coroutines.runBlocking
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-internal class TestAbstractBaseSpringBootTest : AbstractBaseSpringBootTest() {
+internal class TestAbstractIntegrationTest : AbstractIntegrationTest() {
 
 
     @Test

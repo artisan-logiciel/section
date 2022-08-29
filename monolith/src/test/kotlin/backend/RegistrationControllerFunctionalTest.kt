@@ -5,6 +5,8 @@
 package backend
 
 import backend.Data.defaultAccount
+import backend.repositories.UserAuthRepository
+import backend.repositories.UserRepository
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
@@ -18,7 +20,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 
 
-internal class SignUpAccountControllerTest {
+internal class RegistrationControllerFunctionalTest {
 
     private lateinit var context: ConfigurableApplicationContext
 
@@ -37,18 +39,19 @@ internal class SignUpAccountControllerTest {
     @AfterAll
     fun `arrête le serveur`() = context.close()
 
+    //    @Ignore
     @Test
-    fun `signup account`(): Unit = runBlocking {
+    fun `register user`() = runBlocking {
         //TODO: compter les user_auth comme avec user
         //        log.info("count 1 user authorities: ${context.getBean<UserAuthRepository>().count()}")
         //        log.info("count 2 user authorities: ${context.getBean<UserAuthRepository>().count()}")
-        val countUserBefore = context.getBean<IAccountModelRepository>().count()
-//        val countUserAuthBefore = context.getBean<UserAuthRepository>().count()
+        val countUserBefore = context.getBean<UserRepository>().count()
+        val countUserAuthBefore = context.getBean<UserAuthRepository>().count()
         assertEquals(0, countUserBefore)
-//        assertEquals(0, countUserAuthBefore)
+        assertEquals(0, countUserAuthBefore)
         client
             .post()
-            .uri("/api/signup")
+            .uri("/api/register")
             .bodyValue(defaultAccount)
             .exchange()
             .returnResult<Unit>().apply {
@@ -71,14 +74,13 @@ internal class SignUpAccountControllerTest {
                 responseBodyContent?.isEmpty()?.let { assert(it) }
                 assertEquals(expected = HttpStatus.CREATED, actual = status)
             }
-        assertEquals(countUserBefore + 1, context.getBean<IAccountModelRepository>().count())
+        assertEquals(countUserBefore + 1, context.getBean<UserRepository>().count())
 //        assertEquals(countUserAuthBefore + 1, context.getBean<UserAuthRepository>().count())
         //clean after test
-        context.getBean<IAccountModelRepository>().run { delete(findOneByLogin(defaultAccount.login!!)!!) }
-//        context.getBean<UserAuthRepository>().deleteAll()
-//        context.getBean<UserRepository>().deleteAll()
-//        assertEquals(countUserAuthBefore, context.getBean<UserAuthRepository>().count())
-        assertEquals(countUserBefore, context.getBean<IAccountModelRepository>().count())
+        context.getBean<UserAuthRepository>().deleteAll()
+        context.getBean<UserRepository>().deleteAll()
+        assertEquals(countUserAuthBefore, context.getBean<UserAuthRepository>().count())
+        assertEquals(countUserBefore, context.getBean<UserRepository>().count())
     }
 
     //TODO: register un user avec un email invalid

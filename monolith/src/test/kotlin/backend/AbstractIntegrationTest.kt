@@ -44,7 +44,7 @@ import kotlin.test.assertTrue
 @SpringBootTest
 @ActiveProfiles("test")
 /* AbstractBaseFunctionalTest */
-internal abstract class AbstractBaseSpringBootTest {
+internal abstract class AbstractIntegrationTest {
     fun User.unlockUser() {
         apply {
             if (id != null) {

@@ -1,4 +1,8 @@
-@file:Suppress("unused","HttpUrlsUsage", "MemberVisibilityCanBePrivate")
+@file:Suppress(
+    "unused",
+    "HttpUrlsUsage",
+    "MemberVisibilityCanBePrivate"
+)
 
 package backend
 
