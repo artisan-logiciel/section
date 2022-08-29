@@ -9,6 +9,7 @@ import backend.tdd.testLoader
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
+import org.springframework.beans.factory.getBean
 import org.springframework.boot.runApplication
 import org.springframework.context.ConfigurableApplicationContext
 import org.springframework.http.HttpStatus
@@ -42,9 +43,9 @@ internal class SignUpAccountControllerTest {
         //TODO: compter les user_auth comme avec user
         //        log.info("count 1 user authorities: ${context.getBean<UserAuthRepository>().count()}")
         //        log.info("count 2 user authorities: ${context.getBean<UserAuthRepository>().count()}")
-//        val countUserBefore = context.getBean<UserRepository>().count()
+        val countUserBefore = context.getBean<IAccountModelRepository>().count()
 //        val countUserAuthBefore = context.getBean<UserAuthRepository>().count()
-//        assertEquals(0, countUserBefore)
+        assertEquals(0, countUserBefore)
 //        assertEquals(0, countUserAuthBefore)
         client
             .post()

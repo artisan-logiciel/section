@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 package backend.config
 
 import io.r2dbc.spi.ConnectionFactory
@@ -47,8 +49,7 @@ class DatabaseConnectionConfiguration(
 
 @Configuration
 @EnableTransactionManagement
-@EnableR2dbcRepositories("backend.repositories.entities")
-@Suppress("unused")
+@EnableR2dbcRepositories("backend")
 class DatabaseConfiguration(
     private val properties: ApplicationProperties
 ) {

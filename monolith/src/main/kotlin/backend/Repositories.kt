@@ -2,6 +2,7 @@
 
 package backend
 
+import backend.Log.log
 import backend.RepositoryInMemory.accounts
 import backend.repositories.entities.UserAuthority
 import org.springframework.stereotype.Repository
