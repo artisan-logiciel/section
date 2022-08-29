@@ -32,7 +32,7 @@ interface IAccountModelRepository {
 
     suspend fun findOneByEmail(email: String): AccountModel?
 
-    suspend fun save(accountModel: AccountCredentialsModel): AccountModel?
+    suspend fun save(accountCredentialsModel: AccountCredentialsModel): AccountModel?
 
     suspend fun delete(account: AccountModel)
 
@@ -40,6 +40,9 @@ interface IAccountModelRepository {
 
     suspend fun count(): Long
     suspend fun suppress(account: AccountModel)
+    suspend fun signup(model: AccountCredentialsModel) {
+        save(model)
+    }
 }
 
 @Repository
@@ -49,19 +52,24 @@ class AccountRepositoryInMemory(
 ) : IAccountModelRepository {
 
     companion object {
-        val accounts by lazy { mutableSetOf<AccountCredentialsModel>() }
+        val accounts by lazy { mutableSetOf<AccountEntity>() }
     }
 
     override suspend fun findOneByLogin(login: String): AccountModel? =
-        accounts.find { it.login?.lowercase().equals(login.lowercase()) }?.toAccount()
+        accounts.find { it.login?.lowercase().equals(login.lowercase()) }?.toModel()
 
     override suspend fun findOneByEmail(email: String): AccountModel? =
-        accounts.find { it.email?.lowercase().equals(email.lowercase()) }?.toAccount()
+        accounts.find { it.email?.lowercase().equals(email.lowercase()) }?.toModel()
 
-    override suspend fun save(accountModel: AccountCredentialsModel): AccountModel? =
-        accountModel.copy(id = UUID.randomUUID()).apply {
-            accounts.add(accountModel)
-        }.toAccount()
+    override suspend fun save(accountCredentialsModel: AccountCredentialsModel): AccountModel? =
+        if (
+            accountCredentialsModel.id == null
+            && accounts.none { it.login?.lowercase() == accountCredentialsModel.login }
+            && accounts.none { it.email?.lowercase() == accountCredentialsModel.email }
+        ) accountCredentialsModel.copy(id = UUID.randomUUID())
+            .apply { accounts.add(AccountEntity(this)) }
+            .toAccount()
+        else accountCredentialsModel.toAccount()
 
     override suspend fun delete(account: AccountModel) {
         accounts.apply { if (isNotEmpty()) remove(find { it.id == account.id }) }

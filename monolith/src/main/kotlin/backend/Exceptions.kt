@@ -1,6 +1,8 @@
 package backend
 
 //import org.springframework.security.core.AuthenticationException
+import backend.Constants.PASSWORD_MAX_LENGTH
+import backend.Constants.PASSWORD_MIN_LENGTH
 import org.apache.commons.lang3.StringUtils
 class UsernameAlreadyUsedException :
     RuntimeException("Login name already used!") {
@@ -15,8 +17,8 @@ class InvalidPasswordException :
     }
     fun isPasswordLengthInvalid(password: String?): Boolean =
         if (StringUtils.isEmpty(password)) false
-        else (password?.length!! < Constants.PASSWORD_MIN_LENGTH) ||
-                (password.length > Constants.PASSWORD_MAX_LENGTH)
+        else (password?.length!! < PASSWORD_MIN_LENGTH) ||
+                (password.length > PASSWORD_MAX_LENGTH)
 }
 class EmailAlreadyUsedException :
     RuntimeException("Email is already in use!") {

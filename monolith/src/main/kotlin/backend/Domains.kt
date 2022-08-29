@@ -3,6 +3,7 @@ package backend
 import java.time.Instant
 import java.util.*
 import javax.validation.constraints.*
+import javax.validation.constraints.Email as EmailConstraints
 
 /**
  * Représente le user view model sans le password
@@ -17,7 +18,7 @@ open class Account(
     open var firstName: String? = null,
     @field:Size(max = 50)
     open var lastName: String? = null,
-    @field:javax.validation.constraints.Email
+    @field:EmailConstraints
     @field:Size(min = 5, max = 254)
     open var email: String? = null,
     @field:Size(max = 256)
@@ -92,7 +93,7 @@ data class AccountDomain(
     val firstName: String? = null,
     @field:Size(max = 50)
     val lastName: String? = null,
-    @field:javax.validation.constraints.Email
+    @field:EmailConstraints
     @field:Size(min = 5, max = 254)
     val email: String? = null,
     @field:Size(max = 256)
@@ -129,7 +130,7 @@ data class AccountCredentialsDomain(
     val firstName: String? = null,
     @field:Size(max = 50)
     val lastName: String? = null,
-    @field:javax.validation.constraints.Email
+    @field:EmailConstraints
     @field:Size(min = 5, max = 254)
     val email: String? = null,
     @field:Size(max = 256)
@@ -185,7 +186,7 @@ data class AccountModel(
     val firstName: String? = null,
     @field:Size(max = 50)
     val lastName: String? = null,
-    @field:javax.validation.constraints.Email
+    @field:EmailConstraints
     @field:Size(min = 5, max = 254)
     val email: String? = null,
     @field:Size(max = 256)
@@ -223,7 +224,7 @@ data class AccountCredentialsModel(
     val firstName: String? = null,
     @field:Size(max = 50)
     val lastName: String? = null,
-    @field:javax.validation.constraints.Email
+    @field:EmailConstraints
     @field:Size(min = 5, max = 254)
     val email: String? = null,
     @field:Size(max = 256)
