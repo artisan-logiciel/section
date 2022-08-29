@@ -5,8 +5,4 @@
 * browser
 * desktop
 * server
-
-== codebase
-
-https://start.spring.io/#!type=gradle-project&language=kotlin&platformVersion=2.7.3&packaging=jar&jvmVersion=18&groupId=com.cheroliv&artifactId=monolith-webflux&name=monolith-webflux&description=monolith%20webflux%20codebase&packageName=backend&dependencies=devtools,configuration-processor,webflux,graphql,thymeleaf,security,data-r2dbc,h2,postgresql,validation,mail,actuator[from scratch]
-
+* monolith
