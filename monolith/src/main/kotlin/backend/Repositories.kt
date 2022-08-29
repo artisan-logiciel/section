@@ -2,21 +2,29 @@
 
 package backend
 
-import backend.RepositoryInMemory.accountAuthorities
-import backend.RepositoryInMemory.accounts
+
 import org.springframework.stereotype.Repository
 import java.util.*
 
-object RepositoryInMemory {
-    val accounts by lazy { mutableSetOf<AccountCredentialsModel>() }
-    val authorities by lazy {
-        mutableSetOf(
-            "ADMIN",
-            "USER",
-            "ANONYMOUS"
-        ).map { AuthorityEntity(it) }.toSet()
+interface IAuthorityRepository {
+    suspend fun findOne(role: String): AuthorityEntity?
+}
+
+@Repository
+class AuthorityRepositoryInMemory : IAuthorityRepository {
+    companion object {
+        val authorities by lazy {
+            mutableSetOf(
+                "ADMIN",
+                "USER",
+                "ANONYMOUS"
+            ).map { AuthorityEntity(it) }.toSet()
+        }
     }
-    val accountAuthorities by lazy { mutableSetOf<UserAuthority>() }
+
+    override suspend fun findOne(role: String): AuthorityEntity? =
+        authorities.find { it.role == role }
+
 }
 
 interface IAccountModelRepository {
@@ -33,8 +41,16 @@ interface IAccountModelRepository {
     suspend fun count(): Long
 }
 
-@Repository("accountModelRepository")
-class AccountRepositoryInMemory : IAccountModelRepository {
+@Repository
+class AccountRepositoryInMemory(
+    private val accountAuthorityRepository: IAccountAuthorityRepository,
+    private val authorityRepository: IAuthorityRepository
+) : IAccountModelRepository {
+
+    companion object {
+        val accounts by lazy { mutableSetOf<AccountCredentialsModel>() }
+    }
+
     override suspend fun findOneByLogin(login: String): AccountModel? =
         accounts.find { it.login?.lowercase().equals(login.lowercase()) }?.toAccount()
 
@@ -47,7 +63,6 @@ class AccountRepositoryInMemory : IAccountModelRepository {
         }.toAccount()
 
     override suspend fun delete(account: AccountModel) {
-//        accountAuthorities.apply { filter { it.userId == account.id }.map { remove(it) } }
         accounts.apply { if (isNotEmpty()) remove(find { it.id == account.id }) }
     }
 
@@ -71,7 +86,12 @@ interface IAccountAuthorityRepository {
     suspend fun deleteAllByAccountId(id: UUID)
 }
 
+@Repository
 class AccountAuthorityRepositoryInMemory : IAccountAuthorityRepository {
+    companion object {
+        val accountAuthorities by lazy { mutableSetOf<UserAuthority>() }
+    }
+
     override suspend fun count(): Long = accountAuthorities.size.toLong()
 
     override suspend fun save(accountAuthority: UserAuthority): UserAuthority =

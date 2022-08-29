@@ -5,7 +5,6 @@ package backend
 import backend.Account.AccountCredentials
 import backend.services.AccountService
 import org.springframework.http.HttpStatus
-import org.springframework.http.HttpStatus.CREATED
 import org.springframework.web.bind.annotation.*
 import java.util.*
 import javax.validation.Valid
@@ -51,7 +50,7 @@ class RegistrationController(
      * @throws backend.http.problems.LoginAlreadyUsedProblem {@code 400 (Bad Request)} if the login is already used.
      */
     @PostMapping("register")
-    @ResponseStatus(CREATED)
+    @ResponseStatus(HttpStatus.CREATED)
     suspend fun registerAccount(
         @RequestBody @Valid accountCredentials: AccountCredentials
     ) = accountService.register(accountCredentials)
