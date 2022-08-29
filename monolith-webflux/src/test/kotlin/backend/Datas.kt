@@ -1,9 +1,5 @@
 package backend
 
-//import backend.Constants
-//import backend.domain.Account.AccountCredentials
-//import backend.repositories.entities.Authority
-//import backend.repositories.entities.User
 import org.apache.commons.lang3.StringUtils
 import java.time.Instant
 import kotlin.test.assertEquals
@@ -17,16 +13,7 @@ object Datas {
     const val USER2_LOGIN = "test2"
     const val USER3_LOGIN = "test3"
 
-    val defaultAccount = accountCredentialsFactory(USER_LOGIN).apply {
-        assertEquals("$USER_LOGIN@acme.com", email)
-        assertEquals(Constants.DEFAULT_LANGUAGE, langKey)
-        assertEquals(Constants.SYSTEM_USER, createdBy)
-        assertEquals(Constants.SYSTEM_USER, lastModifiedBy)
-        assertEquals("http://placehold.it/50x50", imageUrl)
-        assert(createdDate!!.isBefore(Instant.now()))
-        assert(lastModifiedDate!!.isBefore(Instant.now()))
-        setOf(login, firstName, lastName).map { assertEquals(USER_LOGIN, it) }
-    }
+    val defaultAccount = accountCredentialsFactory(USER_LOGIN)
     val adminAccount = accountCredentialsFactory(ADMIN_LOGIN)
     val userTest1Account = accountCredentialsFactory(USER1_LOGIN)
     val userTest2Account = accountCredentialsFactory(USER2_LOGIN)
@@ -39,27 +26,35 @@ object Datas {
 
     val users = setOf(defaultUser, admin, userTest1, userTest2, userTest3)
 
+//    defaultAccount.apply {
+//        assertEquals("${Datas.USER_LOGIN}@acme.com", email)
+//        assertEquals(Constants.DEFAULT_LANGUAGE, langKey)
+//        assertEquals(Constants.SYSTEM_USER, createdBy)
+//        assertEquals(Constants.SYSTEM_USER, lastModifiedBy)
+//        assertEquals("http://placehold.it/50x50", imageUrl)
+//        assert(createdDate!!.isBefore(Instant.now()))
+//        assert(lastModifiedDate!!.isBefore(Instant.now()))
+//        setOf(login, firstName, lastName).map { assertEquals(Datas.USER_LOGIN, it) }
+//    }
 
 }
 
 
-fun accountCredentialsFactory(login: String)
-        : AccountCredentials = AccountCredentials(
-    password = login
-).apply {
-    this.login = login
-    firstName = login
-    lastName = login
-    email = "$login@acme.com"
-    langKey = Constants.DEFAULT_LANGUAGE
-    createdBy = Constants.SYSTEM_USER
-    createdDate = Instant.now()
-    lastModifiedBy = Constants.SYSTEM_USER
-    lastModifiedDate = Instant.now()
-    imageUrl = "http://placehold.it/50x50"
-}
+fun accountCredentialsFactory(login: String): UserCredentialsModel = UserCredentialsModel(
+    password = login,
+    login = login,
+    firstName = login,
+    lastName = login,
+    email = "$login@acme.com",
+    langKey = Constants.DEFAULT_LANGUAGE,
+    createdBy = Constants.SYSTEM_USER,
+    createdDate = Instant.now(),
+    lastModifiedBy = Constants.SYSTEM_USER,
+    lastModifiedDate = Instant.now(),
+    imageUrl = "http://placehold.it/50x50",
+)
 
-fun userFactory(accountCredentials: AccountCredentials): User = User(
+fun userFactory(accountCredentials: UserCredentialsModel): UserEntity = UserEntity(
     login = accountCredentials.login,
     password = accountCredentials.password,
     firstName = accountCredentials.firstName,
