@@ -1,7 +1,7 @@
+@file:Suppress("unused")
+
 package backend
 
-import backend.domain.Account
-import backend.services.AccountService
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
 import javax.validation.Valid
@@ -12,6 +12,7 @@ class SignUpController(
     private val accountModelService: AccountModelService
 ) {
     internal class AccountException(message: String) : RuntimeException(message)
+
     /**
      * {@code POST  /signup} : register the user.
      *
