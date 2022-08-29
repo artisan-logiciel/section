@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 package backend.services
 
 import backend.domain.Account
@@ -11,7 +13,6 @@ import org.springframework.transaction.annotation.Transactional
 
 //import org.springframework.security.crypto.password.PasswordEncoder
 @Service(value = "accountService")
-@Suppress("unused")
 class AccountService(
     private val accountRepository: AccountRepository,
     private val mailService: MailService,

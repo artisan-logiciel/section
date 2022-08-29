@@ -8,7 +8,7 @@ import javax.validation.constraints.*
 /**
  * Représente le user view model sans le password
  */
-data class UserModel(
+data class AccountModel(
     val id: UUID? = null,
     @field:NotBlank
     @field:Pattern(regexp = Constants.LOGIN_REGEX)
@@ -39,7 +39,7 @@ data class UserModel(
 /**
  * Représente l'account view model avec le password
  */
-data class UserCredentialsModel(
+data class AccountCredentialsModel(
     @field:NotNull
     @field:Size(
         min = Constants.PASSWORD_MIN_LENGTH,

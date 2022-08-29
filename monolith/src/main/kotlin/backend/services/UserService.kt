@@ -86,8 +86,8 @@ class UserService
 //                    langKey = account.langKey,
 //                    activated = USER_INITIAL_ACTIVATED_VALUE,
 //                    activationKey = generateActivationKey,
-//                    authorities = mutableSetOf<Authority>().apply {
-//                        add(Authority(role = ROLE_USER))
+//                    authorities = mutableSetOf<AuthorityEntity>().apply {
+//                        add(AuthorityEntity(role = ROLE_USER))
 //                    })
 //            )
 //        }
@@ -100,7 +100,7 @@ class UserService
 //            resetDate = now()
 //            activated = true
 //            account.authorities?.map {
-//                authorities?.remove(Authority(it))
+//                authorities?.remove(AuthorityEntity(it))
 //                authorityRepository.findById(it).apply auth@{
 //                    if (this@auth != null) authorities!!.add(this@auth)
 //                }
@@ -132,7 +132,7 @@ class UserService
 //                langKey = account.langKey
 //                if (!authorities.isNullOrEmpty()) {
 //                    account.authorities!!.forEach {
-//                        authorities?.remove(Authority(it))
+//                        authorities?.remove(AuthorityEntity(it))
 //                        authorityRepository.findById(it).apply auth@{
 //                            if (this@auth != null) authorities!!.add(this@auth)
 //                        }

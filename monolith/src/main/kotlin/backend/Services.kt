@@ -9,7 +9,7 @@ package backend
 //    val mailService: MailService
 //) {
 //    @Transactional
-//    suspend fun register(user: UserCredentialsModel) {
+//    suspend fun register(user: AccountCredentialsModel) {
 //        log.info("registration for $user")
 //    }
 //}

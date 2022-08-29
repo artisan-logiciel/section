@@ -44,7 +44,7 @@ data class EmailEntity(
 }
 
 @Table("`authority`")
-data class Authority(
+data class AuthorityEntity(
     @Id
     @field:NotNull
     @field:Size(max = 50)
@@ -55,7 +55,7 @@ data class Authority(
 }
 
 @Table("`user_authority`")
-data class UserAuthority(
+data class AccountAuthority(
     @Id var id: Long? = null,
     @field:NotNull
     val userId: UUID,
@@ -64,7 +64,7 @@ data class UserAuthority(
 )
 
 @Table("`user`")
-data class UserEntity(
+data class AccountEntity(
     @Id var id: UUID? = null,
     @field:NotNull
     @field:Pattern(regexp = LOGIN_REGEX)
@@ -95,7 +95,7 @@ data class UserEntity(
     var resetKey: String? = null,
     var resetDate: Instant? = null,
     @JsonIgnore @Transient
-    var authorities: MutableSet<Authority>? = mutableSetOf(),
+    var authorities: MutableSet<AuthorityEntity>? = mutableSetOf(),
     @JsonIgnore
     var createdBy: String? = null,
     @JsonIgnore @CreatedDate
@@ -145,26 +145,26 @@ data class UserEntity(
     )
 
 
-    constructor(userModel: UserCredentialsModel) : this() {
-        UserEntity().apply {
-            this@UserEntity.id = userModel.id
-            this@UserEntity.login = userModel.login
-            this@UserEntity.email = userModel.email
-            this@UserEntity.firstName = userModel.firstName
-            this@UserEntity.lastName = userModel.lastName
-            this@UserEntity.langKey = userModel.langKey
-            this@UserEntity.activated = userModel.activated
-            this@UserEntity.createdBy = userModel.createdBy
-            this@UserEntity.createdDate = userModel.createdDate
-            this@UserEntity.lastModifiedBy = userModel.lastModifiedBy
-            this@UserEntity.lastModifiedDate = userModel.lastModifiedDate
-            this@UserEntity.imageUrl = userModel.imageUrl
-            this@UserEntity.authorities = userModel.authorities?.map { Authority(it) }?.toMutableSet()
-            this@UserEntity.password = userModel.password
+    constructor(model: AccountCredentialsModel) : this() {
+        AccountEntity().apply {
+            this@AccountEntity.id = model.id
+            this@AccountEntity.login = model.login
+            this@AccountEntity.email = model.email
+            this@AccountEntity.firstName = model.firstName
+            this@AccountEntity.lastName = model.lastName
+            this@AccountEntity.langKey = model.langKey
+            this@AccountEntity.activated = model.activated
+            this@AccountEntity.createdBy = model.createdBy
+            this@AccountEntity.createdDate = model.createdDate
+            this@AccountEntity.lastModifiedBy = model.lastModifiedBy
+            this@AccountEntity.lastModifiedDate = model.lastModifiedDate
+            this@AccountEntity.imageUrl = model.imageUrl
+            this@AccountEntity.authorities = model.authorities?.map { AuthorityEntity(it) }?.toMutableSet()
+            this@AccountEntity.password = model.password
         }
     }
 
-    fun toUserModel(): UserModel = UserModel(
+    fun toModel(): AccountModel = AccountModel(
         id = id,
         login = login,
         firstName = firstName,
@@ -180,7 +180,7 @@ data class UserEntity(
         authorities = authorities?.map { it.role }?.toMutableSet()
     )
 
-    fun copyAuthorities(that: UserEntity): UserEntity = this.apply {
+    fun copyAuthorities(that: AccountEntity): AccountEntity = this.apply {
         if (authorities == null) authorities = mutableSetOf()
         else authorities!!.clear()
         that.authorities?.forEach {
