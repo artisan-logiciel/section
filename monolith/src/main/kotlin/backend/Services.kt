@@ -31,14 +31,8 @@ class AccountModelService(
             }
         }
         accountRepository.signup(model)
-//            .also {
-//            //TODO: mail
-//            when {
-//                accountRepository
-//                    .findActivationKeyByLogin(login = accountCredentials.login!!)
-//                    .isNotEmpty() -> mailService.sendActivationEmail(it)
-//            }
-//        }
+        //TODO: refactor mailService pour prendre des AccountModel
+//        mailService.sendActivationEmail(model.toAccount())
     }
 
     private suspend fun suppress(model: AccountCredentialsModel) {

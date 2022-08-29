@@ -40,9 +40,7 @@ interface IAccountModelRepository {
 
     suspend fun count(): Long
     suspend fun suppress(account: AccountModel)
-    suspend fun signup(model: AccountCredentialsModel) {
-        save(model)
-    }
+    suspend fun signup(model: AccountCredentialsModel)
 }
 
 @Repository
@@ -83,6 +81,10 @@ class AccountRepositoryInMemory(
     override suspend fun count(): Long = accounts.size.toLong()
     override suspend fun suppress(account: AccountModel) {
         TODO("Not yet implemented")
+    }
+
+    override suspend fun signup(model: AccountCredentialsModel) {
+        save(model)
     }
 }
 
