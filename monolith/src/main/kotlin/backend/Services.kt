@@ -1,18 +1,15 @@
 package backend
 
-//import backend.Log.log
-//import org.springframework.stereotype.Service
-//import org.springframework.transaction.annotation.Transactional
-//@Service
-//class UserService(
-//    val userRepository: IUserRepository,
-//    val mailService: MailService
-//) {
-//    @Transactional
-//    suspend fun register(user: AccountCredentialsModel) {
-//        log.info("registration for $user")
-//    }
-//}
-//@Service
-//class MailService
+import backend.Log.log
+import backend.services.MailService
+import org.springframework.stereotype.Service
 
+@Service
+class AccountModelService(
+    val accountModelRepository: IAccountModelRepository,
+    val mailService: MailService
+) {
+    suspend fun signup(model: AccountCredentialsModel) {
+        log.info("signup for $model")
+    }
+}

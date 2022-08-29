@@ -66,4 +66,6 @@ class AccountService(
 //                } else log.debug("No user found with activation key {}", key)
 //            }
 //        }
+
+
 }

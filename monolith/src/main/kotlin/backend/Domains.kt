@@ -69,7 +69,21 @@ data class AccountCredentialsModel(
     val lastModifiedBy: String? = null,
     val lastModifiedDate: Instant? = null,
     val authorities: Set<String>? = null
-)
+) {
+    fun toAccount(): AccountModel = AccountModel(
+        id = id,
+        login = login,
+        firstName = firstName,
+        email = email,
+        activated = activated,
+        langKey = langKey,
+        createdBy = createdBy,
+        createdDate = createdDate,
+        lastModifiedBy = lastModifiedBy,
+        lastModifiedDate = lastModifiedDate,
+        authorities = authorities
+    )
+}
 
 /**
  * représente le user view model minimaliste pour la view
