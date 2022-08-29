@@ -1,4 +1,4 @@
-package backend.tdd
+package backend
 
 import backend.Log.log
 import org.springframework.beans.factory.annotation.Autowired

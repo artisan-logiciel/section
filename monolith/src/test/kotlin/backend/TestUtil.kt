@@ -1,8 +1,7 @@
 @file:JvmName("TestUtil")
 
-package backend.tdd
+package backend
 
-import backend.User
 import com.fasterxml.jackson.annotation.JsonInclude.Include.NON_EMPTY
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.SerializationFeature.WRITE_DURATIONS_AS_TIMESTAMPS

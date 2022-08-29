@@ -1,4 +1,4 @@
-package backend.tdd
+package backend
 
 import backend.Data.defaultUser
 import kotlinx.coroutines.runBlocking

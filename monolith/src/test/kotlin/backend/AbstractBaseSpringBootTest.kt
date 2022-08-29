@@ -4,14 +4,12 @@
     "SqlDialectInspection", "unused"
 )
 
-package backend.tdd
+package backend
 
 import backend.Log.log
 import backend.Constants.ROLE_ADMIN
 import backend.Constants.ROLE_ANONYMOUS
 import backend.Constants.ROLE_USER
-import backend.User
-import backend.UserAuthority
 import backend.Data.defaultAccount
 import backend.Data.defaultUser
 import com.fasterxml.jackson.databind.ObjectMapper

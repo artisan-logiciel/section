@@ -5,7 +5,6 @@
 package backend
 
 import backend.Data.defaultAccount
-import backend.tdd.testLoader
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
