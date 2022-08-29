@@ -28,8 +28,9 @@ import java.time.LocalDateTime.ofInstant
 import java.time.ZoneOffset.UTC
 
 @Configuration
-@Suppress("unused")
-class DatabaseConnectionConfiguration(
+@EnableTransactionManagement
+@EnableR2dbcRepositories("backend")
+class DatabaseConfiguration(
     private val properties: ApplicationProperties
 ) {
     @Bean
@@ -45,15 +46,6 @@ class DatabaseConnectionConfiguration(
                 )
             )
         }
-}
-
-@Configuration
-@EnableTransactionManagement
-@EnableR2dbcRepositories("backend")
-class DatabaseConfiguration(
-    private val properties: ApplicationProperties
-) {
-
     @Bean
     fun reactiveTransactionManager(
         connectionFactory: ConnectionFactory

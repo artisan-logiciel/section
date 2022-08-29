@@ -2,7 +2,7 @@
 
 package backend.http
 
-import backend.domain.Account.AccountCredentials
+import backend.Account.AccountCredentials
 import backend.services.AccountService
 import org.springframework.http.HttpStatus.CREATED
 import org.springframework.web.bind.annotation.*
