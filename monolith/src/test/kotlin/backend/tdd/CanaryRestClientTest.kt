@@ -1,7 +1,7 @@
 package backend.tdd
 
 import backend.Server
-import backend.Server.Log.log
+import backend.Log.log
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
 import org.springframework.boot.runApplication

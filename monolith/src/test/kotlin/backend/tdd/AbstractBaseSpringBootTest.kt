@@ -6,14 +6,14 @@
 
 package backend.tdd
 
-import backend.Server.Log.log
+import backend.Log.log
 import backend.config.Constants.ROLE_ADMIN
 import backend.config.Constants.ROLE_ANONYMOUS
 import backend.config.Constants.ROLE_USER
 import backend.repositories.entities.User
 import backend.repositories.entities.UserAuthority
-import backend.tdd.Datas.defaultAccount
-import backend.tdd.Datas.defaultUser
+import backend.Datas.defaultAccount
+import backend.Datas.defaultUser
 import com.fasterxml.jackson.databind.ObjectMapper
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.count

@@ -4,12 +4,10 @@
 
 package backend.http
 
+import backend.Datas.defaultAccount
 import backend.Server
-import backend.Server.Log.log
-import backend.domain.Account
 import backend.repositories.UserAuthRepository
 import backend.repositories.UserRepository
-import backend.tdd.Datas.defaultAccount
 import backend.tdd.testLoader
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.AfterAll

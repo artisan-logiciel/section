@@ -1,6 +1,6 @@
 package backend.tdd
 
-import backend.Server.Log.log
+import backend.Log.log
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.context.ApplicationContext

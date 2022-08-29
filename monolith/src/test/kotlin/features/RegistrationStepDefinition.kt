@@ -1,7 +1,7 @@
 package features
 
 import backend.Server
-import backend.Server.Log.log
+import backend.Log.log
 import backend.services.RandomUtils
 import com.fasterxml.jackson.databind.ObjectMapper
 import backend.domain.Account

@@ -2,7 +2,7 @@
 
 package backend.repositories
 
-import backend.Server.Log.log
+import backend.Log.log
 import backend.repositories.entities.User
 import backend.config.Constants.SYSTEM_USER
 import backend.domain.Account

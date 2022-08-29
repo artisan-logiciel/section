@@ -1,12 +1,9 @@
 package backend.services
 
-import backend.Server
-import backend.Server.Log.log
 import backend.domain.Account
 import backend.domain.Account.AccountCredentials
 import backend.repositories.AccountRepository
 import backend.services.RandomUtils.generateActivationKey
-import backend.services.exceptions.EmailAlreadyUsedException
 import backend.services.exceptions.InvalidPasswordException
 import backend.services.exceptions.UsernameAlreadyUsedException
 import org.springframework.stereotype.Service
@@ -20,38 +17,6 @@ class AccountService(
     private val mailService: MailService,
 //    private val passwordEncoder:PasswordEncoder
 ) {
-    //    @Transactional
-//    suspend fun register(accountCredentials: AccountCredentials) {
-//
-//        InvalidPasswordException().apply {
-//            if (isPasswordLengthInvalid(accountCredentials.password)) throw this
-//        }
-//
-//
-//        accountRepository.findOneByLogin(accountCredentials.login!!).run {
-//            when {
-//                !activated -> accountRepository.delete(account = accountCredentials)
-//                else -> throw UsernameAlreadyUsedException()
-//            }
-//        }
-//
-//
-//        accountRepository.findOneByEmail(accountCredentials.email!!).run {
-//            when {
-//                !activated -> accountRepository.delete(account = accountCredentials)
-//                else -> throw EmailAlreadyUsedException()
-//            }
-//        }
-//
-//        accountRepository.save(
-//            accountCredentials.apply {
-//                activationKey = generateActivationKey
-//                //                password=PasswordEncoder(password)
-//            }
-//        )
-//
-//        mailService.sendActivationEmail(accountCredentials)
-//    }
     @Transactional
     suspend fun register(
         accountCredentials: AccountCredentials

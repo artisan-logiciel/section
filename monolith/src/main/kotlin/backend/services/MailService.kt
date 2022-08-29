@@ -1,6 +1,6 @@
 package backend.services
 
-import backend.Server.Log.log
+import backend.Log.log
 import backend.config.ApplicationProperties
 import backend.config.Constants.BASE_URL
 import backend.config.Constants.USER

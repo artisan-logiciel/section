@@ -1,4 +1,6 @@
-package backend.tdd
+@file:Suppress("unused","HttpUrlsUsage", "MemberVisibilityCanBePrivate")
+
+package backend
 
 import backend.config.Constants
 import backend.domain.Account.AccountCredentials
@@ -6,10 +8,8 @@ import backend.repositories.entities.Authority
 import backend.repositories.entities.User
 import org.apache.commons.lang3.StringUtils
 import java.time.Instant
-import kotlin.test.assertEquals
 
 
-@Suppress("HttpUrlsUsage", "MemberVisibilityCanBePrivate")
 object Datas {
     const val USER_LOGIN = "user"
     const val ADMIN_LOGIN = "admin"
@@ -65,7 +65,6 @@ fun userFactory(accountCredentials: AccountCredentials): User = User(
         }
     })
 
-@Suppress("unused")
 fun nameToLogin(userList: List<String>): List<String> = userList.map { s: String ->
     StringUtils.stripAccents(s.lowercase().replace(oldChar = ' ', newChar = '.'))
 }

@@ -1,6 +1,6 @@
 package backend.config
 
-import backend.Server.Log.log
+import backend.Log.log
 import org.springframework.aop.interceptor.AsyncUncaughtExceptionHandler
 import org.springframework.aop.interceptor.SimpleAsyncUncaughtExceptionHandler
 import org.springframework.beans.factory.DisposableBean
