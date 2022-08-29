@@ -1,6 +1,6 @@
 @file:Suppress("unused")
 
-package backend.http.problems
+package backend
 
 //import backend.config.Constants.CONSTRAINT_VIOLATION_TYPE
 //import backend.config.Constants.DEFAULT_TYPE

@@ -3,7 +3,7 @@
 package backend.repositories
 
 import backend.Log.log
-import backend.repositories.entities.User
+import backend.User
 import backend.config.Constants.SYSTEM_USER
 import backend.Account
 import backend.Account.AccountCredentials

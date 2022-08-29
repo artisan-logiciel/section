@@ -7,7 +7,7 @@
 package backend.repositories
 
 import org.springframework.data.repository.kotlin.CoroutineSortingRepository
-import backend.repositories.entities.Email
+import backend.Email
 import org.springframework.stereotype.Repository
 
 @Repository("emailRepository")

@@ -5,7 +5,7 @@ package backend.services
 import backend.Account
 import backend.Account.AccountCredentials
 import backend.repositories.AccountRepository
-import backend.services.RandomUtils.generateActivationKey
+import backend.RandomUtils.generateActivationKey
 import backend.services.exceptions.InvalidPasswordException
 import backend.services.exceptions.UsernameAlreadyUsedException
 import org.springframework.stereotype.Service

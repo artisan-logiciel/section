@@ -1,4 +1,4 @@
-package backend.http.filters
+package backend
 
 //@Component("jwtFilter")
 //@Suppress("unused")

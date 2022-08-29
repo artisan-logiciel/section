@@ -18,7 +18,7 @@ open class Account(
     open var firstName: String? = null,
     @field:Size(max = 50)
     open var lastName: String? = null,
-    @field:Email
+    @field:javax.validation.constraints.Email
     @field:Size(min = 5, max = 254)
     open var email: String? = null,
     @field:Size(max = 256)
@@ -93,7 +93,7 @@ data class AccountDomain(
     val firstName: String? = null,
     @field:Size(max = 50)
     val lastName: String? = null,
-    @field:Email
+    @field:javax.validation.constraints.Email
     @field:Size(min = 5, max = 254)
     val email: String? = null,
     @field:Size(max = 256)
@@ -130,7 +130,7 @@ data class AccountCredentialsDomain(
     val firstName: String? = null,
     @field:Size(max = 50)
     val lastName: String? = null,
-    @field:Email
+    @field:javax.validation.constraints.Email
     @field:Size(min = 5, max = 254)
     val email: String? = null,
     @field:Size(max = 256)
@@ -186,7 +186,7 @@ data class AccountModel(
     val firstName: String? = null,
     @field:Size(max = 50)
     val lastName: String? = null,
-    @field:Email
+    @field:javax.validation.constraints.Email
     @field:Size(min = 5, max = 254)
     val email: String? = null,
     @field:Size(max = 256)
@@ -224,7 +224,7 @@ data class AccountCredentialsModel(
     val firstName: String? = null,
     @field:Size(max = 50)
     val lastName: String? = null,
-    @field:Email
+    @field:javax.validation.constraints.Email
     @field:Size(min = 5, max = 254)
     val email: String? = null,
     @field:Size(max = 256)

@@ -6,9 +6,9 @@
 
 package backend.repositories
 
-import backend.repositories.entities.Authority
-import backend.repositories.entities.User
-import backend.repositories.entities.UserAuthority
+import backend.Authority
+import backend.User
+import backend.UserAuthority
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.map
