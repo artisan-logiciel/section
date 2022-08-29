@@ -69,7 +69,7 @@ internal class SignUpAccountControllerTest {
                             ).map { assert(this@requestContent?.contains(it) ?: false) }
                         }
                     }
-//                responseBodyContent?.isEmpty()?.let { assert(it) }
+                responseBodyContent?.isEmpty()?.let { assert(it) }
                 assertEquals(expected = HttpStatus.CREATED, actual = status)
             }
         assertEquals(countUserBefore + 1, context.getBean<IAccountModelRepository>().count())
