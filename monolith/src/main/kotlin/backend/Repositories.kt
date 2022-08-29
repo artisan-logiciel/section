@@ -60,29 +60,33 @@ class AccountRepositoryInMemory : IAccountModelRepository {
 }
 
 interface IAccountAuthorityRepository {
-    suspend fun save(accountAuthority: UserAuthority): UserAuthority?
+    suspend fun save(accountAuthority: UserAuthority): UserAuthority
 
     suspend fun delete(accountAuthority: UserAuthority)
 
     suspend fun count(): Long
 
-    suspend fun deleteAllByAccountId(id:UUID)
+    suspend fun deleteAllByAccountId(id: UUID)
 }
 
 class AccountAuthorityRepositoryInMemory : IAccountAuthorityRepository {
-    override suspend fun count(): Long {
-        TODO("Not yet implemented")
-    }
+    override suspend fun count(): Long = accountAuthorities.size.toLong()
 
-    override suspend fun save(accountAuthority: UserAuthority): UserAuthority? {
-        TODO("Not yet implemented")
-    }
+
+    override suspend fun save(accountAuthority: UserAuthority): UserAuthority =
+        accountAuthority.apply { accountAuthorities.add(this) }
+
 
     override suspend fun delete(accountAuthority: UserAuthority) {
-        TODO("Not yet implemented")
+        when {
+            accountAuthorities.contains(accountAuthority) -> accountAuthorities.remove(accountAuthority)
+        }
     }
 
     override suspend fun deleteAllByAccountId(id: UUID) {
-        TODO("Not yet implemented")
+        accountAuthorities.apply {
+            filter { it.userId == id }
+                .map { remove(it) }
+        }
     }
 }
