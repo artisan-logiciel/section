@@ -1,6 +1,6 @@
 package backend.tdd
 
-import backend.Datas.defaultUser
+import backend.Data.defaultUser
 import kotlinx.coroutines.runBlocking
 import kotlin.test.Test
 import kotlin.test.assertEquals

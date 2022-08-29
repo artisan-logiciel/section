@@ -7,7 +7,7 @@ import org.apache.commons.lang3.StringUtils
 import java.time.Instant
 
 
-object Datas {
+object Data {
     const val USER_LOGIN = "user"
     const val ADMIN_LOGIN = "admin"
     const val USER1_LOGIN = "test1"
@@ -58,7 +58,7 @@ fun userFactory(accountCredentials: AccountCredentials): User = User(
     lastModifiedDate = accountCredentials.lastModifiedDate,
     authorities = mutableSetOf(Authority(role = Constants.ROLE_USER)).apply {
         when (accountCredentials.login) {
-            Datas.adminAccount.login -> add(Authority(role = Constants.ROLE_ADMIN))
+            Data.adminAccount.login -> add(Authority(role = Constants.ROLE_ADMIN))
         }
     })
 
