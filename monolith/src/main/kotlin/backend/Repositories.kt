@@ -39,6 +39,7 @@ interface IAccountModelRepository {
     suspend fun findActivationKeyByLogin(login: String): String?
 
     suspend fun count(): Long
+    suspend fun suppress(account: AccountModel)
 }
 
 @Repository
@@ -72,6 +73,9 @@ class AccountRepositoryInMemory(
         }?.activationKey
 
     override suspend fun count(): Long = accounts.size.toLong()
+    override suspend fun suppress(account: AccountModel) {
+        TODO("Not yet implemented")
+    }
 }
 
 interface IAccountAuthorityRepository {

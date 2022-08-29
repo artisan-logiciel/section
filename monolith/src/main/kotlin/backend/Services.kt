@@ -10,11 +10,15 @@ class AccountModelService(
     private val accountModelRepository: IAccountModelRepository,
     private val mailService: MailService
 ) {
+
     suspend fun signup(model: AccountCredentialsModel) {
         //TODO: reprendre register
         InvalidPasswordException().run { if (isPasswordLengthInvalid(model.password)) throw this }
-
         accountModelRepository.save(model)
+    }
+
+    private suspend fun suppress(model: AccountCredentialsModel) {
+        accountModelRepository.suppress(model.toAccount())
     }
 }
 
