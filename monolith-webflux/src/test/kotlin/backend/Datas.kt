@@ -2,7 +2,8 @@ package backend
 
 import org.apache.commons.lang3.StringUtils
 import java.time.Instant
-import kotlin.test.assertEquals
+
+
 
 
 @Suppress("HttpUrlsUsage", "MemberVisibilityCanBePrivate")
@@ -13,12 +14,12 @@ object Datas {
     const val USER2_LOGIN = "test2"
     const val USER3_LOGIN = "test3"
 
-    val defaultAccount = accountCredentialsFactory(USER_LOGIN)
+    val defaultUserModel = accountCredentialsFactory(USER_LOGIN)
     val adminAccount = accountCredentialsFactory(ADMIN_LOGIN)
     val userTest1Account = accountCredentialsFactory(USER1_LOGIN)
     val userTest2Account = accountCredentialsFactory(USER2_LOGIN)
     val userTest3Account = accountCredentialsFactory(USER3_LOGIN)
-    val defaultUser = userFactory(defaultAccount)
+    val defaultUser = userFactory(defaultUserModel)
     val admin = userFactory(adminAccount)
     val userTest1 = userFactory(userTest1Account)
     val userTest2 = userFactory(userTest2Account)

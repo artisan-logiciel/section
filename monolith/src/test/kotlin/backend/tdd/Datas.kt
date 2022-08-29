@@ -17,16 +17,7 @@ object Datas {
     const val USER2_LOGIN = "test2"
     const val USER3_LOGIN = "test3"
 
-    val defaultAccount = accountCredentialsFactory(USER_LOGIN).apply {
-        assertEquals("$USER_LOGIN@acme.com", email)
-        assertEquals(Constants.DEFAULT_LANGUAGE, langKey)
-        assertEquals(Constants.SYSTEM_USER, createdBy)
-        assertEquals(Constants.SYSTEM_USER, lastModifiedBy)
-        assertEquals("http://placehold.it/50x50", imageUrl)
-        assert(createdDate!!.isBefore(Instant.now()))
-        assert(lastModifiedDate!!.isBefore(Instant.now()))
-        setOf(login, firstName, lastName).map { assertEquals(USER_LOGIN, it) }
-    }
+    val defaultAccount = accountCredentialsFactory(USER_LOGIN)
     val adminAccount = accountCredentialsFactory(ADMIN_LOGIN)
     val userTest1Account = accountCredentialsFactory(USER1_LOGIN)
     val userTest2Account = accountCredentialsFactory(USER2_LOGIN)
@@ -38,8 +29,6 @@ object Datas {
     val userTest3 = userFactory(userTest3Account)
 
     val users = setOf(defaultUser, admin, userTest1, userTest2, userTest3)
-
-
 }
 
 
