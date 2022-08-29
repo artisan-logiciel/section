@@ -1,4 +1,4 @@
-package backend.config
+package backend
 
 import java.net.URI
 

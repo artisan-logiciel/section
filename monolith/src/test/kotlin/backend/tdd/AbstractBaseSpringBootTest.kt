@@ -7,9 +7,9 @@
 package backend.tdd
 
 import backend.Log.log
-import backend.config.Constants.ROLE_ADMIN
-import backend.config.Constants.ROLE_ANONYMOUS
-import backend.config.Constants.ROLE_USER
+import backend.Constants.ROLE_ADMIN
+import backend.Constants.ROLE_ANONYMOUS
+import backend.Constants.ROLE_USER
 import backend.User
 import backend.UserAuthority
 import backend.Datas.defaultAccount

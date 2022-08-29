@@ -6,7 +6,7 @@ import org.springframework.context.i18n.SimpleLocaleContext
 import org.springframework.web.reactive.config.DelegatingWebFluxConfiguration
 import org.springframework.web.server.ServerWebExchange
 import org.springframework.web.server.i18n.LocaleContextResolver
-import backend.config.Constants.REQUEST_PARAM_LANG
+import backend.Constants.REQUEST_PARAM_LANG
 import java.util.Locale.forLanguageTag
 import java.util.Locale.getDefault
 

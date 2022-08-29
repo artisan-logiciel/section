@@ -2,13 +2,13 @@
 
 package backend
 
-//import backend.config.Constants.CONSTRAINT_VIOLATION_TYPE
-//import backend.config.Constants.DEFAULT_TYPE
-//import backend.config.Constants.ERR_CONCURRENCY_FAILURE
-//import backend.config.Constants.ERR_VALIDATION
-//import backend.config.Constants.SPRING_PROFILE_PRODUCTION
+//import backend.Constants.CONSTRAINT_VIOLATION_TYPE
+//import backend.Constants.DEFAULT_TYPE
+//import backend.Constants.ERR_CONCURRENCY_FAILURE
+//import backend.Constants.ERR_VALIDATION
+//import backend.Constants.SPRING_PROFILE_PRODUCTION
 //import backend.http.util.HttpHeaderUtil.createFailureAlert
-//import backend.config.ApplicationProperties
+//import backend.ApplicationProperties
 //import backend.services.exceptions.EmailAlreadyUsedException
 //import backend.services.exceptions.InvalidPasswordException
 //import backend.services.exceptions.UsernameAlreadyUsedException

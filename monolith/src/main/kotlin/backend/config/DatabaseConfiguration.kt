@@ -2,6 +2,7 @@
 
 package backend.config
 
+import backend.ApplicationProperties
 import io.r2dbc.spi.ConnectionFactory
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.context.annotation.Bean

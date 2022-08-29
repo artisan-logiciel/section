@@ -7,8 +7,8 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include.NON_EMPTY
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.SerializationFeature.WRITE_DURATIONS_AS_TIMESTAMPS
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
-import backend.config.Constants.SPRING_PROFILE_CONF_DEFAULT_KEY
-import backend.config.Constants.SPRING_PROFILE_TEST
+import backend.Constants.SPRING_PROFILE_CONF_DEFAULT_KEY
+import backend.Constants.SPRING_PROFILE_TEST
 import org.assertj.core.api.Assertions.assertThat
 import org.hamcrest.Description
 import org.hamcrest.TypeSafeDiagnosingMatcher

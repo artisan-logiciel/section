@@ -17,6 +17,8 @@ package backend.config
 //import org.springframework.security.web.server.util.matcher.OrServerWebExchangeMatcher
 //import org.springframework.security.web.server.util.matcher.ServerWebExchangeMatchers.pathMatchers
 
+import backend.ApplicationProperties
+import backend.Constants
 import backend.Log.log
 //import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module
@@ -148,7 +150,7 @@ class WebConfiguration(
         }
 
         @Bean
-        @Profile(backend.config.Constants.SPRING_PROFILE_PRODUCTION)
+        @Profile(backend.Constants.SPRING_PROFILE_PRODUCTION)
         public CachingHttpHeadersFilter cachingHttpHeadersFilter() {
             // Use a cache filter that only match selected paths
             return new CachingHttpHeadersFilter(TimeUnit.DAYS.toMillis(ApplicationProperties.getHttp().getCache().getTimeToLiveInDays()));
@@ -190,7 +192,7 @@ class WebConfiguration(
 //            .accessDeniedHandler(problemSupport)
 //            .authenticationEntryPoint(problemSupport)
 //            .and()
-//            .headers().contentSecurityPolicy(backend.config.Constants.CONTENT_SECURITY_POLICY)
+//            .headers().contentSecurityPolicy(backend.Constants.CONTENT_SECURITY_POLICY)
 //            .and()
 //            .referrerPolicy(STRICT_ORIGIN_WHEN_CROSS_ORIGIN)
 //            .and()

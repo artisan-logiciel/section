@@ -1,13 +1,12 @@
 package backend
 
 import backend.Log.log
-import backend.config.ApplicationProperties
-import backend.config.Constants.DEV_HOST
-import backend.config.Constants.SPRING_PROFILE_CLOUD
-import backend.config.Constants.SPRING_PROFILE_CONF_DEFAULT_KEY
-import backend.config.Constants.SPRING_PROFILE_DEVELOPMENT
-import backend.config.Constants.SPRING_PROFILE_PRODUCTION
-import backend.config.Constants.STARTUP_LOG_MSG_KEY
+import backend.Constants.DEV_HOST
+import backend.Constants.SPRING_PROFILE_CLOUD
+import backend.Constants.SPRING_PROFILE_CONF_DEFAULT_KEY
+import backend.Constants.SPRING_PROFILE_DEVELOPMENT
+import backend.Constants.SPRING_PROFILE_PRODUCTION
+import backend.Constants.STARTUP_LOG_MSG_KEY
 import org.springframework.beans.factory.getBean
 import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication

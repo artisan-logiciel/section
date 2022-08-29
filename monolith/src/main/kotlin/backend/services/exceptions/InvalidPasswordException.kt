@@ -1,6 +1,6 @@
 package backend.services.exceptions
 
-import backend.config.Constants
+import backend.Constants
 import org.apache.commons.lang3.StringUtils
 
 class InvalidPasswordException :

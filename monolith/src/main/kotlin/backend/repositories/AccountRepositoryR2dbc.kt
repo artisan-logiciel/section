@@ -4,7 +4,7 @@ package backend.repositories
 
 import backend.Log.log
 import backend.User
-import backend.config.Constants.SYSTEM_USER
+import backend.Constants.SYSTEM_USER
 import backend.Account
 import backend.Account.AccountCredentials
 import org.springframework.stereotype.Repository

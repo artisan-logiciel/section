@@ -1,6 +1,5 @@
 package backend
 
-import backend.config.Constants
 import java.time.Instant
 import java.util.*
 import javax.validation.constraints.*
