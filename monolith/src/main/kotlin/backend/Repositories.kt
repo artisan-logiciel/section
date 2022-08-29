@@ -66,12 +66,13 @@ interface IAccountAuthorityRepository {
 
     suspend fun count(): Long
 
+    suspend fun deleteAll()
+
     suspend fun deleteAllByAccountId(id: UUID)
 }
 
 class AccountAuthorityRepositoryInMemory : IAccountAuthorityRepository {
     override suspend fun count(): Long = accountAuthorities.size.toLong()
-
 
     override suspend fun save(accountAuthority: UserAuthority): UserAuthority =
         accountAuthority.apply { accountAuthorities.add(this) }
@@ -82,6 +83,9 @@ class AccountAuthorityRepositoryInMemory : IAccountAuthorityRepository {
             accountAuthorities.contains(accountAuthority) -> accountAuthorities.remove(accountAuthority)
         }
     }
+
+    override suspend fun deleteAll() = accountAuthorities.clear()
+
 
     override suspend fun deleteAllByAccountId(id: UUID) {
         accountAuthorities.apply {
