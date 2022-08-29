@@ -47,7 +47,7 @@ class AccountRepositoryInMemory : IAccountModelRepository {
         }.toAccount()
 
     override suspend fun delete(account: AccountModel) {
-        accountAuthorities.apply { filter { it.userId == account.id }.map { remove(it) }}
+        accountAuthorities.apply { filter { it.userId == account.id }.map { remove(it) } }
         accounts.apply { if (isNotEmpty()) remove(find { it.id == account.id }) }
     }
 
@@ -57,4 +57,32 @@ class AccountRepositoryInMemory : IAccountModelRepository {
         }?.activationKey
 
     override suspend fun count(): Long = accounts.size.toLong()
+}
+
+interface IAccountAuthorityRepository {
+    suspend fun save(accountAuthority: UserAuthority): UserAuthority?
+
+    suspend fun delete(accountAuthority: UserAuthority)
+
+    suspend fun count(): Long
+
+    suspend fun deleteAllByAccountId(id:UUID)
+}
+
+class AccountAuthorityRepositoryInMemory : IAccountAuthorityRepository {
+    override suspend fun count(): Long {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun save(accountAuthority: UserAuthority): UserAuthority? {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun delete(accountAuthority: UserAuthority) {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun deleteAllByAccountId(id: UUID) {
+        TODO("Not yet implemented")
+    }
 }
