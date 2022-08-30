@@ -1,6 +1,8 @@
 backend:
   message: hello
   item: item
+#  message: go visit https://www.cheroliv.com
+#  item: monolith
   clientApp:
     name: 'server'
   database:

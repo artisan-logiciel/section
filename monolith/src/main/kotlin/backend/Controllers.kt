@@ -23,9 +23,9 @@ class SignUpController(
      * {@code POST  /signup} : register the user.
      *
      * @param accountCredentials the managed user View Model.
-     * @throws backend.services.exceptions.InvalidPasswordException {@code 400 (Bad Request)} if the password is incorrect.
-     * @throws backend.http.problems.EmailAlreadyUsedProblem {@code 400 (Bad Request)} if the email is already used.
-     * @throws backend.http.problems.LoginAlreadyUsedProblem {@code 400 (Bad Request)} if the login is already used.
+     * @throws backend.InvalidPasswordException {@code 400 (Bad Request)} if the password is incorrect.
+     * @throws backend.EmailAlreadyUsedProblem {@code 400 (Bad Request)} if the email is already used.
+     * @throws backend.LoginAlreadyUsedProblem {@code 400 (Bad Request)} if the login is already used.
      */
     @PostMapping("signup")
     @ResponseStatus(HttpStatus.CREATED)
@@ -33,17 +33,18 @@ class SignUpController(
         @RequestBody @Valid accountCredentials: AccountCredentialsModel
     ) = accountModelService.signup(accountCredentials)
 
-//    /**
-//     * `GET  /activate` : activate the registered user.
-//     *
-//     * @param key the activation key.
-//     * @throws RuntimeException `500 (Internal Server Error)` if the user couldn't be activated.
-//     */
-//    @GetMapping("/activate")
-//    suspend fun activateAccount(@RequestParam(value = "key") key: String): Unit =
+    /**
+     * `GET  /activate` : activate the registered user.
+     *
+     * @param key the activation key.
+     * @throws RuntimeException `500 (Internal Server Error)` if the user couldn't be activated.
+     */
+    @GetMapping("/activate")
+    suspend fun activateAccount(@RequestParam(value = "key") key: String) {
 //        accountService.activateRegistration(key = key).run {
 //            if (this == null) throw RegistrationController.AccountException("No user was found for this activation key")
 //        }
+    }
 }
 
 /*=================================================================================*/
