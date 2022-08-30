@@ -21,7 +21,7 @@ import java.util.Locale.forLanguageTag
 import javax.mail.MessagingException
 
 @Service
-class AccountModelService(
+class SignUpService(
     private val accountRepository: IAccountModelRepository,
     private val mailService: MailService
 ) {
@@ -35,8 +35,8 @@ class AccountModelService(
         InvalidPasswordException().run {
             if (isPasswordLengthInvalid(model.password)) throw this
         }
-        signUpLoginValidation(model)
-        signUpEmailValidation(model)
+        loginValidation(model)
+        emailValidation(model)
         model.copy(
             //TODO:hash password
             activationKey = RandomUtils.generateActivationKey
@@ -47,7 +47,7 @@ class AccountModelService(
     }
 
     @Throws(UsernameAlreadyUsedException::class)
-    private suspend fun signUpLoginValidation(model: AccountCredentialsModel) {
+    private suspend fun loginValidation(model: AccountCredentialsModel) {
         accountRepository.findOneByLogin(model.login!!).run {
             if (this != null) when {
                 !activated -> accountRepository.suppress(this)
@@ -57,7 +57,7 @@ class AccountModelService(
     }
 
     @Throws(UsernameAlreadyUsedException::class)
-    private suspend fun signUpEmailValidation(model: AccountCredentialsModel) {
+    private suspend fun emailValidation(model: AccountCredentialsModel) {
         accountRepository.findOneByEmail(model.email!!).run {
             if (this != null) {
                 when {

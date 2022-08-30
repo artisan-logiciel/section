@@ -15,7 +15,7 @@ import javax.validation.Valid
 @RestController
 @RequestMapping("api")
 class SignUpController(
-    private val accountModelService: AccountModelService
+    private val signUpService: SignUpService
 ) {
     internal class AccountException(message: String) : RuntimeException(message)
 
@@ -31,7 +31,7 @@ class SignUpController(
     @ResponseStatus(HttpStatus.CREATED)
     suspend fun signup(
         @RequestBody @Valid accountCredentials: AccountCredentialsModel
-    ) = accountModelService.signup(accountCredentials)
+    ) = signUpService.signup(accountCredentials)
 
     /**
      * `GET  /activate` : activate the registered user.
