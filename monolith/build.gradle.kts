@@ -1,7 +1,10 @@
+@file:Suppress("UNUSED_VARIABLE")
+
 import org.gradle.api.JavaVersion.VERSION_1_8
 import org.gradle.api.tasks.testing.logging.TestLogEvent.FAILED
 import org.gradle.api.tasks.testing.logging.TestLogEvent.SKIPPED
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+//import java.io.ByteArrayOutputStream
 
 plugins {
     kotlin(module = "jvm")
@@ -217,3 +220,21 @@ tasks.jacocoTestReport {
         xml.required.set(true)
     }
 }
+
+
+//open class DeployGAE : Exec() {
+//    init {
+//        this.workingDir = project.rootDir
+//        this.commandLine(
+//            "/snap/bin/gcloud",
+//            "app",
+//            "deploy",
+//            "${projectDir.absolutePath}/src/main/appengine/app.yml"
+//        )
+//        this.standardOutput = ByteArrayOutputStream()
+//    }
+//}
+//
+//tasks.register<DeployGAE>("deployGAE"){
+//    doLast { println(standardOutput.toString()) }
+//}
