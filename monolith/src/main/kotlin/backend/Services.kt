@@ -6,7 +6,6 @@ import backend.services.MailService
 import org.apache.commons.lang3.RandomStringUtils
 import org.springframework.stereotype.Service
 import java.security.SecureRandom
-import javax.validation.Valid
 import kotlin.jvm.Throws
 
 @Service
@@ -21,16 +20,18 @@ class AccountModelService(
         UsernameAlreadyUsedException::class
     )
     suspend fun signup(model: AccountCredentialsModel) {
-        InvalidPasswordException().run { if (isPasswordLengthInvalid(model.password)) throw this }
-        checkLoginAvailable(model)
-        checkEmailAvailable(model)
+        InvalidPasswordException().run {
+            if (isPasswordLengthInvalid(model.password)) throw this
+        }
+        signUpLoginValidation(model)
+        signUpEmailValidation(model)
         accountRepository.signup(model)
         //TODO: refactor mailService pour prendre des AccountModel
 //        mailService.sendActivationEmail(model.toAccount())
     }
 
     @Throws(UsernameAlreadyUsedException::class)
-    private suspend fun checkLoginAvailable(model: AccountCredentialsModel) {
+    private suspend fun signUpLoginValidation(model: AccountCredentialsModel) {
         accountRepository.findOneByLogin(model.login!!).run {
             if (this != null) when {
                 !activated -> accountRepository.suppress(this)
@@ -40,7 +41,7 @@ class AccountModelService(
     }
 
     @Throws(UsernameAlreadyUsedException::class)
-    private suspend fun checkEmailAvailable(model: AccountCredentialsModel) {
+    private suspend fun signUpEmailValidation(model: AccountCredentialsModel) {
         accountRepository.findOneByEmail(model.email!!).run {
             if (this != null) {
                 when {
