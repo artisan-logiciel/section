@@ -126,14 +126,15 @@ configurations {
         extendsFrom(configurations.annotationProcessor.get())
     }
     implementation.configure {
-        listOf(
-            listOf("org.junit.vintage", "junit-vintage-engine"),
-            listOf("org.springframework.boot", "spring-boot-starter-tomcat"),
-            listOf("org.apache.tomcat")
+        setOf(
+            setOf("org.junit.vintage", "junit-vintage-engine"),
+            setOf("org.springframework.boot", "spring-boot-starter-tomcat"),
+            setOf("org.apache.tomcat")
         ).map {
-            if (it.size == 2)
-                exclude(group = it.first(), module = it.last())
-            else exclude(group = it.first())
+            when (it.size) {
+                2 -> exclude(group = it.first(), module = it.last())
+                else -> exclude(group = it.first())
+            }
         }
     }
 }
