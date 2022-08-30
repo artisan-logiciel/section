@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
 import java.util.*
 import javax.validation.Valid
+
 /*=================================================================================*/
 
 
@@ -34,17 +35,17 @@ class SignUpController(
     ) = signUpService.signup(accountCredentials)
 
     /**
-     * `GET  /activate` : activate the registered user.
+     * `GET  /activate` : activate the signed up user.
      *
      * @param key the activation key.
      * @throws RuntimeException `500 (Internal Server Error)` if the user couldn't be activated.
      */
-//    @GetMapping("/activate")
-//    suspend fun activateAccount(@RequestParam(value = "key") key: String) {
-//        accountService.activateRegistration(key = key).run {
-//            if (this == null) throw RegistrationController.AccountException("No user was found for this activation key")
-//        }
-//    }
+    @GetMapping("/activate")
+    suspend fun activateAccount(@RequestParam(value = "key") key: String) {
+        when {
+            !signUpService.activateRegistration(key = key) -> throw RegistrationController.AccountException("No user was found for this activation key")
+        }
+    }
 }
 
 /*=================================================================================*/
@@ -78,7 +79,7 @@ class RegistrationController(
      * @param key the activation key.
      * @throws RuntimeException `500 (Internal Server Error)` if the user couldn't be activated.
      */
-    @GetMapping("/activate")
+    @GetMapping("/activate_")
     suspend fun activateAccount(@RequestParam(value = "key") key: String): Unit =
         accountService.activateRegistration(key = key).run {
             if (this == null) throw AccountException("No user was found for this activation key")
@@ -187,8 +188,6 @@ class RegistrationController(
 }
 
 /*=================================================================================*/
-
-
 
 
 /**
@@ -399,7 +398,6 @@ class RegistrationController(
 /*=================================================================================*/
 
 
-
 /**
  * Controller to authenticate users.
  */
@@ -441,7 +439,6 @@ class RegistrationController(
 
 
 /*=================================================================================*/
-
 
 
 //import backend.Server.Log.log

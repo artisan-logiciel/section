@@ -42,6 +42,7 @@ interface IAccountModelRepository {
     suspend fun count(): Long
     suspend fun suppress(account: AccountModel)
     suspend fun signup(model: AccountCredentialsModel)
+    suspend fun findOneActivationKey(key: String): AccountCredentialsModel?
 }
 
 @Repository
@@ -103,6 +104,10 @@ class AccountRepositoryInMemory(
     override suspend fun signup(model: AccountCredentialsModel) {
         accountAuthorityRepository.save(save(model)?.id!!, ROLE_USER)
         save(model)
+    }
+
+    override suspend fun findOneActivationKey(key: String): AccountCredentialsModel? {
+        TODO("Not yet implemented")
     }
 }
 

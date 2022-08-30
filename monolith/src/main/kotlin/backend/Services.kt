@@ -71,6 +71,20 @@ class SignUpService(
     private suspend fun suppress(model: AccountCredentialsModel) {
         accountRepository.suppress(model.toAccount())
     }
+
+    suspend fun activateRegistration(key: String): Boolean {
+        accountRepository.run {
+            with(findOneActivationKey(key)) {
+                when {
+                    this == null -> return false
+                    else -> {
+                        save(copy(activated = true, activationKey = null))
+                        return true
+                    }
+                }
+            }
+        }
+    }
 }
 
 object RandomUtils {
