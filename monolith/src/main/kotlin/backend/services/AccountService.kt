@@ -4,6 +4,7 @@ package backend.services
 
 import backend.*
 import backend.Account.AccountCredentials
+import backend.Log.log
 import backend.repositories.AccountRepository
 import backend.RandomUtils.generateActivationKey
 import org.springframework.stereotype.Service
@@ -28,12 +29,12 @@ class AccountService(
                 else -> throw UsernameAlreadyUsedException()
             }
         }
-//        log.info(accountRepository.findOneByEmail(accountCredentials.email!!))
-//            .run {
-//            if (id != null && !activated) accountRepository.delete(account = this)
-//            else throw EmailAlreadyUsedException()
-//        }
-
+        accountRepository.findOneByEmail(accountCredentials.email!!)?.run {
+            when {
+                !activated -> accountRepository.delete(account = this)
+                else -> throw EmailAlreadyUsedException()
+            }
+        }
         accountCredentials.copy(
             //                password = password,//encrypt
             activationKey = generateActivationKey

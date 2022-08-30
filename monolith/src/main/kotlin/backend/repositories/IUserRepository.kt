@@ -20,20 +20,20 @@ interface IUserRepository : CoroutineSortingRepository<User, UUID> {
     suspend fun findOneByLogin(login: String): User?
 
     @Nullable
-    @Query("SELECT * FROM user WHERE activation_key = :activationKey")
+    @Query("SELECT * FROM `user` WHERE activation_key = :activationKey")
     suspend fun findOneByActivationKey(activationKey: String): User?
 
-    @Query("SELECT * FROM user WHERE activated = false AND activation_key IS NOT NULL AND created_date<:dateTime")
+    @Query("SELECT * FROM `user` WHERE activated = false AND activation_key IS NOT NULL AND created_date<:dateTime")
     suspend fun findAllByActivatedIsFalseAndActivationKeyIsNotNullAndCreatedDateBefore(dateTime: LocalDateTime): Flow<User>
 
     @Nullable
-    @Query("SELECT * FROM user WHERE reset_key = :resetKey")
+    @Query("SELECT * FROM `user` WHERE reset_key = :resetKey")
     suspend fun findOneByResetKey(resetKey: String): User?
 
     @Nullable
-    @Query("SELECT * FROM user WHERE LOWER(email) = LOWER(:email)")
+    @Query("SELECT * FROM `user` WHERE LOWER(email) = LOWER(:email)")
     suspend fun findOneByEmailIgnoreCase(email: String): User?
 
-    @Query("SELECT COUNT(DISTINCT id) FROM user WHERE login != :anonymousUser")
+    @Query("SELECT COUNT(DISTINCT id) FROM `user` WHERE login != :anonymousUser")
     suspend fun countAllByLoginNot(anonymousUser: String): Long
 }

@@ -17,15 +17,22 @@ class AccountRepositoryR2dbc(
     override suspend fun findOneByLogin(login: String) =
         userRepository.findOneWithAuthoritiesByLogin(login)?.toAccount()
 
-    override suspend fun findOneByEmail(email: String) =
-        userRepository.findOneByEmail(email)?.toAccount()
-/*
-    override suspend fun findOneByEmail(email: String): Account =
-        userRepository.findOneByEmail(email).apply {
-            if (this == null) return Account()
-        }?.toAccount()!!
+    override suspend fun findOneByEmail(email: String): Account?
+//        userRepository.findOneByEmail(email)?.toAccount()
+    {
+        return userRepository.findOneByEmail(email)?.toAccount()
+//            .apply {
+//            if (this == null) return null
+//        }?.toAccount()!!
+    }
 
- */
+    /*
+        override suspend fun findOneByEmail(email: String): Account =
+            userRepository.findOneByEmail(email).apply {
+                if (this == null) return Account()
+            }?.toAccount()!!
+
+     */
     override suspend fun findActivationKeyByLogin(login: String): String =
         userRepository.findOneByLogin(login)?.activationKey.toString()
 
