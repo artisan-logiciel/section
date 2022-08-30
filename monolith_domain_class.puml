@@ -21,7 +21,7 @@ package backend"Domains.kt" <<Folder>> {
     + fun isActivated(): Boolean
   }
 
-  class AccountCredentials{
+  class AccountCredentials {
     var password:String?
     var activationKey:String?
         var id: UUID?
@@ -38,38 +38,64 @@ package backend"Domains.kt" <<Folder>> {
         var lastModifiedDate: Instant?
         var authorities: Set<String>?
   }
-  class Avatar{
+
+  class Avatar {
     var id: UUID?
     var login: String?
   }
 
-  class KeyAndPassword{
+  class KeyAndPassword {
     val key: String?
     val newPassword: String?
   }
 
-  class Login{
+  class Login {
    val username: String?
    val password: String?
    val rememberMe: Boolean?
   }
 
-  class PasswordChange{
+  class PasswordChange {
    val currentPassword: String?
    val newPassword: String?
   }
 }
+
 json AccountJSON {
-   "fruit":"Apple",
-   "size":"Large",
-   "color": ["Red", "Green"]
+   "id":"1",
+   "login":"admin",
+   "authorities":["ADMIN", "USER"],
+   "first_name":"Administrator",
+   "last_name":"Administrator",
+   "email":"admin@localhost",
+   "image_url":"",
+   "activated":"",
+   "lang_key":"",
+   "created_by":"",
+   "last_modified_by":""
+
 }
+
 AccountJSON  <|-- Account
 json AccountCredentialsJSON {
-   "fruit":"Apple",
-   "size":"Large",
-   "color": ["Red", "Green"]
+   "password":"admin",
+   "activationKey":"",
+   "id":"1",
+   "login":"admin",
+   "authorities":["USER"],
+   "first_name":"Administrator",
+   "last_name":"Administrator",
+   "email":"admin@localhost",
+   "image_url":"",
+   "activated":"",
+   "lang_key":"",
+   "created_by":"",
+   "last_modified_by":""
 }
+'id;login;password_hash;first_name;last_name;email;image_url;activated;lang_key;created_by;last_modified_by
+'2;user;$2a$10$VEjxo0jq2YG9Rbk2HmX9S.k1uZBGYUHdUcid3g/vfiEl7lwWgOH/K;User;User;user@localhost;;true;fr;system;system
+
+
 AccountCredentialsJSON  <|-- AccountCredentials
 
 
