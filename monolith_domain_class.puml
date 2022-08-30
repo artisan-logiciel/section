@@ -1,0 +1,171 @@
+@startuml
+'https://plantuml.com/class-diagram
+scale 750 width
+
+
+package backend"Domains.kt" <<Folder>> {
+  class Account{
+    var id: UUID?
+    var login: String?
+    var firstName: String?
+    var lastName: String?
+    var email: String?
+    var imageUrl: String?
+    var activated = false
+    var langKey: String?
+    var createdBy: String?
+    var createdDate: Instant?
+    var lastModifiedBy: String?
+    var lastModifiedDate: Instant?
+    var authorities: Set<String>?
+    + fun isActivated(): Boolean
+  }
+
+  class AccountCredentials{
+    var password:String?
+    var activationKey:String?
+        var id: UUID?
+        var login: String?
+        var firstName: String?
+        var lastName: String?
+        var email: String?
+        var imageUrl: String?
+        var activated = false
+        var langKey: String?
+        var createdBy: String?
+        var createdDate: Instant?
+        var lastModifiedBy: String?
+        var lastModifiedDate: Instant?
+        var authorities: Set<String>?
+  }
+  class Avatar{
+    var id: UUID?
+    var login: String?
+  }
+
+  class KeyAndPassword{
+    val key: String?
+    val newPassword: String?
+  }
+
+  class Login{
+   val username: String?
+   val password: String?
+   val rememberMe: Boolean?
+  }
+
+  class PasswordChange{
+   val currentPassword: String?
+   val newPassword: String?
+  }
+}
+json AccountJSON {
+   "fruit":"Apple",
+   "size":"Large",
+   "color": ["Red", "Green"]
+}
+AccountJSON  <|-- Account
+json AccountCredentialsJSON {
+   "fruit":"Apple",
+   "size":"Large",
+   "color": ["Red", "Green"]
+}
+AccountCredentialsJSON  <|-- AccountCredentials
+
+
+package backend"Services.kt" <<Node>> {
+    class SignUpService
+    class AccountService
+}
+
+package backend"Repositories.kt" <<Node>>{
+  interface AccountRepository{
+    + suspend fun findOneByLogin(login: String): Account
+    + suspend fun findOneByEmail(email: String): Account
+    + suspend fun save(accountCredentials: AccountCredentials): Account
+    + suspend fun delete(account: Account)
+    + suspend fun findActivationKeyByLogin(login: String): String
+  }
+
+  interface AuthorityRepository
+  interface AccountAuthorityRepository
+
+  class AccountRepositoryR2dbc implements AccountRepository
+  class AccountRepositoryInMemory implements AccountRepository
+  class AuthorityRepositoryR2dbc implements AuthorityRepository
+  class AuthorityRepositoryInMemory implements AuthorityRepository
+  class AccountAuthorityRepositoryR2dbc implements AccountAuthorityRepository
+  class AccountAuthorityRepositoryInMemory implements AccountAuthorityRepository
+
+
+'  extends
+'  AccountRepository <|-- AccountRepositoryR2dbc
+
+}
+
+
+package backend"Entities.kt" <<Database>> {
+
+  class AuthorityEntity{
+    val role: String
+    + override fun getId() = role
+    + override fun isNew() = true
+  }
+
+  class EmailEntity{
+    val value: String
+    + override fun getId() = value
+    + override fun isNew() = true
+  }
+
+  class PhoneEntity{
+      var id: UUID?
+      var value: String? = null
+  }
+
+  class AccountEntity{
+    var id: UUID?
+    var login: String?
+    var password: String?
+    var lastName: String?
+    var email: String?
+    var activated: Boolean?
+    var langKey: String?
+    var imageUrl: String?
+    var activationKey: String?
+    var resetKey: String?
+    var resetDate: Instant?
+    var authorities: MutableSet<Authority>?
+    var createdBy: String?
+    var createdDate: Instant?
+    var lastModifiedBy: String?
+    var lastModifiedDate: Instant?
+    var version: Long?
+    + fun toAccount(): common.domain.Account
+  }
+
+  class AccountAuthorityEntity{
+      var id: Long?
+      val userId: UUID
+      val role: String
+  }
+
+}
+
+
+package backend"Controllers.kt" <<Cloud>> {
+
+  class SignUpController{
+    private val accountService: AccountService
+    + suspend fun signup(ac: AccountCredentials)
+    + suspend fun activate(key: String)
+  }
+
+  class AccountException{
+    message: String
+  }
+'  inner
+  SignUpController +-- AccountException
+}
+
+@enduml
