@@ -4,7 +4,8 @@ import org.gradle.api.JavaVersion.VERSION_1_8
 import org.gradle.api.tasks.testing.logging.TestLogEvent.FAILED
 import org.gradle.api.tasks.testing.logging.TestLogEvent.SKIPPED
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-//import java.io.ByteArrayOutputStream
+
+import java.io.ByteArrayOutputStream
 
 plugins {
     kotlin(module = "jvm")
@@ -13,8 +14,8 @@ plugins {
     kotlin(module = "plugin.noarg")
     kotlin(module = "plugin.serialization")
     id("org.springframework.boot")
-    id( "io.spring.dependency-management")
-    id( "com.google.cloud.tools.jib")
+    id("io.spring.dependency-management")
+    id("com.google.cloud.tools.jib")
     jacoco
 }
 
@@ -43,57 +44,57 @@ repositories {
 dependencies {
 //    implementation(project(path = ":common"))
     //Kotlin lib: jdk8, reflexion, coroutines
-    implementation( "org.jetbrains.kotlin:kotlin-stdlib-jdk8")
-    implementation( "org.jetbrains.kotlin:kotlin-reflect")
-    implementation( "io.projectreactor.kotlin:reactor-kotlin-extensions")
-    implementation( "org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
-    implementation( "org.jetbrains.kotlinx:kotlinx-serialization-json:${properties["kotlinx_serialization_json.version"]}")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
+    implementation("org.jetbrains.kotlin:kotlin-reflect")
+    implementation("io.projectreactor.kotlin:reactor-kotlin-extensions")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:${properties["kotlinx_serialization_json.version"]}")
     // kotlin TDD
-    testImplementation( "org.jetbrains.kotlin:kotlin-test")
-    testImplementation( "org.jetbrains.kotlin:kotlin-test-junit5")
-    testImplementation( "io.projectreactor:reactor-test")
-    testImplementation ("org.mockito.kotlin:mockito-kotlin:${properties["mockito_kotlin_version"]}")
+    testImplementation("org.jetbrains.kotlin:kotlin-test")
+    testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
+    testImplementation("io.projectreactor:reactor-test")
+    testImplementation("org.mockito.kotlin:mockito-kotlin:${properties["mockito_kotlin_version"]}")
 
     //jackson mapping (json/xml)
-    implementation( "com.fasterxml.jackson.module:jackson-module-kotlin")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     // String manipulation
-    implementation( "org.apache.commons:commons-lang3")
+    implementation("org.apache.commons:commons-lang3")
     //Http Request Exception Response
 //    implementation( "org.zalando:problem-spring-webflux:${properties["zalando_problem.version"]}")
     //spring conf
-    annotationProcessor( "org.springframework.boot:spring-boot-configuration-processor")
+    annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
     //spring dev tools
-    developmentOnly( "org.springframework.boot:spring-boot-devtools")
+    developmentOnly("org.springframework.boot:spring-boot-devtools")
     //spring actuator
-    implementation( "org.springframework.boot:spring-boot-starter-actuator")
+    implementation("org.springframework.boot:spring-boot-starter-actuator")
     //spring r2dbc
-    implementation( "org.springframework.boot:spring-boot-starter-data-r2dbc")
+    implementation("org.springframework.boot:spring-boot-starter-data-r2dbc")
     //spring javax.mail
-    implementation( "org.springframework.boot:spring-boot-starter-mail")
+    implementation("org.springframework.boot:spring-boot-starter-mail")
     //Spring bean validation JSR 303
-    implementation( "org.springframework.boot:spring-boot-starter-validation")
+    implementation("org.springframework.boot:spring-boot-starter-validation")
     //spring thymeleaf for mail templating
-    implementation( "org.springframework.boot:spring-boot-starter-thymeleaf")
+    implementation("org.springframework.boot:spring-boot-starter-thymeleaf")
     //spring webflux reactive http
-    implementation( "org.springframework.boot:spring-boot-starter-webflux")
+    implementation("org.springframework.boot:spring-boot-starter-webflux")
     //H2database
-    runtimeOnly( "com.h2database:h2")
-    runtimeOnly( "io.r2dbc:r2dbc-h2")
+    runtimeOnly("com.h2database:h2")
+    runtimeOnly("io.r2dbc:r2dbc-h2")
     //Postgresql
 //    runtimeOnly("io.r2dbc:r2dbc-postgresql")
 //    runtimeOnly("org.postgresql:postgresql")
     //SSL
-    implementation( "io.netty:netty-tcnative-boringssl-static:${properties["boring_ssl.version"]}")
+    implementation("io.netty:netty-tcnative-boringssl-static:${properties["boring_ssl.version"]}")
     // spring Test dependencies
-    testImplementation( "org.springframework.boot:spring-boot-starter-test") { exclude(module = "mockito-core") }
+    testImplementation("org.springframework.boot:spring-boot-starter-test") { exclude(module = "mockito-core") }
     // Mocking
-    testImplementation( "io.mockk:mockk:${properties["mockk.version"]}")
-    testImplementation( "com.github.tomakehurst:wiremock-jre8:${properties["wiremock.version"]}")
-    testImplementation( "com.ninja-squad:springmockk:3.1.0")
+    testImplementation("io.mockk:mockk:${properties["mockk.version"]}")
+    testImplementation("com.github.tomakehurst:wiremock-jre8:${properties["wiremock.version"]}")
+    testImplementation("com.ninja-squad:springmockk:3.1.0")
 
     // BDD - Cucumber
-    testImplementation( "io.cucumber:cucumber-java8:${properties["cucumber_java.version"]}")
-    testImplementation( "io.cucumber:cucumber-java:${properties["cucumber_java.version"]}")
+    testImplementation("io.cucumber:cucumber-java8:${properties["cucumber_java.version"]}")
+    testImplementation("io.cucumber:cucumber-java:${properties["cucumber_java.version"]}")
     // testcontainer
 //    testImplementation("org.testcontainers:junit-jupiter")
 //    testImplementation("org.testcontainers:postgresql")
@@ -105,18 +106,18 @@ dependencies {
 //    implementation( "org.springframework.security:spring-security-data")
 //    testImplementation( "org.springframework.security:spring-security-test")
     // JWT authentication
-    implementation( "io.jsonwebtoken:jjwt-impl:${properties["jsonwebtoken.version"]}")
-    implementation( "io.jsonwebtoken:jjwt-jackson:${properties["jsonwebtoken.version"]}")
+    implementation("io.jsonwebtoken:jjwt-impl:${properties["jsonwebtoken.version"]}")
+    implementation("io.jsonwebtoken:jjwt-jackson:${properties["jsonwebtoken.version"]}")
 //    testImplementation( "org.springframework.cloud:spring-cloud-starter-contract-verifier")
     // to get Constants
-    implementation( "org.apache.commons:commons-email:${properties["commons_email.version"]}") {
+    implementation("org.apache.commons:commons-email:${properties["commons_email.version"]}") {
         exclude(group = "junit")
-        exclude(group ="org.easymock")
-        exclude(group ="org.powermock")
-        exclude(group ="org.slf4j ")
-        exclude(group ="commons-io")
-        exclude(group ="org.subethamail")
-        exclude(group ="com.sun.mail")
+        exclude(group = "org.easymock")
+        exclude(group = "org.powermock")
+        exclude(group = "org.slf4j ")
+        exclude(group = "commons-io")
+        exclude(group = "org.subethamail")
+        exclude(group = "com.sun.mail")
     }
 }
 
@@ -174,7 +175,6 @@ val cucumberRuntime: Configuration by configurations.creating {
     extendsFrom(configurations["testImplementation"])
 }
 
-
 tasks.register<DefaultTask>("cucumber") {
     group = "verification"
     dependsOn("assemble", "compileTestJava")
@@ -222,19 +222,26 @@ tasks.jacocoTestReport {
 }
 
 
-//open class DeployGAE : Exec() {
-//    init {
-//        this.workingDir = project.rootDir
-//        this.commandLine(
-//            "/snap/bin/gcloud",
+open class DeployGAE : Exec() {
+    init {
+        this.workingDir = project.rootDir
+        this.commandLine(
+            "/snap/bin/gcloud",
+            "-v"
 //            "app",
 //            "deploy",
 //            "${projectDir.absolutePath}/src/main/appengine/app.yml"
-//        )
-//        this.standardOutput = ByteArrayOutputStream()
-//    }
-//}
-//
-//tasks.register<DeployGAE>("deployGAE"){
-//    doLast { println(standardOutput.toString()) }
-//}
+        )
+        this.standardOutput = ByteArrayOutputStream()
+    }
+}
+
+
+tasks.register<DeployGAE>("deployGAE") {
+    val cmd = "gcloud app deploy src/main/appengine/app.flexible.yml"
+    doLast {
+        println(projectDir.canonicalPath)
+        println(cmd)
+    }
+}
+
