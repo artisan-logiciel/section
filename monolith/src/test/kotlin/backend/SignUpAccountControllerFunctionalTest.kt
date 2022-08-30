@@ -39,9 +39,6 @@ internal class SignUpAccountControllerFunctionalTest {
 
     @Test
     fun `signup account`(): Unit = runBlocking {
-        //TODO: compter les user_auth comme avec user
-        //        log.info("count 1 user authorities: ${context.getBean<UserAuthRepository>().count()}")
-        //        log.info("count 2 user authorities: ${context.getBean<UserAuthRepository>().count()}")
         val countUserBefore = context.getBean<IAccountModelRepository>().count()
         val countUserAuthBefore = context.getBean<IAccountAuthorityRepository>().count()
         assertEquals(0, countUserBefore)
@@ -72,12 +69,14 @@ internal class SignUpAccountControllerFunctionalTest {
                 assertEquals(expected = HttpStatus.CREATED, actual = status)
             }
         assertEquals(countUserBefore + 1, context.getBean<IAccountModelRepository>().count())
-//        assertEquals(countUserAuthBefore + 1, context.getBean<IAccountAuthorityRepository>().count())
+        assertEquals(countUserAuthBefore + 1, context.getBean<IAccountAuthorityRepository>().count())
         //clean after test
-        context.getBean<IAccountModelRepository>().run { delete(findOneByLogin(defaultAccount.login!!)!!) }
-//        context.getBean<IAccountAuthorityRepository>().deleteAll()
-//        context.getBean<IAccountModelRepository>().deleteAll()
-//        assertEquals(countUserAuthBefore, context.getBean<IAccountAuthorityRepository>().count())
+        context.getBean<IAccountModelRepository>().run {
+            val account = findOneByLogin(defaultAccount.login!!)
+            context.getBean<IAccountAuthorityRepository>().deleteAllByAccountId(account?.id!!)
+            delete(account)
+        }
+        assertEquals(countUserAuthBefore, context.getBean<IAccountAuthorityRepository>().count())
         assertEquals(countUserBefore, context.getBean<IAccountModelRepository>().count())
     }
 

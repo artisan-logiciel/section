@@ -3,6 +3,7 @@
 package backend
 
 
+import backend.Constants.ROLE_USER
 import org.springframework.stereotype.Repository
 import java.util.*
 
@@ -60,14 +61,30 @@ class AccountRepositoryInMemory(
         accounts.find { it.email?.lowercase().equals(email.lowercase()) }?.toModel()
 
     override suspend fun save(accountCredentialsModel: AccountCredentialsModel): AccountModel? =
-        if (
+        when {
             accountCredentialsModel.id == null
-            && accounts.none { it.login?.lowercase() == accountCredentialsModel.login }
-            && accounts.none { it.email?.lowercase() == accountCredentialsModel.email }
-        ) accountCredentialsModel.copy(id = UUID.randomUUID())
-            .apply { accounts.add(AccountEntity(this)) }
-            .toAccount()
-        else accountCredentialsModel.toAccount()
+                    && accounts.none { it.login?.lowercase() == accountCredentialsModel.login }
+                    && accounts.none { it.email?.lowercase() == accountCredentialsModel.email }
+            -> accountCredentialsModel.copy(id = UUID.randomUUID())
+                .apply { accounts.add(AccountEntity(this)) }
+                .toAccount()
+
+            accountCredentialsModel.id != null
+                    && accounts.none { it.login?.lowercase() == accountCredentialsModel.login }
+                    && accounts.none { it.email?.lowercase() == accountCredentialsModel.email }
+            -> AccountEntity(
+                accountCredentialsModel
+            ).apply {
+                try {
+                    accounts.remove(accounts.first { this.id == it.id })
+                    accounts.add(this)
+                } catch (_: NoSuchElementException) {
+                }
+            }.toModel()
+
+            else -> accountCredentialsModel.toAccount()
+        }
+
 
     override suspend fun delete(account: AccountModel) {
         accounts.apply { if (isNotEmpty()) remove(find { it.id == account.id }) }
@@ -84,6 +101,12 @@ class AccountRepositoryInMemory(
     }
 
     override suspend fun signup(model: AccountCredentialsModel) {
+        accountAuthorityRepository.save(
+            UserAuthority(
+                userId = save(model)?.id!!,
+                role = ROLE_USER
+            )
+        )
         save(model)
     }
 }
