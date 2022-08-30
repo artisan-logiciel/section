@@ -2,12 +2,15 @@
 
 package backend
 
+//import backend.services.SecurityUtils.getCurrentUserLogin
 import backend.Account.AccountCredentials
 import backend.services.AccountService
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
 import java.util.*
 import javax.validation.Valid
+/*=================================================================================*/
+
 
 @RestController
 @RequestMapping("api")
@@ -29,10 +32,23 @@ class SignUpController(
     suspend fun signup(
         @RequestBody @Valid accountCredentials: AccountCredentialsModel
     ) = accountModelService.signup(accountCredentials)
+
+//    /**
+//     * `GET  /activate` : activate the registered user.
+//     *
+//     * @param key the activation key.
+//     * @throws RuntimeException `500 (Internal Server Error)` if the user couldn't be activated.
+//     */
+//    @GetMapping("/activate")
+//    suspend fun activateAccount(@RequestParam(value = "key") key: String): Unit =
+//        accountService.activateRegistration(key = key).run {
+//            if (this == null) throw RegistrationController.AccountException("No user was found for this activation key")
+//        }
 }
 
+/*=================================================================================*/
 
-//import backend.services.SecurityUtils.getCurrentUserLogin
+
 
 @RestController
 @RequestMapping("api")
@@ -45,9 +61,9 @@ class RegistrationController(
      * {@code POST  /register} : register the user.
      *
      * @param accountCredentials the managed user View Model.
-     * @throws backend.services.exceptions.InvalidPasswordException {@code 400 (Bad Request)} if the password is incorrect.
-     * @throws backend.http.problems.EmailAlreadyUsedProblem {@code 400 (Bad Request)} if the email is already used.
-     * @throws backend.http.problems.LoginAlreadyUsedProblem {@code 400 (Bad Request)} if the login is already used.
+     * @throws backend.InvalidPasswordException {@code 400 (Bad Request)} if the password is incorrect.
+     * @throws backend.EmailAlreadyUsedProblem {@code 400 (Bad Request)} if the email is already used.
+     * @throws backend.LoginAlreadyUsedProblem {@code 400 (Bad Request)} if the login is already used.
      */
     @PostMapping("register")
     @ResponseStatus(HttpStatus.CREATED)
@@ -169,10 +185,10 @@ class RegistrationController(
 //    }
 }
 
+/*=================================================================================*/
 
-//import backend.repositories.entities.User
-//import backend.services.MailService
-//import backend.services.UserService
+
+
 
 /**
  * REST controller for managing users.
@@ -379,6 +395,10 @@ class RegistrationController(
 //    }
 //}
 
+/*=================================================================================*/
+
+
+
 /**
  * Controller to authenticate users.
  */
@@ -417,6 +437,9 @@ class RegistrationController(
 //        )
 //    }
 //}
+
+
+/*=================================================================================*/
 
 
 
@@ -502,3 +525,4 @@ class RegistrationController(
 //        .getAuthorities()
 //        .toCollection(mutableListOf())
 //}
+/*=================================================================================*/
