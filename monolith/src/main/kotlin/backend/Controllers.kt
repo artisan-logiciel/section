@@ -39,12 +39,12 @@ class SignUpController(
      * @param key the activation key.
      * @throws RuntimeException `500 (Internal Server Error)` if the user couldn't be activated.
      */
-    @GetMapping("/activate")
-    suspend fun activateAccount(@RequestParam(value = "key") key: String) {
+//    @GetMapping("/activate")
+//    suspend fun activateAccount(@RequestParam(value = "key") key: String) {
 //        accountService.activateRegistration(key = key).run {
 //            if (this == null) throw RegistrationController.AccountException("No user was found for this activation key")
 //        }
-    }
+//    }
 }
 
 /*=================================================================================*/

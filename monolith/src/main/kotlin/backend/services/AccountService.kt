@@ -2,12 +2,10 @@
 
 package backend.services
 
-import backend.Account
+import backend.*
 import backend.Account.AccountCredentials
 import backend.repositories.AccountRepository
 import backend.RandomUtils.generateActivationKey
-import backend.InvalidPasswordException
-import backend.UsernameAlreadyUsedException
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -36,16 +34,33 @@ class AccountService(
 //            else throw EmailAlreadyUsedException()
 //        }
 
-        accountRepository.save(
-            accountCredentials.copy(
-                //                password = password,//encrypt
-                activationKey = generateActivationKey
-            )
-        ).also {
+        accountCredentials.copy(
+            //                password = password,//encrypt
+            activationKey = generateActivationKey
+        ).run {
+            accountRepository.save(this)
             when {
                 accountRepository
                     .findActivationKeyByLogin(login = accountCredentials.login!!)
-                    .isNotEmpty() -> mailService.sendActivationEmail(it)
+                    .isNotEmpty() -> mailService.sendActivationEmail(
+                    AccountCredentialsModel(
+                        password = password,
+                        activationKey = activationKey,
+                        id = id,
+                        login = login,
+                        firstName = firstName,
+                        lastName = lastName,
+                        email = email,
+                        imageUrl = imageUrl,
+                        activated = activated,
+                        langKey = langKey,
+                        createdBy = createdBy,
+                        createdDate = createdDate,
+                        lastModifiedBy = lastModifiedBy,
+                        lastModifiedDate = lastModifiedDate,
+                        authorities = authorities
+                    )
+                )
             }
         }
     }
