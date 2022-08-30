@@ -15,7 +15,11 @@ class AccountModelService(
     private val mailService: MailService
 ) {
 
-    @Throws(UsernameAlreadyUsedException::class, UsernameAlreadyUsedException::class)
+    @Throws(
+        InvalidPasswordException::class,
+        UsernameAlreadyUsedException::class,
+        UsernameAlreadyUsedException::class
+    )
     suspend fun signup(model: AccountCredentialsModel) {
         InvalidPasswordException().run { if (isPasswordLengthInvalid(model.password)) throw this }
         checkLoginAvailable(model)
