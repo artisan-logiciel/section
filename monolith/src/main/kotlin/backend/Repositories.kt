@@ -8,13 +8,13 @@ import org.springframework.stereotype.Repository
 import java.util.*
 
 interface IAuthorityRepository {
-    suspend fun findOne(role: String): AuthorityEntity?
+    suspend fun findOne(role: String): String?
 }
 
 @Repository
 class AuthorityRepositoryInMemory : IAuthorityRepository {
     companion object {
-        val authorities by lazy {
+        private val authorities by lazy {
             mutableSetOf(
                 "ADMIN",
                 "USER",
@@ -23,8 +23,8 @@ class AuthorityRepositoryInMemory : IAuthorityRepository {
         }
     }
 
-    override suspend fun findOne(role: String): AuthorityEntity? =
-        authorities.find { it.role == role }
+    override suspend fun findOne(role: String): String? =
+        authorities.find { it.role == role }?.role
 
 }
 
@@ -101,20 +101,15 @@ class AccountRepositoryInMemory(
     }
 
     override suspend fun signup(model: AccountCredentialsModel) {
-        accountAuthorityRepository.save(
-            UserAuthority(
-                userId = save(model)?.id!!,
-                role = ROLE_USER
-            )
-        )
+        accountAuthorityRepository.save(save(model)?.id!!, ROLE_USER)
         save(model)
     }
 }
 
 interface IAccountAuthorityRepository {
-    suspend fun save(accountAuthority: UserAuthority): UserAuthority
+    suspend fun save(id: UUID, authority: String)
 
-    suspend fun delete(accountAuthority: UserAuthority)
+    suspend fun delete(id: UUID, authority: String)
 
     suspend fun count(): Long
 
@@ -126,18 +121,20 @@ interface IAccountAuthorityRepository {
 @Repository
 class AccountAuthorityRepositoryInMemory : IAccountAuthorityRepository {
     companion object {
-        val accountAuthorities by lazy { mutableSetOf<UserAuthority>() }
+        private val accountAuthorities by lazy { mutableSetOf<UserAuthority>() }
     }
 
     override suspend fun count(): Long = accountAuthorities.size.toLong()
 
-    override suspend fun save(accountAuthority: UserAuthority): UserAuthority =
-        accountAuthority.apply { accountAuthorities.add(this) }
+    override suspend fun save(id: UUID, authority: String) {
+        accountAuthorities.add(UserAuthority(userId = id, role = authority))
+    }
 
 
-    override suspend fun delete(accountAuthority: UserAuthority) {
-        when {
-            accountAuthorities.contains(accountAuthority) -> accountAuthorities.remove(accountAuthority)
+    override suspend fun delete(id: UUID, authority: String) {
+        accountAuthorities.apply {
+            filter { it.userId == id && it.role == authority }
+                .map { remove(it) }
         }
     }
 
