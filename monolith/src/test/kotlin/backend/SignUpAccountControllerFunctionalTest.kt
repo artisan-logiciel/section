@@ -22,16 +22,20 @@ import kotlin.test.assertEquals
 
 internal class SignUpAccountControllerFunctionalTest {
 
+    companion object {
+        private const val SIGNUP_URI = "api/signup"
+        private const val BASE_URL = "http://localhost:8080"
+    }
+
     private lateinit var context: ConfigurableApplicationContext
     private val accountRepository: IAccountModelRepository by lazy { context.getBean() }
     private val accountAuthorityRepository: IAccountAuthorityRepository by lazy { context.getBean() }
     private val client: WebTestClient by lazy {
         WebTestClient
             .bindToServer()
-            .baseUrl("http://localhost:8080")
+            .baseUrl(BASE_URL)
             .build()
     }
-
 
     @BeforeAll
     fun `lance le server en profile test`() =
@@ -78,7 +82,7 @@ internal class SignUpAccountControllerFunctionalTest {
         assertEquals(0, countUserAuthBefore)
         client
             .post()
-            .uri("/api/signup")
+            .uri(SIGNUP_URI)
             .contentType(MediaType.APPLICATION_JSON)
             .bodyValue(defaultAccount)
             .exchange()
@@ -103,7 +107,7 @@ internal class SignUpAccountControllerFunctionalTest {
         assertEquals(0, accountRepository.count())
         client
             .post()
-            .uri("/api/signup")
+            .uri(SIGNUP_URI)
             .contentType(MediaType.APPLICATION_JSON)
             .bodyValue(defaultUser.copy(login = "funky-log(n"))
             .exchange()
@@ -120,7 +124,7 @@ internal class SignUpAccountControllerFunctionalTest {
         assertEquals(0, accountRepository.count())
         client
             .post()
-            .uri("/api/signup")
+            .uri(SIGNUP_URI)
             .contentType(MediaType.APPLICATION_JSON)
             .bodyValue(defaultAccount.copy(password = "inv"))
             .exchange()
@@ -135,7 +139,7 @@ internal class SignUpAccountControllerFunctionalTest {
     fun `test register account avec un password invalid`(): Unit = runBlocking {
         assertEquals(0, accountRepository.count())
         client.post()
-            .uri("/api/signup")
+            .uri(SIGNUP_URI)
             .contentType(MediaType.APPLICATION_JSON)
             .bodyValue(defaultAccount.copy(password = "123"))
             .exchange()
@@ -151,7 +155,7 @@ internal class SignUpAccountControllerFunctionalTest {
         assertEquals(0, accountRepository.count())
         client
             .post()
-            .uri("/api/signup")
+            .uri(SIGNUP_URI)
             .contentType(MediaType.APPLICATION_JSON)
             .bodyValue(defaultAccount.copy(password = null))
             .exchange()
@@ -172,9 +176,9 @@ internal class SignUpAccountControllerFunctionalTest {
 
         client
             .post()
-            .uri("/api/signup")
+            .uri(SIGNUP_URI)
             .contentType(MediaType.APPLICATION_JSON)
-            .bodyValue(defaultAccount.copy(login= "foo"))
+            .bodyValue(defaultAccount.copy(login = "foo"))
             .exchange()
             .expectStatus()
             .isBadRequest
@@ -383,5 +387,6 @@ internal class SignUpAccountControllerFunctionalTest {
 //                .isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
 //        }
 //    */
+
 
 }
