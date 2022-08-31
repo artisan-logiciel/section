@@ -4,12 +4,20 @@
 
 package backend
 
+import backend.Constants.ROLE_USER
+import backend.Data.defaultAccount
+import backend.Data.defaultUser
+import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
 import org.springframework.beans.factory.getBean
 import org.springframework.boot.runApplication
 import org.springframework.context.ConfigurableApplicationContext
+import org.springframework.http.MediaType
 import org.springframework.test.web.reactive.server.WebTestClient
+import org.springframework.test.web.reactive.server.returnResult
+import kotlin.test.Test
+import kotlin.test.assertEquals
 
 
 internal class ActivateAccountControllerFunctionalTest {
@@ -35,6 +43,35 @@ internal class ActivateAccountControllerFunctionalTest {
 
     @AfterAll
     fun `arrête le serveur`() = context.close()
+
+
+//    @Test//TODO: revisiter avec coherence de la requete
+//    fun `vérifie que la requete contient bien des données cohérentes`() {
+//        client
+//            .post()
+//            .uri("/api/foo")
+//            .contentType(MediaType.APPLICATION_JSON)
+//            .bodyValue(defaultAccount)
+//            .exchange()
+//            .returnResult<Unit>().run {
+//                assert(requestBodyContent!!.isNotEmpty())
+//                requestBodyContent
+//                    ?.map { it.toInt().toChar().toString() }
+//                    ?.reduce { acc: String, s: String -> acc + s }.apply requestContent@{
+//                        //test request contains passed values
+//                        defaultAccount.run {
+//                            setOf(
+//                                "\"login\":\"${login}\"",
+//                                "\"password\":\"${password}\"",
+//                                "\"firstName\":\"${firstName}\"",
+//                                "\"lastName\":\"${lastName}\"",
+//                                "\"email\":\"${email}\"",
+//                                "\"imageUrl\":\"${imageUrl}\""
+//                            ).map { assert(this@requestContent?.contains(it) ?: false) }
+//                        }
+//                    }
+//            }
+//    }
 
 //    /*
 //        @Test
