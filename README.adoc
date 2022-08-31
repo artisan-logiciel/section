@@ -6,3 +6,7 @@
 * desktop
 * server
 * monolith
+
+== class diagram
+
+image::images/monolith_domain_class.png[Classes]
