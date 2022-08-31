@@ -39,7 +39,7 @@ class SignUpController(
     ) = signUpService.signup(accountCredentials)
 
     /**
-     * `GET  /activate` : activate the signed up user.
+     * `GET  /activate` : activate the signed-up user.
      *
      * @param key the activation key.
      * @throws RuntimeException `500 (Internal Server Error)` if the user couldn't be activated.
