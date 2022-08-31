@@ -224,16 +224,40 @@ internal class SignUpAccountControllerTest {
         assertEquals(0, accountAuthorityRepository.count())
         assertEquals(0, accountRepository.count())
     }
+
     @Test
     fun `test register account avec un email dupliqué`(): Unit = runBlocking {
-
+        assertEquals(0, accountRepository.count())
+        assertEquals(0, accountAuthorityRepository.count())
         // First user
         // Register first user
+        client
+            .post()
+            .uri(SIGNUP_URI)
+            .contentType(MediaType.APPLICATION_JSON)
+            .bodyValue(defaultAccount)
+            .exchange()
+            .expectStatus()
+            .isCreated
+            .returnResult<Unit>()
+            .run { responseBodyContent?.isEmpty()?.let { assert(it) } }
+        assertEquals(1, accountRepository.count())
+        assertEquals(1, accountAuthorityRepository.count())
+        assertEquals(false, accountRepository.findOneByEmail(defaultAccount.email!!)!!.activated)
+
         // Duplicate email, different login
         // Register second (non activated) user
         // Duplicate email - with uppercase email address
         // Register third (not activated) user
         // Register 4th (already activated) user
+
+        //netoyage des accounts et accountAuthorities à la fin du test
+        accountRepository.findOneByLogin(defaultAccount.login!!).run {
+            accountAuthorityRepository.deleteAllByAccountId(this?.id!!)
+            accountRepository.delete(this)
+        }
+        assertEquals(0, accountRepository.count())
+        assertEquals(0, accountAuthorityRepository.count())
 
         /*
             // First user
