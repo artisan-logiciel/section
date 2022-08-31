@@ -1,4 +1,4 @@
-@file:Suppress("LeakingThis")
+@file:Suppress("LeakingThis", "unused")
 
 package features
 
@@ -27,7 +27,6 @@ import kotlin.test.assertEquals
     webEnvironment = DEFINED_PORT
 )
 @ActiveProfiles("test")
-@Suppress("unused")
 class RegistrationStepDefinition : Fr {
     @Autowired
     private lateinit var objectMapper: ObjectMapper
@@ -86,6 +85,7 @@ class RegistrationStepDefinition : Fr {
 //            println("passé par ici")
 //            log.info("passé par ici")
 //            }
+            //TODO: ne pas oublier de netoyer la base
         }
     }
 

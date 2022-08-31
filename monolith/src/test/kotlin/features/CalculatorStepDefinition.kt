@@ -1,10 +1,11 @@
+@file:Suppress("unused")
+
 package features
 
 import calculator.add
 import calculator.subtract
 import io.cucumber.java8.En
 
-@Suppress("unused")
 class CalculatorStepDefinition : En {
 
     private var firstNumber: Int = 0

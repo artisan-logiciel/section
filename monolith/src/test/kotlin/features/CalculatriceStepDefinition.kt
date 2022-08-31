@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 package features
 
 import backend.Server
@@ -21,7 +23,6 @@ import kotlin.test.assertEquals
     webEnvironment = DEFINED_PORT
 )
 @ActiveProfiles("test")
-@Suppress("unused")
 class CalculatriceStepDefinition : Fr {
     @Autowired
     private lateinit var objectMapper: ObjectMapper

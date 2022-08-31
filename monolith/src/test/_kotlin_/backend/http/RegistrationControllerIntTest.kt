@@ -34,8 +34,8 @@ import kotlin.test.Ignore
 import kotlin.test.assertEquals
 
 class RegistrationControllerIntTest : AbstractRestIntegrationTest() {
-
-    @Test
+//TODO reprendre tous ces test avec inmemory
+    @Test//suprimable
     fun `test post un account valide sur le end point register`()
             : Unit = runBlocking {
         client
