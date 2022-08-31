@@ -25,16 +25,15 @@ internal class SignUpAccountControllerFunctionalTest {
     companion object {
         private const val SIGNUP_URI = "api/signup"
         private const val BASE_URL = "http://localhost:8080"
-    }
-
-    private lateinit var context: ConfigurableApplicationContext
-    private val accountRepository: IAccountModelRepository by lazy { context.getBean() }
-    private val accountAuthorityRepository: IAccountAuthorityRepository by lazy { context.getBean() }
-    private val client: WebTestClient by lazy {
-        WebTestClient
-            .bindToServer()
-            .baseUrl(BASE_URL)
-            .build()
+        private val client: WebTestClient by lazy {
+            WebTestClient
+                .bindToServer()
+                .baseUrl(BASE_URL)
+                .build()
+        }
+        private lateinit var context: ConfigurableApplicationContext
+        private val accountRepository: IAccountModelRepository by lazy { context.getBean() }
+        private val accountAuthorityRepository: IAccountAuthorityRepository by lazy { context.getBean() }
     }
 
     @BeforeAll
@@ -42,12 +41,12 @@ internal class SignUpAccountControllerFunctionalTest {
         runApplication<Server> { testLoader(app = this) }
             .run { context = this }
 
-
     @AfterAll
     fun `arrête le serveur`() = context.close()
 
+
     @Test
-    fun `verifie que la requete contient bien des données cohérentes`() {
+    fun `vérifie que la requete contient bien des données cohérentes`() {
         client
             .post()
             .uri("/api/foo")
@@ -170,7 +169,10 @@ internal class SignUpAccountControllerFunctionalTest {
     fun `test register account activé avec un email existant`(): Unit = runBlocking {
         assertEquals(0, accountRepository.count())
         assertEquals(0, accountAuthorityRepository.count())
-        accountAuthorityRepository.save(accountRepository.save(defaultAccount.copy(activated = true))?.id!!, ROLE_USER)
+        accountAuthorityRepository.save(
+            accountRepository.save(defaultAccount.copy(activated = true))?.id!!,
+            ROLE_USER
+        )
         assertEquals(1, accountRepository.count())
         assertEquals(1, accountAuthorityRepository.count())
 
@@ -197,7 +199,10 @@ internal class SignUpAccountControllerFunctionalTest {
     fun `test register account activé avec un login existant`(): Unit = runBlocking {
         assertEquals(0, accountRepository.count())
         assertEquals(0, accountAuthorityRepository.count())
-        accountAuthorityRepository.save(accountRepository.save(defaultAccount.copy(activated = true))?.id!!, ROLE_USER)
+        accountAuthorityRepository.save(
+            accountRepository.save(defaultAccount.copy(activated = true))?.id!!,
+            ROLE_USER
+        )
         assertEquals(1, accountRepository.count())
         assertEquals(1, accountAuthorityRepository.count())
 
@@ -219,7 +224,6 @@ internal class SignUpAccountControllerFunctionalTest {
         assertEquals(0, accountAuthorityRepository.count())
         assertEquals(0, accountRepository.count())
     }
-
 
 
 //    @Test
