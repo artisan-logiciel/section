@@ -1,5 +1,6 @@
-package backend
+package backend.bootstrap
 
+import backend.Constants
 import backend.Log.log
 import org.springframework.beans.factory.getBean
 import org.springframework.boot.SpringApplication
@@ -9,6 +10,7 @@ import org.springframework.context.MessageSource
 import java.net.InetAddress
 import java.net.UnknownHostException
 import java.util.*
+import backend.Server
 
 
 fun start(args: Array<String>): Unit =

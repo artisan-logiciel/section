@@ -1,9 +1,11 @@
 @file:Suppress("unused")
 
-package backend
+package backend.web
 
 //import backend.services.SecurityUtils.getCurrentUserLogin
 import backend.Account.AccountCredentials
+import backend.AccountCredentialsModel
+import backend.SignUpService
 import backend.services.AccountService
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
