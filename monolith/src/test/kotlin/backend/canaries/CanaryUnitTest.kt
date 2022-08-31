@@ -1,4 +1,4 @@
-package backend
+package backend.canaries
 
 import kotlin.test.Test
 import kotlin.test.assertEquals

@@ -18,7 +18,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 
 
-internal class RegistrationControllerFunctionalTest {
+internal class RegistrationControllerTest {
 
     private lateinit var context: ConfigurableApplicationContext
 

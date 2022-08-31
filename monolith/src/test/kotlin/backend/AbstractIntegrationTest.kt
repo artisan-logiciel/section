@@ -6,12 +6,12 @@
 
 package backend
 
-import backend.Log.log
 import backend.Constants.ROLE_ADMIN
 import backend.Constants.ROLE_ANONYMOUS
 import backend.Constants.ROLE_USER
 import backend.Data.defaultAccount
 import backend.Data.defaultUser
+import backend.Log.log
 import com.fasterxml.jackson.databind.ObjectMapper
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.count
@@ -19,6 +19,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.single
 import kotlinx.coroutines.reactive.awaitFirstOrNull
 import kotlinx.coroutines.reactive.awaitSingle
+import kotlinx.coroutines.runBlocking
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.context.ApplicationContext
@@ -36,6 +37,7 @@ import java.time.LocalDateTime
 import java.util.*
 import java.util.regex.Pattern
 import java.util.regex.Pattern.compile
+import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
@@ -265,5 +267,31 @@ internal abstract class AbstractIntegrationTest {
                 log.info(single()::toString)
             else map { log.info(it::toString) }
         }
+    }
+}
+
+internal class TestAbstractIntegrationTest : AbstractIntegrationTest() {
+
+
+    @Test
+    fun `test AbstractBaseSpringBootTest_saveUserWithAuthorities`(): Unit = runBlocking {
+        val countUserBeforeSave = countUser()
+        assertEquals(0, countUserBeforeSave)
+        val countUserAuthorityBeforeSave = countUserAuthority()
+        assertEquals(0, countUserAuthorityBeforeSave)
+        defaultUser.copy().apply {
+            unlockUser()
+            val id = saveUserWithAutorities(this)?.id
+            assertEquals(countUserBeforeSave + 1, countUser())
+            assertEquals(countUserAuthorityBeforeSave + 1, countUserAuthority())
+            when {
+                id != null -> {
+                    unlockUser()
+                    deleteUserByIdWithAuthorities(id)
+                }
+            }
+        }
+        assertEquals(countUserBeforeSave, countUser())
+        assertEquals(countUserAuthorityBeforeSave, countUserAuthority())
     }
 }

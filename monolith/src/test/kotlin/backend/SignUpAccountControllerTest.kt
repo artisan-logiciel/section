@@ -20,7 +20,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 
 
-internal class SignUpAccountControllerFunctionalTest {
+internal class SignUpAccountControllerTest {
 
     companion object {
         private const val SIGNUP_URI = "api/signup"

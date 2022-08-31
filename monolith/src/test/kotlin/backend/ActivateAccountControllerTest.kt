@@ -4,23 +4,15 @@
 
 package backend
 
-import backend.Constants.ROLE_USER
-import backend.Data.defaultAccount
-import backend.Data.defaultUser
-import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
 import org.springframework.beans.factory.getBean
 import org.springframework.boot.runApplication
 import org.springframework.context.ConfigurableApplicationContext
-import org.springframework.http.MediaType
 import org.springframework.test.web.reactive.server.WebTestClient
-import org.springframework.test.web.reactive.server.returnResult
-import kotlin.test.Test
-import kotlin.test.assertEquals
 
 
-internal class ActivateAccountControllerFunctionalTest {
+internal class ActivateAccountControllerTest {
 
     companion object {
         private const val SIGNUP_URI = "api/activate"

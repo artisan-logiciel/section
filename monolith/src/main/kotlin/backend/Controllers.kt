@@ -3,18 +3,16 @@
 package backend
 
 //import backend.services.SecurityUtils.getCurrentUserLogin
+
+
 import backend.Account.AccountCredentials
-import org.springframework.http.HttpStatus
-import org.springframework.web.bind.annotation.*
-import java.util.*
-import javax.validation.Valid
-
-
-
 import org.springframework.data.domain.Page
 import org.springframework.http.HttpHeaders
+import org.springframework.http.HttpStatus
+import org.springframework.web.bind.annotation.*
 import org.springframework.web.util.UriComponentsBuilder
 import java.text.MessageFormat
+import javax.validation.Valid
 
 /*=================================================================================*/
 
@@ -49,7 +47,7 @@ class SignUpController(
     @GetMapping("/activate")
     suspend fun activateAccount(@RequestParam(value = "key") key: String) {
         when {
-            !signUpService.activateRegistration(key = key) -> throw RegistrationController.AccountException("No user was found for this activation key")
+            !signUpService.activateRegistration(key = key) -> throw AccountException("No user was found for this activation key")
         }
     }
 }

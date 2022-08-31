@@ -1,5 +1,7 @@
-package backend
+package backend.canaries
 
+import backend.Server
+import backend.testLoader
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
 import org.springframework.boot.runApplication
