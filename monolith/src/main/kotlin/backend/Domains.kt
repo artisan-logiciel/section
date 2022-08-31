@@ -243,6 +243,24 @@ data class AccountCredentialsModel(
     val lastModifiedDate: Instant? = null,
     val authorities: Set<String>? = null
 ) {
+
+    constructor(account: AccountModel) : this(
+        id = account.id,
+        login = account.login,
+        email = account.email,
+        firstName = account.firstName,
+        lastName = account.lastName,
+        langKey = account.langKey,
+        activated = account.activated,
+        createdBy = account.createdBy,
+        createdDate = account.createdDate,
+        lastModifiedBy = account.lastModifiedBy,
+        lastModifiedDate = account.lastModifiedDate,
+        imageUrl = account.imageUrl,
+        authorities = account.authorities?.map { it }?.toMutableSet()
+    )
+
+
     fun toAccount(): AccountModel = AccountModel(
         id = id,
         login = login,

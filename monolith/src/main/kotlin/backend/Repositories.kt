@@ -4,6 +4,7 @@ package backend
 
 
 import backend.Constants.ROLE_USER
+import backend.Log.log
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.map
@@ -89,6 +90,7 @@ class AccountRepositoryInMemory(
                 try {
                     accounts.remove(accounts.first { this.id == it.id })
                     accounts.add(this)
+                    log.info("accounts: ${accounts}")
                 } catch (_: NoSuchElementException) {
                 }
             }.toModel()

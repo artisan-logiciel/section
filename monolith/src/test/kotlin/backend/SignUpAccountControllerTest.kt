@@ -7,6 +7,7 @@ package backend
 import backend.Constants.ROLE_USER
 import backend.Data.defaultAccount
 import backend.Data.defaultUser
+import backend.Log.log
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
@@ -231,6 +232,7 @@ internal class SignUpAccountControllerTest {
     //    @Ignore
     @Test
     fun `test register account avec un email dupliqué`(): Unit = runBlocking {
+
         assertEquals(0, accountRepository.count())
         assertEquals(0, accountAuthorityRepository.count())
         // First user
@@ -251,11 +253,12 @@ internal class SignUpAccountControllerTest {
 
         // Duplicate email, different login
         // Register second (non activated) user
+        val secondLogin = "foo"
         client
             .post()
             .uri(SIGNUP_URI)
             .contentType(MediaType.APPLICATION_JSON)
-            .bodyValue(defaultAccount.copy(login = "foo"))
+            .bodyValue(defaultAccount.copy(login = secondLogin))
             .exchange()
             .expectStatus()
             .isCreated
@@ -264,21 +267,23 @@ internal class SignUpAccountControllerTest {
         assertEquals(1, accountRepository.count())
         assertEquals(1, accountAuthorityRepository.count())
         assertNull(accountRepository.findOneByLogin(defaultAccount.login!!))
-        accountRepository.findOneByLogin("foo").run {
+        accountRepository.findOneByLogin(secondLogin).run {
             assertNotNull(this)
             assertEquals(defaultAccount.email!!, email)
         }
+        assertFalse(accountRepository.findOneByEmail(defaultAccount.email!!)!!.activated)
 
 
         // Duplicate email - with uppercase email address
         // Register third (not activated) user
+        val thirdLogin = "bar"
         client
             .post()
             .uri(SIGNUP_URI)
             .contentType(MediaType.APPLICATION_JSON)
             .bodyValue(
                 defaultAccount.copy(
-                    login = "bar",
+                    login = thirdLogin,
                     email = defaultAccount.email!!.uppercase()
                 )
             )
@@ -289,17 +294,38 @@ internal class SignUpAccountControllerTest {
             .run { responseBodyContent?.isEmpty()?.let { assert(it) } }
         assertEquals(1, accountRepository.count())
         assertEquals(1, accountAuthorityRepository.count())
-        assertNull(accountRepository.findOneByLogin("foo"))
-        accountRepository.findOneByLogin("bar").run {
+        assertNull(accountRepository.findOneByLogin(secondLogin))
+        accountRepository.findOneByLogin(thirdLogin).run {
             assertNotNull(this)
             assertEquals(defaultAccount.email!!.uppercase(), email)
+            //activate third
+            accountRepository.save(AccountCredentialsModel(copy(activated = true)))
+            log.info("accountRepository.save(AccountCredentialsModel(copy(activated = true))) : ${accountRepository.save(AccountCredentialsModel(copy(activated = true)))}")
         }
-
-
-        // Register 4th (already activated) user
+//        assert(accountRepository.findOneByEmail(defaultAccount.email!!)!!.activated)
+//
+//        // Register 4th (already activated) user
+//        client
+//            .post()
+//            .uri(SIGNUP_URI)
+//            .contentType(MediaType.APPLICATION_JSON)
+//            .bodyValue(defaultAccount.copy(login = secondLogin))
+//            .exchange()
+//            .expectStatus()
+//            .isBadRequest
+//            .returnResult<Unit>()
+//            .run { responseBodyContent?.isEmpty()?.let { assert(it) } }
+//        assertEquals(1, accountRepository.count())
+//        assertEquals(1, accountAuthorityRepository.count())
+//        assertNull(accountRepository.findOneByLogin(secondLogin))
+//        accountRepository.findOneByLogin(thirdLogin).run {
+//            assertNotNull(this)
+//            assertEquals(defaultAccount.email!!.lowercase(), email!!.lowercase())
+//        }
+//        assertFalse(accountRepository.findOneByEmail(defaultAccount.email!!)!!.activated)
 
         //netoyage des accounts et accountAuthorities à la fin du test
-        accountRepository.findOneByLogin("bar").run {
+        accountRepository.findOneByLogin(thirdLogin).run {
             accountAuthorityRepository.deleteAllByAccountId(this?.id!!)
             accountRepository.delete(this)
         }
