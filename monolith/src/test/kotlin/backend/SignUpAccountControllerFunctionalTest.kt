@@ -193,6 +193,34 @@ internal class SignUpAccountControllerFunctionalTest {
         assertEquals(0, accountRepository.count())
     }
 
+    @Test
+    fun `test register account activé avec un login existant`(): Unit = runBlocking {
+        assertEquals(0, accountRepository.count())
+        assertEquals(0, accountAuthorityRepository.count())
+        accountAuthorityRepository.save(accountRepository.save(defaultAccount.copy(activated = true))?.id!!, ROLE_USER)
+        assertEquals(1, accountRepository.count())
+        assertEquals(1, accountAuthorityRepository.count())
+
+        client
+            .post()
+            .uri(SIGNUP_URI)
+            .contentType(MediaType.APPLICATION_JSON)
+            .bodyValue(defaultAccount.copy(email = "foo@localhost"))
+            .exchange()
+            .expectStatus()
+            .isBadRequest
+            .returnResult<Unit>()
+            .run { responseBodyContent?.isNotEmpty()?.let { assert(it) } }
+
+        accountRepository.findOneByLogin(defaultAccount.login!!).run {
+            accountAuthorityRepository.deleteAllByAccountId(this?.id!!)
+            accountRepository.delete(this)
+        }
+        assertEquals(0, accountAuthorityRepository.count())
+        assertEquals(0, accountRepository.count())
+    }
+
+
 
 //    @Test
 //    fun `test register account avec un login existant`(): Unit = runBlocking {
