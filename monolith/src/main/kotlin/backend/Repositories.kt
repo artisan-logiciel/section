@@ -108,7 +108,8 @@ class AccountRepositoryInMemory(
 
     override suspend fun count(): Long = accounts.size.toLong()
     override suspend fun suppress(account: AccountModel) {
-        TODO("Not yet implemented")
+        accountAuthorityRepository.deleteAllByAccountId(account.id!!)
+        delete(account)
     }
 
     override suspend fun signup(model: AccountCredentialsModel) {
