@@ -12,6 +12,7 @@ import backend.Data.defaultUser
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.getBean
 import org.springframework.boot.runApplication
 import org.springframework.context.ConfigurableApplicationContext
@@ -19,6 +20,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.test.web.reactive.server.WebTestClient
 import org.springframework.test.web.reactive.server.returnResult
+import javax.validation.ValidationException
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -54,6 +56,7 @@ internal class SignUpAccountControllerFunctionalTest {
         client
             .post()
             .uri("/api/signup")
+            .contentType(MediaType.APPLICATION_JSON)
             .bodyValue(defaultAccount)
             .exchange()
             .returnResult<Unit>().run {
@@ -96,10 +99,9 @@ internal class SignUpAccountControllerFunctionalTest {
 
 
     @Test
-    @Throws(Exception::class)
     fun `test register account avec login invalid`(): Unit = runBlocking {
         assertEquals(0, accountRepository.count())
-        client
+         client
             .post()
             .uri("/api/signup")
             .contentType(MediaType.APPLICATION_JSON)
