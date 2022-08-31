@@ -1,37 +1,17 @@
+@file:Suppress("unused")
+
 package backend
 
-//import reactor.core.publisher.Hooks.onOperatorDebug
-//import org.springframework.security.authentication.ReactiveAuthenticationManager
-//import org.springframework.security.authentication.UserDetailsRepositoryReactiveAuthenticationManager
-//import org.springframework.security.config.annotation.method.configuration.EnableReactiveMethodSecurity
-//import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity
-//import org.springframework.security.config.web.server.SecurityWebFiltersOrder.AUTHENTICATION
-//import org.springframework.security.config.web.server.SecurityWebFiltersOrder.HTTP_BASIC
-//import org.springframework.security.config.web.server.ServerHttpSecurity
-//import org.springframework.security.core.userdetails.ReactiveUserDetailsService
-//import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
-//import org.springframework.security.crypto.password.PasswordEncoder
-//import org.springframework.security.web.server.SecurityWebFilterChain
-//import org.springframework.security.web.server.header.ReferrerPolicyServerHttpHeadersWriter.ReferrerPolicy.STRICT_ORIGIN_WHEN_CROSS_ORIGIN
-//import org.springframework.security.web.server.util.matcher.NegatedServerWebExchangeMatcher
-//import org.springframework.security.web.server.util.matcher.OrServerWebExchangeMatcher
-//import org.springframework.security.web.server.util.matcher.ServerWebExchangeMatchers.pathMatchers
 
-
-//import com.fasterxml.jackson.databind.ObjectMapper
-//import org.springframework.core.annotation.Order
-//import org.springframework.web.server.WebExceptionHandler
-//import org.zalando.problem.jackson.ProblemModule
-//import org.zalando.problem.spring.webflux.advice.ProblemExceptionHandler
-//import org.zalando.problem.spring.webflux.advice.ProblemHandling
-//import org.zalando.problem.violations.ConstraintViolationProblemModule
 import backend.Log.log
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import org.apache.commons.mail.EmailConstants.*
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Profile
+import org.springframework.core.annotation.Order
 import org.springframework.data.web.ReactivePageableHandlerMethodArgumentResolver
 import org.springframework.data.web.ReactiveSortHandlerMethodArgumentResolver
 import org.springframework.format.FormatterRegistry
@@ -44,6 +24,11 @@ import org.springframework.web.cors.reactive.CorsWebFilter
 import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource
 import org.springframework.web.reactive.config.EnableWebFlux
 import org.springframework.web.reactive.config.WebFluxConfigurer
+import org.springframework.web.server.WebExceptionHandler
+import org.zalando.problem.jackson.ProblemModule
+import org.zalando.problem.spring.webflux.advice.ProblemExceptionHandler
+import org.zalando.problem.spring.webflux.advice.ProblemHandling
+import org.zalando.problem.violations.ConstraintViolationProblemModule
 import reactor.core.publisher.Hooks
 
 @Configuration
@@ -51,7 +36,7 @@ import reactor.core.publisher.Hooks
 //@EnableWebFluxSecurity
 //@EnableReactiveMethodSecurity
 //@Import(SecurityProblemSupport::class)
-@Suppress("unused")
+
 class WebConfiguration(
     private val properties: ApplicationProperties,
 //    private val userDetailsService: ReactiveUserDetailsService,
@@ -98,18 +83,18 @@ class WebConfiguration(
      * WebFluxResponseStatusExceptionHandler
      * and Spring Boot's ErrorWebExceptionHandler
      */
-//    @Bean
-//    @Order(-2)
-//    fun problemHandler(
-//        mapper: ObjectMapper,
-//        problemHandling: ProblemHandling
-//    ): WebExceptionHandler = ProblemExceptionHandler(mapper, problemHandling)
+    @Bean
+    @Order(-2)
+    fun problemHandler(
+        mapper: ObjectMapper,
+        problemHandling: ProblemHandling
+    ): WebExceptionHandler = ProblemExceptionHandler(mapper, problemHandling)
 
-//    @Bean
-//    fun problemModule(): ProblemModule = ProblemModule()
+    @Bean
+    fun problemModule(): ProblemModule = ProblemModule()
 
-//    @Bean
-//    fun constraintViolationProblemModule() = ConstraintViolationProblemModule()
+    @Bean
+    fun constraintViolationProblemModule() = ConstraintViolationProblemModule()
 
     @Profile("!${Constants.SPRING_PROFILE_PRODUCTION}")
     fun reactorConfiguration() = Hooks.onOperatorDebug()
@@ -141,20 +126,18 @@ class WebConfiguration(
     fun reactiveSortHandlerMethodArgumentResolver() = ReactiveSortHandlerMethodArgumentResolver()
 
 
-    /*
-        @Bean
-        ResourceHandlerRegistrationCustomizer registrationCustomizer() {
-            // Disable built-in cache control to use our custom filter instead
-            return registration -> registration.setCacheControl(null);
-        }
+//        @Bean
+//        fun registrationCustomizer():ResourceHandlerRegistrationCustomizer {
+//            // Disable built-in cache control to use our custom filter instead
+//            return registration -> registration.setCacheControl(null);
+//        }
+//        @Bean
+//        @Profile(backend.Constants.SPRING_PROFILE_PRODUCTION)
+//        fun  cachingHttpHeadersFilter():CachingHttpHeadersFilter {
+//            // Use a cache filter that only match selected paths
+//            return  CachingHttpHeadersFilter(TimeUnit.DAYS.toMillis(ApplicationProperties.getHttp().getCache().getTimeToLiveInDays()));
+//        }
 
-        @Bean
-        @Profile(backend.Constants.SPRING_PROFILE_PRODUCTION)
-        public CachingHttpHeadersFilter cachingHttpHeadersFilter() {
-            // Use a cache filter that only match selected paths
-            return new CachingHttpHeadersFilter(TimeUnit.DAYS.toMillis(ApplicationProperties.getHttp().getCache().getTimeToLiveInDays()));
-        }
-    */
 //    @Bean("passwordEncoder")
 //    fun passwordEncoder(): PasswordEncoder = BCryptPasswordEncoder()
 

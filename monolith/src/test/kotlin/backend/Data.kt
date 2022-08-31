@@ -32,27 +32,26 @@ object Data {
     val userTest2 = userFactory(userTest2Account)
     val userTest3 = userFactory(userTest3Account)
 
-    val users = setOf(defaultUser, admin, userTest1, userTest2, userTest3)
+    val users = setOf(defaultAccount, adminAccount, userTest1Account, userTest2Account, userTest3Account)
 }
 
 
-fun accountCredentialsFactory(login: String)
-        : AccountCredentials = AccountCredentials(
-    password = login
-).apply {
-    this.login = login
-    firstName = login
-    lastName = login
-    email = "$login@acme.com"
-    langKey = Constants.DEFAULT_LANGUAGE
-    createdBy = Constants.SYSTEM_USER
-    createdDate = Instant.now()
-    lastModifiedBy = Constants.SYSTEM_USER
-    lastModifiedDate = Instant.now()
-    imageUrl = "http://placehold.it/50x50"
-}
+fun accountCredentialsFactory(login: String): AccountCredentialsModel =
+    AccountCredentialsModel(
+        password = login,
+        login = login,
+        firstName = login,
+        lastName = login,
+        email = "$login@acme.com",
+        langKey = Constants.DEFAULT_LANGUAGE,
+        createdBy = Constants.SYSTEM_USER,
+        createdDate = Instant.now(),
+        lastModifiedBy = Constants.SYSTEM_USER,
+        lastModifiedDate = Instant.now(),
+        imageUrl = "http://placehold.it/50x50",
+    )
 
-fun userFactory(accountCredentials: AccountCredentials): User = User(
+fun userFactory(accountCredentials: AccountCredentialsModel): User = User(
     login = accountCredentials.login,
     password = accountCredentials.password,
     firstName = accountCredentials.firstName,

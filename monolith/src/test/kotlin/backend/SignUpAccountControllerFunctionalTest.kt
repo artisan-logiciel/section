@@ -4,23 +4,18 @@
 
 package backend
 
-import backend.Constants.DEFAULT_LANGUAGE
-import backend.Constants.SYSTEM_USER
-import backend.Data.USER_LOGIN
+import backend.Constants.ROLE_USER
 import backend.Data.defaultAccount
 import backend.Data.defaultUser
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
-import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.getBean
 import org.springframework.boot.runApplication
 import org.springframework.context.ConfigurableApplicationContext
-import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.test.web.reactive.server.WebTestClient
 import org.springframework.test.web.reactive.server.returnResult
-import javax.validation.ValidationException
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -47,7 +42,8 @@ internal class SignUpAccountControllerFunctionalTest {
     @AfterAll
     fun `arrête le serveur`() = context.close()
 
-    @Test fun`verifie que la requete contient bien des données cohérente`(){
+    @Test
+    fun `verifie que la requete contient bien des données cohérentes`() {
         client
             .post()
             .uri("/api/foo")
@@ -92,7 +88,7 @@ internal class SignUpAccountControllerFunctionalTest {
             .run { responseBodyContent?.isEmpty()?.let { assert(it) } }
         assertEquals(countUserBefore + 1, accountRepository.count())
         assertEquals(countUserAuthBefore + 1, accountAuthorityRepository.count())
-        //clean after test
+        //clean accounts and accountAuthorities after test
         accountRepository.findOneByLogin(defaultAccount.login!!).run {
             accountAuthorityRepository.deleteAllByAccountId(this?.id!!)
             accountRepository.delete(this)
@@ -101,13 +97,6 @@ internal class SignUpAccountControllerFunctionalTest {
         assertEquals(countUserAuthBefore, accountAuthorityRepository.count())
         assertEquals(countUserBefore, accountRepository.count())
     }
-
-    //TODO: register un user avec un email invalid
-    //TODO: register un user avec un email existant
-    //TODO: register un user avec un mauvais login
-    //TODO: register un user avec un login existant
-    //TODO: mocker que l'email est parti en interceptant l'appel et logger l'action(en affichant le mail)
-
 
     @Test
     fun `test register account avec login invalid`(): Unit = runBlocking {
@@ -142,104 +131,66 @@ internal class SignUpAccountControllerFunctionalTest {
         assertEquals(0, accountRepository.count())
     }
 
+    @Test
+    fun `test register account avec un password invalid`(): Unit = runBlocking {
+        assertEquals(0, accountRepository.count())
+        client.post()
+            .uri("/api/signup")
+            .contentType(MediaType.APPLICATION_JSON)
+            .bodyValue(defaultAccount.copy(password = "123"))
+            .exchange()
+            .expectStatus()
+            .isBadRequest
+            .returnResult<Unit>()
+            .run { responseBodyContent?.isNotEmpty()?.let { assert(it) } }
+        assertEquals(0, accountRepository.count())
+    }
+
+    @Test
+    fun `test register account avec un password null`(): Unit = runBlocking {
+        assertEquals(0, accountRepository.count())
+        client
+            .post()
+            .uri("/api/signup")
+            .contentType(MediaType.APPLICATION_JSON)
+            .bodyValue(defaultAccount.copy(password = null))
+            .exchange()
+            .expectStatus()
+            .isBadRequest
+            .returnResult<Unit>()
+            .run { responseBodyContent?.isNotEmpty()?.let { assert(it) } }
+        assertEquals(0, accountRepository.count())
+    }
+
+    @Test
+    fun `test register account activé avec un email existant`(): Unit = runBlocking {
+        assertEquals(0, accountRepository.count())
+        assertEquals(0, accountAuthorityRepository.count())
+        accountAuthorityRepository.save(accountRepository.save(defaultAccount.copy(activated = true))?.id!!, ROLE_USER)
+        assertEquals(1, accountRepository.count())
+        assertEquals(1, accountAuthorityRepository.count())
+
+        client
+            .post()
+            .uri("/api/signup")
+            .contentType(MediaType.APPLICATION_JSON)
+            .bodyValue(defaultAccount.copy(login= "foo"))
+            .exchange()
+            .expectStatus()
+            .is4xxClientError
+            .returnResult<Unit>()
+            .run { responseBodyContent?.isNotEmpty()?.let { assert(it) } }
+
+        accountRepository.findOneByLogin(defaultAccount.login!!).run {
+            accountAuthorityRepository.deleteAllByAccountId(this?.id!!)
+            accountRepository.delete(this)
+        }
+        assertEquals(0, accountAuthorityRepository.count())
+        assertEquals(0, accountRepository.count())
+    }
+
+
 //    @Test
-//    @Throws(Exception::class)
-//    fun `test register account avec un password invalid`(): Unit = runBlocking {
-//        assertEquals(expected = countUser(), actual = 0)
-//        client.post()
-//            .uri("/api/register")
-//            .contentType(MediaType.APPLICATION_JSON)
-//            .bodyValue(
-//                AccountPassword(
-//                    password = "123"
-//                ).apply {
-//                    login = defaultAccount.login
-//                    firstName = USER_LOGIN
-//                    lastName = USER_LOGIN
-//                    email = defaultAccount.email
-//                    langKey = DEFAULT_LANGUAGE
-//                    createdBy = SYSTEM_USER
-//                    createdDate = Instant.now()
-//                    lastModifiedBy = SYSTEM_USER
-//                    lastModifiedDate = Instant.now()
-//                    imageUrl = "http://placehold.it/50x50"
-//                }
-//            )
-//            .exchange()
-//            .expectStatus()
-//            .isBadRequest
-//        assertEquals(countUser(), 0)
-//    }
-//
-//    @Test
-//    @Throws(Exception::class)
-//    fun `test register account avec un password null`(): Unit = runBlocking {
-//        assertEquals(countUser(), 0)
-//        client
-//            .post()
-//            .uri("/api/register")
-//            .contentType(MediaType.APPLICATION_JSON)
-//            .bodyValue(
-//                AccountPassword(
-//                    password = null
-//                ).apply {
-//                    login = defaultAccount.login
-//                    firstName = USER_LOGIN
-//                    lastName = USER_LOGIN
-//                    email = defaultAccount.email
-//                    langKey = DEFAULT_LANGUAGE
-//                    createdBy = SYSTEM_USER
-//                    createdDate = Instant.now()
-//                    lastModifiedBy = SYSTEM_USER
-//                    lastModifiedDate = Instant.now()
-//                    imageUrl = "http://placehold.it/50x50"
-//                })
-//            .exchange()
-//            .expectStatus()
-//            .isBadRequest
-//        assertEquals(countUser(), 0)
-//    }
-//
-//    @Test
-//    @Throws(Exception::class)
-//    fun `test register account avec un email existant activé`(): Unit = runBlocking {
-//        assertEquals(0, countUser())
-//        assertEquals(0, countUserAuthority())
-//        checkInitDatabaseWithDefaultUser()
-//        assertEquals(1, countUser())
-//        assertEquals(1, countUserAuthority())
-//
-//        client
-//            .post()
-//            .uri("/api/register")
-//            .contentType(MediaType.APPLICATION_JSON)
-//            .bodyValue(
-//                AccountPassword(
-//                    password = defaultAccount.password
-//                ).apply {
-//                    login = TEST_USER_LOGIN
-//                    firstName = defaultAccount.firstName
-//                    lastName = defaultAccount.lastName
-//                    email = defaultAccount.email
-//                    langKey = defaultAccount.langKey
-//                    createdBy = defaultAccount.createdBy
-//                    Instant.now().apply {
-//                        lastModifiedDate = this
-//                        lastModifiedDate = this
-//                    }
-//                    lastModifiedBy = defaultAccount.lastModifiedBy
-//                    imageUrl = "http://placehold.it/50x50"
-//                })
-//            .exchange()
-//            .expectStatus()
-//            .is4xxClientError
-//
-//        assertEquals(1, countUser())
-//    }
-//
-//
-//    @Test
-//    @Throws(Exception::class)
 //    fun `test register account avec un login existant`(): Unit = runBlocking {
 //        assertEquals(0, countUser())
 //        assertEquals(0, countUserAuthority())
@@ -249,7 +200,7 @@ internal class SignUpAccountControllerFunctionalTest {
 //
 //        client
 //            .post()
-//            .uri("/api/register")
+//            .uri("/api/signup")
 //            .contentType(MediaType.APPLICATION_JSON)
 //            .bodyValue(
 //                AccountPassword(
@@ -274,7 +225,6 @@ internal class SignUpAccountControllerFunctionalTest {
 //
 //    @Ignore
 //    @Test
-//    @Throws(Exception::class)
 //    fun `test register account avec un email dupliqué`(): Unit = runBlocking {
 ///*
 //        // First user

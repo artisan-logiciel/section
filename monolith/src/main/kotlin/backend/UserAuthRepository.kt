@@ -1,6 +1,7 @@
 @file:Suppress(
     "SqlNoDataSourceInspection",
-    "SqlResolve"
+    "SqlResolve",
+    "unused"
 )
 
 package backend
@@ -11,7 +12,6 @@ import org.springframework.data.repository.kotlin.CoroutineCrudRepository
 import org.springframework.lang.Nullable
 import java.util.*
 
-@Suppress("unused")
 interface UserAuthRepository : CoroutineCrudRepository<UserAuthority, Long> {
     @Nullable
     @Query("INSERT INTO `user_authority`(user_id,`role`) VALUES(:userId, :role)")
