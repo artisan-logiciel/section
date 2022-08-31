@@ -4,7 +4,11 @@
 
 package backend
 
+import backend.Constants.DEFAULT_LANGUAGE
+import backend.Constants.SYSTEM_USER
+import backend.Data.USER_LOGIN
 import backend.Data.defaultAccount
+import backend.Data.defaultUser
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
@@ -15,7 +19,6 @@ import org.springframework.http.HttpStatus
 //import org.springframework.http.MediaType
 import org.springframework.test.web.reactive.server.WebTestClient
 import org.springframework.test.web.reactive.server.returnResult
-//import java.time.Instant
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -23,19 +26,20 @@ import kotlin.test.assertEquals
 internal class SignUpAccountControllerFunctionalTest {
 
     private lateinit var context: ConfigurableApplicationContext
+    private val accountRepository: IAccountModelRepository by lazy { context.getBean() }
+    private val accountAuthorityRepository: IAccountAuthorityRepository by lazy { context.getBean() }
     private val client: WebTestClient by lazy {
         WebTestClient
             .bindToServer()
             .baseUrl("http://localhost:8080")
             .build()
     }
-    private val accountRepository: IAccountModelRepository by lazy { context.getBean() }
-    private val accountAuthorityRepository: IAccountAuthorityRepository by lazy { context.getBean() }
 
 
     @BeforeAll
     fun `lance le server en profile test`() =
-        runApplication<Server> { testLoader(app = this) }.run { context = this }
+        runApplication<Server> { testLoader(app = this) }
+            .run { context = this }
 
 
     @AfterAll
@@ -52,7 +56,7 @@ internal class SignUpAccountControllerFunctionalTest {
             .uri("/api/signup")
             .bodyValue(defaultAccount)
             .exchange()
-            .returnResult<Unit>().apply {
+            .returnResult<Unit>().run {
                 assert(requestBodyContent!!.isNotEmpty())
                 requestBodyContent
                     ?.map { it.toInt().toChar().toString() }
@@ -75,10 +79,12 @@ internal class SignUpAccountControllerFunctionalTest {
         assertEquals(countUserBefore + 1, accountRepository.count())
         assertEquals(countUserAuthBefore + 1, accountAuthorityRepository.count())
         //clean after test
-        val account = accountRepository.findOneByLogin(defaultAccount.login!!)
-        accountAuthorityRepository.deleteAllByAccountId(account?.id!!)
-        accountRepository.delete(account)
-        assertEquals(countUserAuthBefore, context.getBean<IAccountAuthorityRepository>().count())
+        accountRepository.findOneByLogin(defaultAccount.login!!).run {
+            accountAuthorityRepository.deleteAllByAccountId(this?.id!!)
+            accountRepository.delete(this)
+        }
+
+        assertEquals(countUserAuthBefore, accountAuthorityRepository.count())
         assertEquals(countUserBefore, accountRepository.count())
     }
 
@@ -89,34 +95,22 @@ internal class SignUpAccountControllerFunctionalTest {
     //TODO: mocker que l'email est parti en interceptant l'appel et logger l'action(en affichant le mail)
 
 
-//    @Test
-//    @Throws(Exception::class)
-//    fun `test register account avec login invalid`(): Unit = runBlocking {
-//        assertEquals(countUser(), 0)
+    @Test
+    @Throws(Exception::class)
+    fun `test register account avec login invalid`(): Unit = runBlocking {
+        assertEquals(0, accountRepository.count())
 //        client
 //            .post()
-//            .uri("/api/register")
+//            .uri("/api/signup")
 //            .contentType(MediaType.APPLICATION_JSON)
-//            .bodyValue(
-//                AccountPassword(
-//                    password = defaultAccount.password
-//                ).apply {
-//                    login = "funky-log(n"
-//                    firstName = USER_LOGIN
-//                    lastName = USER_LOGIN
-//                    email = defaultAccount.email
-//                    langKey = DEFAULT_LANGUAGE
-//                    createdBy = SYSTEM_USER
-//                    createdDate = Instant.now()
-//                    lastModifiedBy = SYSTEM_USER
-//                    lastModifiedDate = Instant.now()
-//                    imageUrl = "http://placehold.it/50x50"
-//                })
+//            .bodyValue(defaultUser.copy(login = "funky-log(n"))
 //            .exchange()
 //            .expectStatus()
 //            .isBadRequest
-//        assertEquals(countUser(), 0)
-//    }
+        assertEquals(accountRepository.count(), 0)
+    }
+
+
 //
 //    @Test
 //    @Throws(Exception::class)
