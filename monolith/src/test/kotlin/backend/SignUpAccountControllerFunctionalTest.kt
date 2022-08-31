@@ -224,41 +224,6 @@ internal class SignUpAccountControllerFunctionalTest {
         assertEquals(0, accountAuthorityRepository.count())
         assertEquals(0, accountRepository.count())
     }
-
-
-//    @Test
-//    fun `test register account avec un login existant`(): Unit = runBlocking {
-//        assertEquals(0, countUser())
-//        assertEquals(0, countUserAuthority())
-//        checkInitDatabaseWithDefaultUser()
-//        assertEquals(1, countUser())
-//        assertEquals(1, countUserAuthority())
-//
-//        client
-//            .post()
-//            .uri("/api/signup")
-//            .contentType(MediaType.APPLICATION_JSON)
-//            .bodyValue(
-//                AccountPassword(
-//                    password = defaultAccount.password
-//                ).apply {
-//                    login = defaultAccount.login
-//                    firstName = defaultAccount.firstName
-//                    lastName = defaultAccount.lastName
-//                    email = "j.doe@acme.com"
-//                    langKey = defaultAccount.langKey
-//                    createdBy = defaultAccount.createdBy
-//                    createdDate = Instant.now()
-//                    lastModifiedBy = defaultAccount.lastModifiedBy
-//                    lastModifiedDate = Instant.now()
-//                })
-//            .exchange()
-//            .expectStatus()
-//            .isBadRequest
-//
-//        assertEquals(1, countUser())
-//    }
-//
 //    @Ignore
 //    @Test
 //    fun `test register account avec un email dupliqué`(): Unit = runBlocking {
@@ -357,7 +322,7 @@ internal class SignUpAccountControllerFunctionalTest {
 //    }
 //
 //    /*
-//        @Test
+//        @Test//test en renseignant les authorities est ignoré
 //        void testRegisterAdminIsIgnored() throws Exception {
 //            ManagedUserVM validUser = new ManagedUserVM();
 //            validUser.setLogin("badguy");
@@ -387,38 +352,4 @@ internal class SignUpAccountControllerFunctionalTest {
 //        }
 //    */
 //
-//    /*
-//        @Test
-//        void testActivateAccount() {
-//            final String activationKey = "some activation key";
-//            User user = new User();
-//            user.setLogin("activate-account");
-//            user.setEmail("activate-account@example.com");
-//            user.setPassword(RandomStringUtils.random(60));
-//            user.setActivated(false);
-//            user.setActivationKey(activationKey);
-//            user.setCreatedBy(Constants.SYSTEM);
-//
-//            userRepository.save(user).block();
-//
-//            accountWebTestClient.get().uri("/api/activate?key={activationKey}", activationKey).exchange().expectStatus().isOk();
-//
-//            user = userRepository.findOneByLogin(user.getLogin()).block();
-//            assertThat(user.isActivated()).isTrue();
-//        }
-//    */
-//
-//    /*
-//        @Test
-//        void testActivateAccountWithWrongKey() {
-//            accountWebTestClient
-//                .get()
-//                .uri("/api/activate?key=wrongActivationKey")
-//                .exchange()
-//                .expectStatus()
-//                .isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
-//        }
-//    */
-
-
 }
