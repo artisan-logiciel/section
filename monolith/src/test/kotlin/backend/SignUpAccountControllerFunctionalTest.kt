@@ -47,15 +47,10 @@ internal class SignUpAccountControllerFunctionalTest {
     @AfterAll
     fun `arrête le serveur`() = context.close()
 
-    @Test
-    fun `signup avec un account valide`(): Unit = runBlocking {
-        val countUserBefore = accountRepository.count()
-        val countUserAuthBefore = accountAuthorityRepository.count()
-        assertEquals(0, countUserBefore)
-        assertEquals(0, countUserAuthBefore)
+    @Test fun`verifie que la requete contient bien des données cohérente`(){
         client
             .post()
-            .uri("/api/signup")
+            .uri("/api/foo")
             .contentType(MediaType.APPLICATION_JSON)
             .bodyValue(defaultAccount)
             .exchange()
@@ -76,9 +71,25 @@ internal class SignUpAccountControllerFunctionalTest {
                             ).map { assert(this@requestContent?.contains(it) ?: false) }
                         }
                     }
-                responseBodyContent?.isEmpty()?.let { assert(it) }
-                assertEquals(expected = HttpStatus.CREATED, actual = status)
             }
+    }
+
+    @Test
+    fun `signup avec un account valide`(): Unit = runBlocking {
+        val countUserBefore = accountRepository.count()
+        val countUserAuthBefore = accountAuthorityRepository.count()
+        assertEquals(0, countUserBefore)
+        assertEquals(0, countUserAuthBefore)
+        client
+            .post()
+            .uri("/api/signup")
+            .contentType(MediaType.APPLICATION_JSON)
+            .bodyValue(defaultAccount)
+            .exchange()
+            .expectStatus()
+            .isCreated
+            .returnResult<Unit>()
+            .run { responseBodyContent?.isEmpty()?.let { assert(it) } }
         assertEquals(countUserBefore + 1, accountRepository.count())
         assertEquals(countUserAuthBefore + 1, accountAuthorityRepository.count())
         //clean after test
@@ -101,7 +112,7 @@ internal class SignUpAccountControllerFunctionalTest {
     @Test
     fun `test register account avec login invalid`(): Unit = runBlocking {
         assertEquals(0, accountRepository.count())
-         client
+        client
             .post()
             .uri("/api/signup")
             .contentType(MediaType.APPLICATION_JSON)
@@ -110,40 +121,27 @@ internal class SignUpAccountControllerFunctionalTest {
             .expectStatus()
             .isBadRequest
             .returnResult<Unit>()
+            .run { responseBodyContent?.isNotEmpty()?.let { assert(it) } }
         assertEquals(accountRepository.count(), 0)
     }
 
 
-//
-//    @Test
-//    @Throws(Exception::class)
-//    fun `test register account avec un email invalid`(): Unit = runBlocking {
-//        assertEquals(countUser(), 0)
-//        client
-//            .post()
-//            .uri("/api/register")
-//            .contentType(MediaType.APPLICATION_JSON)
-//            .bodyValue(
-//                AccountPassword(
-//                    password = defaultAccount.password
-//                ).apply {
-//                    login = defaultAccount.login
-//                    firstName = USER_LOGIN
-//                    lastName = USER_LOGIN
-//                    email = "invalid"
-//                    langKey = DEFAULT_LANGUAGE
-//                    createdBy = SYSTEM_USER
-//                    createdDate = Instant.now()
-//                    lastModifiedBy = SYSTEM_USER
-//                    lastModifiedDate = Instant.now()
-//                    imageUrl = "http://placehold.it/50x50"
-//                })
-//            .exchange()
-//            .expectStatus()
-//            .isBadRequest
-//        assertEquals(expected = countUser(), actual = 0)
-//    }
-//
+    @Test
+    fun `test register account avec un email invalid`(): Unit = runBlocking {
+        assertEquals(0, accountRepository.count())
+        client
+            .post()
+            .uri("/api/signup")
+            .contentType(MediaType.APPLICATION_JSON)
+            .bodyValue(defaultAccount.copy(password = "inv"))
+            .exchange()
+            .expectStatus()
+            .isBadRequest
+            .returnResult<Unit>()
+            .run { responseBodyContent?.isNotEmpty()?.let { assert(it) } }
+        assertEquals(0, accountRepository.count())
+    }
+
 //    @Test
 //    @Throws(Exception::class)
 //    fun `test register account avec un password invalid`(): Unit = runBlocking {
