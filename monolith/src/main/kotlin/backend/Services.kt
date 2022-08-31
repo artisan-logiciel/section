@@ -2,21 +2,20 @@
 
 package backend
 
-import org.apache.commons.lang3.RandomStringUtils
-import org.springframework.stereotype.Service
-import java.security.SecureRandom
-import kotlin.jvm.Throws
-import backend.Log.log
 import backend.Constants.BASE_URL
 import backend.Constants.USER
+import backend.Log.log
+import org.apache.commons.lang3.RandomStringUtils
 import org.springframework.context.MessageSource
 import org.springframework.mail.MailException
 import org.springframework.mail.javamail.JavaMailSender
 import org.springframework.mail.javamail.MimeMessageHelper
 import org.springframework.scheduling.annotation.Async
+import org.springframework.stereotype.Service
 import org.thymeleaf.context.Context
 import org.thymeleaf.spring5.SpringWebFluxTemplateEngine
 import java.nio.charset.StandardCharsets.UTF_8
+import java.security.SecureRandom
 import java.util.Locale.forLanguageTag
 import javax.mail.MessagingException
 

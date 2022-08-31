@@ -1,7 +1,5 @@
 package backend
 
-import backend.bootstrap.checkProfileLog
-import backend.bootstrap.start
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.ApplicationContext

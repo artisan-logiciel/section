@@ -190,8 +190,6 @@ data class User(
 }
 
 
-
-
 @Table("`phone`")
 data class PhoneEntity(
     @Id var id: UUID? = null,

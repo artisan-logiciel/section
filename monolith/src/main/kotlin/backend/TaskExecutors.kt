@@ -18,7 +18,6 @@ import java.util.concurrent.Executor
 import java.util.concurrent.Future
 
 
-
 @EnableAsync
 @Configuration
 @EnableScheduling

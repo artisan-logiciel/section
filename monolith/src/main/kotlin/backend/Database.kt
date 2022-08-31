@@ -1,8 +1,7 @@
 @file:Suppress("unused")
 
-package backend.configuration
+package backend
 
-import backend.ApplicationProperties
 import io.r2dbc.spi.ConnectionFactory
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.context.annotation.Bean
@@ -47,6 +46,7 @@ class DatabaseConfiguration(
                 )
             )
         }
+
     @Bean
     fun reactiveTransactionManager(
         connectionFactory: ConnectionFactory
@@ -66,7 +66,6 @@ class DatabaseConfiguration(
     class InstantReadConverter : Converter<LocalDateTime, Instant> {
         override fun convert(localDateTime: LocalDateTime): Instant = localDateTime.toInstant(UTC)!!
     }
-
 
 
     @Bean
