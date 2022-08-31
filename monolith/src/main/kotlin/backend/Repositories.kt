@@ -18,6 +18,7 @@ import org.springframework.stereotype.Repository
 import reactor.core.publisher.Flux
 import java.time.LocalDateTime
 import java.util.*
+
 interface IAuthorityRepository {
     suspend fun findOne(role: String): String?
 }
@@ -78,8 +79,10 @@ class AccountRepositoryInMemory(
                     && accounts.none { it.login?.lowercase() == accountCredentialsModel.login }
                     && accounts.none { it.email?.lowercase() == accountCredentialsModel.email }
             -> accountCredentialsModel.copy(id = UUID.randomUUID())
-                .apply { accounts.add(AccountEntity(this)) }
-                .toAccount()
+                .apply {
+                    accounts.add(AccountEntity(this))
+                    log.info("accounts: ${accounts}")
+                }.toAccount()
 
             accountCredentialsModel.id != null
                     && accounts.none { it.login?.lowercase() == accountCredentialsModel.login }
@@ -168,7 +171,6 @@ class AccountAuthorityRepositoryInMemory : IAccountAuthorityRepository {
 }
 
 
-
 interface AccountRepository {
 
     suspend fun findOneByLogin(login: String): Account?
@@ -181,7 +183,6 @@ interface AccountRepository {
 
     suspend fun findActivationKeyByLogin(login: String): String
 }
-
 
 
 @Repository("emailRepository")

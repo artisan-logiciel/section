@@ -300,9 +300,9 @@ internal class SignUpAccountControllerTest {
             assertEquals(defaultAccount.email!!.uppercase(), email)
             //activate third
             accountRepository.save(AccountCredentialsModel(copy(activated = true)))
-            log.info("accountRepository.save(AccountCredentialsModel(copy(activated = true))) : ${accountRepository.save(AccountCredentialsModel(copy(activated = true)))}")
+//            log.info("accountRepository.save(AccountCredentialsModel(copy(activated = true))) : ${accountRepository.save(AccountCredentialsModel(copy(activated = true)))}")
         }
-//        assert(accountRepository.findOneByEmail(defaultAccount.email!!)!!.activated)
+        assert(accountRepository.findOneByEmail(defaultAccount.email!!)!!.activated)
 //
 //        // Register 4th (already activated) user
 //        client
@@ -315,18 +315,18 @@ internal class SignUpAccountControllerTest {
 //            .isBadRequest
 //            .returnResult<Unit>()
 //            .run { responseBodyContent?.isEmpty()?.let { assert(it) } }
-//        assertEquals(1, accountRepository.count())
-//        assertEquals(1, accountAuthorityRepository.count())
-//        assertNull(accountRepository.findOneByLogin(secondLogin))
-//        accountRepository.findOneByLogin(thirdLogin).run {
-//            assertNotNull(this)
-//            assertEquals(defaultAccount.email!!.lowercase(), email!!.lowercase())
-//        }
-//        assertFalse(accountRepository.findOneByEmail(defaultAccount.email!!)!!.activated)
+        assertEquals(1, accountRepository.count())
+        assertEquals(1, accountAuthorityRepository.count())
+        assertNull(accountRepository.findOneByLogin(secondLogin))
+        accountRepository.findOneByLogin(thirdLogin).run {
+            assertNotNull(this)
+            assertEquals(defaultAccount.email!!.lowercase(), email!!.lowercase())
+        }
+        assertFalse(accountRepository.findOneByEmail(defaultAccount.email!!)!!.activated)
 
         //netoyage des accounts et accountAuthorities à la fin du test
-        accountRepository.findOneByLogin(thirdLogin).run {
-            accountAuthorityRepository.deleteAllByAccountId(this?.id!!)
+        accountRepository.findOneByEmail(defaultAccount.email!!).run {
+            accountAuthorityRepository.deleteAllByAccountId(this!!.id!!)
             accountRepository.delete(this)
         }
         assertEquals(0, accountRepository.count())
