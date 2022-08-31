@@ -18,6 +18,8 @@ import org.springframework.test.web.reactive.server.WebTestClient
 import org.springframework.test.web.reactive.server.returnResult
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertNotNull
+import kotlin.test.assertNull
 
 
 internal class SignUpAccountControllerTest {
@@ -247,6 +249,22 @@ internal class SignUpAccountControllerTest {
 
         // Duplicate email, different login
         // Register second (non activated) user
+        client
+            .post()
+            .uri(SIGNUP_URI)
+            .contentType(MediaType.APPLICATION_JSON)
+            .bodyValue(defaultAccount.copy(login = "foo"))
+            .exchange()
+            .expectStatus()
+            .isCreated
+            .returnResult<Unit>()
+            .run { responseBodyContent?.isEmpty()?.let { assert(it) } }
+        assertEquals(1, accountRepository.count())
+        assertEquals(1, accountAuthorityRepository.count())
+        assertNull(accountRepository.findOneByLogin(defaultAccount.login!!))
+        assertNotNull(accountRepository.findOneByLogin("foo"))
+
+
         // Duplicate email - with uppercase email address
         // Register third (not activated) user
         // Register 4th (already activated) user
