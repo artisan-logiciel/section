@@ -3,7 +3,7 @@
     "SqlResolve"
 )
 
-package backend.repositories
+package backend
 
 import backend.User
 import kotlinx.coroutines.flow.Flow

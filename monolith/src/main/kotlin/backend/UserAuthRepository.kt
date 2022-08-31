@@ -3,13 +3,12 @@
     "SqlResolve"
 )
 
-package backend.repositories
+package backend
 
 import kotlinx.coroutines.flow.Flow
 import org.springframework.data.r2dbc.repository.Query
 import org.springframework.data.repository.kotlin.CoroutineCrudRepository
 import org.springframework.lang.Nullable
-import backend.UserAuthority
 import java.util.*
 
 @Suppress("unused")

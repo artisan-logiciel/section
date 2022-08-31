@@ -4,7 +4,7 @@
     "unused"
 )
 
-package backend.repositories
+package backend
 
 import org.springframework.data.domain.Pageable
 import org.springframework.data.r2dbc.repository.R2dbcRepository

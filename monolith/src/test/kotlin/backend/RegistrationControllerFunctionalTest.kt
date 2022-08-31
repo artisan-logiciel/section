@@ -5,8 +5,6 @@
 package backend
 
 import backend.Data.defaultAccount
-import backend.repositories.UserAuthRepository
-import backend.repositories.UserRepository
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll

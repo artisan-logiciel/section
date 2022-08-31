@@ -1,4 +1,4 @@
-package backend.repositories
+package backend
 
 import backend.Account
 import backend.Account.AccountCredentials

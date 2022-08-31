@@ -1,4 +1,4 @@
-package backend.services
+package backend
 
 
 //@Component

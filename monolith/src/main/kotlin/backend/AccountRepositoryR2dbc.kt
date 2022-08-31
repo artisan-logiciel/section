@@ -1,11 +1,9 @@
 @file:Suppress("unused")
 
-package backend.repositories
+package backend
 
 import backend.Log.log
-import backend.User
 import backend.Constants.SYSTEM_USER
-import backend.Account
 import backend.Account.AccountCredentials
 import org.springframework.stereotype.Repository
 
@@ -17,22 +15,9 @@ class AccountRepositoryR2dbc(
     override suspend fun findOneByLogin(login: String) =
         userRepository.findOneWithAuthoritiesByLogin(login)?.toAccount()
 
-    override suspend fun findOneByEmail(email: String): Account?
-//        userRepository.findOneByEmail(email)?.toAccount()
-    {
-        return userRepository.findOneByEmail(email)?.toAccount()
-//            .apply {
-//            if (this == null) return null
-//        }?.toAccount()!!
-    }
+    override suspend fun findOneByEmail(email: String): Account? =
+        userRepository.findOneByEmail(email)?.toAccount()
 
-    /*
-        override suspend fun findOneByEmail(email: String): Account =
-            userRepository.findOneByEmail(email).apply {
-                if (this == null) return Account()
-            }?.toAccount()!!
-
-     */
     override suspend fun findActivationKeyByLogin(login: String): String =
         userRepository.findOneByLogin(login)?.activationKey.toString()
 

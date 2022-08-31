@@ -1,6 +1,6 @@
-package backend.services
+package backend
 
-//import backend.repositories.UserRepository
+//import backend.UserRepository
 //import backend.repositories.entities.User
 
 

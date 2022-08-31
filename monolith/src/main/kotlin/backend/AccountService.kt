@@ -1,11 +1,8 @@
 @file:Suppress("unused")
 
-package backend.services
+package backend
 
-import backend.*
 import backend.Account.AccountCredentials
-import backend.Log.log
-import backend.repositories.AccountRepository
 import backend.RandomUtils.generateActivationKey
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional

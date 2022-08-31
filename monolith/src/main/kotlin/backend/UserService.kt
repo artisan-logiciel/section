@@ -1,4 +1,4 @@
-package backend.services
+package backend
 
 //import backend.repositories.entities.User
 

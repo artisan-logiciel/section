@@ -4,11 +4,8 @@
     "unused"
 )
 
-package backend.repositories
+package backend
 
-import backend.Authority
-import backend.User
-import backend.UserAuthority
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.map

@@ -4,7 +4,6 @@ package backend
 
 //import backend.services.SecurityUtils.getCurrentUserLogin
 import backend.Account.AccountCredentials
-import backend.services.AccountService
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
 import java.util.*
@@ -444,7 +443,7 @@ class RegistrationController(
 //import backend.Server.Log.log
 //import common.domain.Avatar
 //import backend.http.util.PaginationUtil.generatePaginationHttpHeaders
-////import backend.services.UserService
+////import backend.UserService
 //import kotlinx.coroutines.flow.Flow
 //import kotlinx.coroutines.flow.toCollection
 //import org.springframework.data.domain.PageImpl

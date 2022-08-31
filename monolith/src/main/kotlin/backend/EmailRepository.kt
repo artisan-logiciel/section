@@ -4,7 +4,7 @@
     "unused",
 )
 
-package backend.repositories
+package backend
 
 import org.springframework.data.repository.kotlin.CoroutineSortingRepository
 import backend.Email

@@ -1,4 +1,4 @@
-package backend.services
+package backend
 
 //@Suppress("ClassName")
 //object SecurityUtils {
