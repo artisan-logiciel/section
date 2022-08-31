@@ -1,5 +1,6 @@
 package backend
 
+import backend.Constants.IMAGE_URL_DEFAULT
 import java.time.Instant
 import java.util.*
 import javax.validation.constraints.NotBlank
@@ -179,6 +180,7 @@ open class Account(
 /**
  * Représente le user view model sans le password
  */
+//TODO: add field suspended=false
 data class AccountModel(
     val id: UUID? = null,
     @field:NotBlank
@@ -193,7 +195,7 @@ data class AccountModel(
     @field:Size(min = 5, max = 254)
     val email: String? = null,
     @field:Size(max = 256)
-    val imageUrl: String? = "http://placehold.it/50x50",
+    val imageUrl: String? = IMAGE_URL_DEFAULT,
     val activated: Boolean = false,
     @field:Size(min = 2, max = 10)
     val langKey: String? = null,
@@ -231,7 +233,7 @@ data class AccountCredentialsModel(
     @field:Size(min = 5, max = 254)
     val email: String? = null,
     @field:Size(max = 256)
-    val imageUrl: String? = "http://placehold.it/50x50",
+    val imageUrl: String? = IMAGE_URL_DEFAULT,
     val activated: Boolean = false,
     @field:Size(min = 2, max = 10)
     val langKey: String? = null,

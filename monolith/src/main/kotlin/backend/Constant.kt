@@ -86,6 +86,7 @@ object Constants {
     const val ERR_VALIDATION: String = "error.validation"
     private const val PROBLEM_BASE_URL: String = "https://www.cccp.education/problem"
     const val USER_INITIAL_ACTIVATED_VALUE = false
+    const val IMAGE_URL_DEFAULT = "http://placehold.it/50x50"
 
     @JvmField
     val DEFAULT_TYPE: URI = URI.create("$PROBLEM_BASE_URL/problem-with-message")
