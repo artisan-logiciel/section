@@ -16,7 +16,7 @@ import org.springframework.beans.factory.getBean
 import org.springframework.boot.runApplication
 import org.springframework.context.ConfigurableApplicationContext
 import org.springframework.http.HttpStatus
-//import org.springframework.http.MediaType
+import org.springframework.http.MediaType
 import org.springframework.test.web.reactive.server.WebTestClient
 import org.springframework.test.web.reactive.server.returnResult
 import kotlin.test.Test
@@ -99,14 +99,15 @@ internal class SignUpAccountControllerFunctionalTest {
     @Throws(Exception::class)
     fun `test register account avec login invalid`(): Unit = runBlocking {
         assertEquals(0, accountRepository.count())
-//        client
-//            .post()
-//            .uri("/api/signup")
-//            .contentType(MediaType.APPLICATION_JSON)
-//            .bodyValue(defaultUser.copy(login = "funky-log(n"))
-//            .exchange()
-//            .expectStatus()
-//            .isBadRequest
+        client
+            .post()
+            .uri("/api/signup")
+            .contentType(MediaType.APPLICATION_JSON)
+            .bodyValue(defaultUser.copy(login = "funky-log(n"))
+            .exchange()
+            .expectStatus()
+            .isBadRequest
+            .returnResult<Unit>()
         assertEquals(accountRepository.count(), 0)
     }
 
