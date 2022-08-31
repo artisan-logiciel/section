@@ -177,7 +177,7 @@ internal class SignUpAccountControllerFunctionalTest {
             .bodyValue(defaultAccount.copy(login= "foo"))
             .exchange()
             .expectStatus()
-            .is4xxClientError
+            .isBadRequest
             .returnResult<Unit>()
             .run { responseBodyContent?.isNotEmpty()?.let { assert(it) } }
 
