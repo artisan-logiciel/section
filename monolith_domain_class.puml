@@ -5,59 +5,59 @@ scale 750 width
 
 package backend"Domains.kt" <<Folder>> {
   class Account{
-    var id: UUID?
-    var login: String?
-    var firstName: String?
-    var lastName: String?
-    var email: String?
-    var imageUrl: String?
-    var activated = false
-    var langKey: String?
-    var createdBy: String?
-    var createdDate: Instant?
-    var lastModifiedBy: String?
-    var lastModifiedDate: Instant?
-    var authorities: Set<String>?
+    id: UUID
+    login: String
+    firstName: String
+    lastName: String
+    email: String
+    imageUrl: String
+    activated: Boolean
+    langKey: String
+    createdBy: String
+    createdDate: Instant
+    lastModifiedBy: String
+    lastModifiedDate: Instant
+    authorities: Set<String>
     + fun isActivated(): Boolean
   }
 
   class AccountCredentials {
-    var password:String?
-    var activationKey:String?
-        var id: UUID?
-        var login: String?
-        var firstName: String?
-        var lastName: String?
-        var email: String?
-        var imageUrl: String?
-        var activated = false
-        var langKey: String?
-        var createdBy: String?
-        var createdDate: Instant?
-        var lastModifiedBy: String?
-        var lastModifiedDate: Instant?
-        var authorities: Set<String>?
+        id: UUID
+        login: String
+        firstName: String
+        lastName: String
+        email: String
+        password:String
+        activationKey:String
+        imageUrl: String
+        activated: Boolean
+        langKey: String
+        createdBy: String
+        createdDate: Instant
+        lastModifiedBy: String
+        lastModifiedDate: Instant
+        authorities: Set<String>
   }
 
   class Avatar {
-    var id: UUID?
-    var login: String?
+    id: UUID
+    login: String
   }
 
   class KeyAndPassword {
-    val key: String?
-    val newPassword: String?
+    key: String
+    newPassword: String
   }
 
   class Login {
-   val username: String?
-   val password: String?
-   val rememberMe: Boolean?
+   username: String
+   password: String
+   rememberMe: Boolean
   }
 
   class PasswordChange {
-   val currentPassword: String?
-   val newPassword: String?
+   currentPassword: String
+   newPassword: String
   }
 }
 
@@ -133,47 +133,47 @@ package backend"Repositories.kt" <<Node>>{
 package backend"Entities.kt" <<Database>> {
 
   class AuthorityEntity{
-    val role: String
-    + override fun getId() = role
-    + override fun isNew() = true
+    role: String
+    + override fun getId()
+    + override fun isNew()
   }
 
   class EmailEntity{
-    val value: String
-    + override fun getId() = value
-    + override fun isNew() = true
+    value: String
+    + override fun getId()
+    + override fun isNew()
   }
 
   class PhoneEntity{
-      var id: UUID?
-      var value: String? = null
+      id: UUID
+      value: String
   }
 
   class AccountEntity{
-    var id: UUID?
-    var login: String?
-    var password: String?
-    var lastName: String?
-    var email: String?
-    var activated: Boolean?
-    var langKey: String?
-    var imageUrl: String?
-    var activationKey: String?
-    var resetKey: String?
-    var resetDate: Instant?
-    var authorities: MutableSet<Authority>?
-    var createdBy: String?
-    var createdDate: Instant?
-    var lastModifiedBy: String?
-    var lastModifiedDate: Instant?
-    var version: Long?
-    + fun toAccount(): common.domain.Account
+    id: UUID
+    login: String
+    password: String
+    lastName: String
+    email: String
+    activated: Boolean
+    langKey: String
+    imageUrl: String
+    activationKey: String
+    resetKey: String
+    resetDate: Instant
+    authorities: MutableSet<Authority>
+    createdBy: String
+    createdDate: Instant
+    lastModifiedBy: String
+    lastModifiedDate: Instant
+    version: Long
+    + fun toAccount(): Account
   }
 
   class AccountAuthorityEntity{
-      var id: Long?
-      val userId: UUID
-      val role: String
+      id: Long
+      userId: UUID
+      role: String
   }
 
 }
@@ -181,13 +181,13 @@ package backend"Entities.kt" <<Database>> {
 
 package backend"Controllers.kt" <<Cloud>> {
 
-  class SignUpController{
-    private val accountService: AccountService
+  class SignUpController {
+    private accountService: AccountService
     + suspend fun signup(ac: AccountCredentials)
     + suspend fun activate(key: String)
   }
 
-  class AccountException{
+  class AccountException {
     message: String
   }
 '  inner
