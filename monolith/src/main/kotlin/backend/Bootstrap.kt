@@ -11,6 +11,8 @@ import java.net.UnknownHostException
 import java.util.*
 
 
+fun main(args: Array<String>) = start(args)
+
 fun start(args: Array<String>): Unit =
     runApplication<Server>(*args) {
         loader(app = this)
