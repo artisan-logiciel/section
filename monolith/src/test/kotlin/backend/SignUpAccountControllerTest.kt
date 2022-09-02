@@ -298,9 +298,8 @@ internal class SignUpAccountControllerTest {
         accountRepository.findOneByLogin(thirdLogin).run {
             assertNotNull(this)
             assertEquals(defaultAccount.email!!.uppercase(), email)
-            //activate third
-//            log.info("accountRepository.save(AccountCredentialsModel(copy(activated = true))) : ${accountRepository.save(AccountCredentialsModel(copy(activated = true)))}")
         }
+        //activate third
         accountRepository.save(
             AccountCredentialsModel(
                 accountRepository.findOneByEmail(defaultAccount.email!!)!!
@@ -324,11 +323,11 @@ internal class SignUpAccountControllerTest {
 //            .run { responseBodyContent?.isEmpty()?.let { assert(it) } }
         assertEquals(1, accountRepository.count())
         assertEquals(1, accountAuthorityRepository.count())
-        assertNull(accountRepository.findOneByLogin(secondLogin))
-        accountRepository.findOneByLogin(thirdLogin).run {
-            assertNotNull(this)
-//            assertEquals(defaultAccount.email!!.lowercase(), email!!.lowercase())
-        }
+//        assertNull(accountRepository.findOneByLogin(secondLogin))
+//        accountRepository.findOneByLogin(thirdLogin).run {
+//            assertNotNull(this)
+////            assertEquals(defaultAccount.email!!.lowercase(), email!!.lowercase())
+//        }
 //        assert(accountRepository.findOneByEmail(defaultAccount.email!!)!!.activated)
 
         //netoyage des accounts et accountAuthorities à la fin du test

@@ -47,6 +47,10 @@ interface IAccountModelRepository {
 
     suspend fun save(accountCredentialsModel: AccountCredentialsModel): AccountModel?
 
+    suspend fun save(accountModel: AccountModel): AccountModel?
+
+
+
     suspend fun delete(account: AccountModel)
 
     suspend fun findActivationKeyByLogin(login: String): String?
@@ -72,6 +76,10 @@ class AccountRepositoryInMemory(
 
     override suspend fun findOneByEmail(email: String): AccountModel? =
         accounts.find { it.email?.lowercase().equals(email.lowercase()) }?.toModel()
+
+    override suspend fun save(accountModel: AccountModel): AccountModel? {
+        TODO("Not yet implemented")
+    }
 
     override suspend fun save(accountCredentialsModel: AccountCredentialsModel): AccountModel? =
         when {
@@ -100,6 +108,7 @@ class AccountRepositoryInMemory(
 
             else -> accountCredentialsModel.toAccount()
         }
+
 
 
     override suspend fun delete(account: AccountModel) {
