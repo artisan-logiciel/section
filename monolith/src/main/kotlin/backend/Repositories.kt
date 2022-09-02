@@ -49,8 +49,6 @@ interface IAccountModelRepository {
 
     suspend fun save(accountModel: AccountModel): AccountModel?
 
-
-
     suspend fun delete(account: AccountModel)
 
     suspend fun findActivationKeyByLogin(login: String): String?
@@ -89,7 +87,7 @@ class AccountRepositoryInMemory(
             -> accountCredentialsModel.copy(id = UUID.randomUUID())
                 .apply {
                     accounts.add(AccountEntity(this))
-                    log.info("accounts: ${accounts}")
+                    log.info("accounts: $accounts")
                 }.toAccount()
 
             accountCredentialsModel.id != null
@@ -101,7 +99,7 @@ class AccountRepositoryInMemory(
                 try {
                     accounts.remove(accounts.first { this.id == it.id })
                     accounts.add(this)
-                    log.info("accounts: ${accounts}")
+                    log.info("accounts: $accounts")
                 } catch (_: NoSuchElementException) {
                 }
             }.toModel()
