@@ -1,4 +1,7 @@
-@file:Suppress("UNUSED_VARIABLE")
+@file:Suppress(
+    "GradlePackageUpdate",
+    "DEPRECATION",
+)
 
 import org.gradle.api.JavaVersion.VERSION_1_8
 import org.gradle.api.tasks.testing.logging.TestLogEvent.FAILED
@@ -8,11 +11,11 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.io.ByteArrayOutputStream
 
 plugins {
-    kotlin(module = "jvm")
-    kotlin(module = "plugin.spring")
-    kotlin(module = "plugin.allopen")
-    kotlin(module = "plugin.noarg")
-    kotlin(module = "plugin.serialization")
+    kotlin("jvm")
+    kotlin("plugin.spring")
+    kotlin("plugin.allopen")
+    kotlin("plugin.noarg")
+    kotlin("plugin.serialization")
     id("org.springframework.boot")
     id("io.spring.dependency-management")
     id("com.google.cloud.tools.jib")
@@ -28,9 +31,9 @@ plugins {
 //}
 repositories {
     mavenCentral()
-    maven(url = "https://maven.pkg.jetbrains.space/kotlin/p/kotlin/bootstrap/")
-    maven(url = "https://repo.spring.io/milestone")
-    maven(url = "https://repo.spring.io/snapshot")
+    maven("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/bootstrap/")
+    maven("https://repo.spring.io/milestone")
+    maven("https://repo.spring.io/snapshot")
 }
 
 //dependencyManagement {
@@ -40,7 +43,6 @@ repositories {
 //    }
 //}
 
-@Suppress("GradlePackageUpdate")
 dependencies {
 //    implementation(project(path = ":common"))
     //Kotlin lib: jdk8, reflexion, coroutines
@@ -60,7 +62,7 @@ dependencies {
     // String manipulation
     implementation("org.apache.commons:commons-lang3")
     //Http Request Exception Response
-    implementation( "org.zalando:problem-spring-webflux:${properties["zalando_problem.version"]}")
+    implementation("org.zalando:problem-spring-webflux:${properties["zalando_problem.version"]}")
     //spring conf
     annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
     //spring dev tools
@@ -122,9 +124,7 @@ dependencies {
 }
 
 configurations {
-    compileOnly {
-        extendsFrom(configurations.annotationProcessor.get())
-    }
+    compileOnly { extendsFrom(configurations.annotationProcessor.get()) }
     implementation.configure {
         setOf(
             setOf("org.junit.vintage", "junit-vintage-engine"),
@@ -150,7 +150,6 @@ tasks.withType<Test> {
     useJUnitPlatform()
     testLogging { events(FAILED, SKIPPED) }
     reports {
-        @Suppress("DEPRECATION")
         html.isEnabled = true
         ignoreFailures = true
     }
@@ -165,10 +164,10 @@ tasks.register<Delete>("cleanResources") {
 
 
 
-tasks.register<TestReport>(name = "testReport") {
+tasks.register<TestReport>("testReport") {
     description = "Generates an HTML test report from the results of testReport task."
     group = "report"
-    destinationDir = file(path = "$buildDir/reports/tests")
+    destinationDir = file("$buildDir/reports/tests")
     reportOn("test")
 }
 
@@ -200,9 +199,7 @@ tasks.register<DefaultTask>("cucumber") {
                             .jacocoAgent
                             .get()
                             .singleFile
-                    ).filter {
-                        it.name == "jacocoagent.jar"
-                    }.singleFile
+                    ).filter { it.name == "jacocoagent.jar" }.singleFile
                 }=destfile=$buildDir/results/jacoco/cucumber.exec,append=false"
             )
         }
@@ -239,10 +236,8 @@ open class DeployGAE : Exec() {
 
 
 tasks.register<DeployGAE>("deployGAE") {
+    group = "application"
     val cmd = "gcloud app deploy src/main/appengine/app.flexible.yml"
-    doLast {
-        println(projectDir.canonicalPath)
-        println(cmd)
-    }
+    doLast { println(cmd) }
 }
 
