@@ -27,7 +27,7 @@ import kotlin.test.assertEquals
     webEnvironment = DEFINED_PORT
 )
 @ActiveProfiles("test")
-class RegistrationStepDefinition : Fr {
+class SignUpStepDefinition : Fr {
     @Autowired
     private lateinit var objectMapper: ObjectMapper
 

@@ -66,7 +66,7 @@ class AccountRepositoryInMemory(
 ) : IAccountModelRepository {
 
     companion object {
-        val accounts by lazy { mutableSetOf<AccountEntity>() }
+        private val accounts by lazy { mutableSetOf<AccountEntity>() }
     }
 
     override suspend fun findOneByLogin(login: String): AccountModel? =
