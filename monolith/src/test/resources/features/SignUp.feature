@@ -1,4 +1,5 @@
 #language: fr
+#noinspection CucumberUndefinedStep
 Fonctionnalité: Inscription d'un compte utilisateur.
 
   Contexte:

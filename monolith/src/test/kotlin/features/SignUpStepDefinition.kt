@@ -87,7 +87,7 @@ class SignUpStepDefinition : Fr {
 //            println("passé par ici")
 //            log.info("passé par ici")
 //            }
-            //TODO: ne pas oublier de netoyer la base
+            //TODO: ne pas oublier de nettoyer la base
         }
     }
 
