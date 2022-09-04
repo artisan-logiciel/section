@@ -13,6 +13,6 @@ Fonctionnalité: Inscription d'un compte utilisateur.
       | test3 | test3@acme.com | test3    | test3     | test3    |
 
   Scénario: Inscription d'un compte utilisateur.
-    Etant donné l'utilisateur qui à pour login "user"
+    Etant donné l'utilisateur qui a pour login "user"
     Quand on envoie l'inscription de "user"
     Alors le résultat est la création d'un nouveau compte non activé
