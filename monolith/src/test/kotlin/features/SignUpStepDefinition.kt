@@ -63,7 +63,7 @@ class SignUpStepDefinition : Fr {
                 )
             }
         }
-        Etantdonné("l'utilisateur qui à pour login {string}") { login: String ->
+        Etantdonné("l'utilisateur qui a pour login {string}") { login: String ->
             currentAccount = accounts.first { it.login.equals(login, ignoreCase = true) }
         }
         Quand("on envoie l'inscription de {string}") { login: String ->

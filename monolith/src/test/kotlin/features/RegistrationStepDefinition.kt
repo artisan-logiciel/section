@@ -71,8 +71,8 @@ class RegistrationStepDefinition : Fr {
             mono {
                 client.post().uri("/api/register")
                     .bodyValue(currentAccount)
-                    ?.toMono()
-                    ?.block()
+                    .toMono()
+                    .block()
                     ?.exchange().apply { response = this!! }
                     ?.returnResult<Account>().apply { log.info(this!!.status) }
             }
