@@ -63,13 +63,13 @@ class SignUpStepDefinition : Fr {
                 )
             }
         }
-        Etantdonné("l'utilisateur qui a pour login {string}") { login: String ->
+        Etantdonné("l'utilisateur de la liste qui a pour login {string}") { login: String ->
             currentAccount = accounts.first { it.login.equals(login, ignoreCase = true) }
         }
-        Quand("on envoie l'inscription de {string}") { login: String ->
+        Quand("on envoie la requête d'inscription de {string}") { login: String ->
             assertEquals(expected = currentAccount.login, actual = login)
             mono {
-                client.post().uri("/api/register")
+                client.post().uri("/api/signup")
                     .bodyValue(currentAccount)
                     .toMono()
                     .block()

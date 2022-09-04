@@ -14,5 +14,5 @@ Fonctionnalité: Inscription d'un compte utilisateur.
 
   Scénario: Création d'un nouveau compte utilisateur.
     Etant donné l'utilisateur de la liste qui a pour login "user"
-    Quand on envoie le formulaire d'inscription de "user"
+    Quand on envoie la requête d'inscription de "user"
     Alors le résultat est la création d'un nouveau compte non activé
