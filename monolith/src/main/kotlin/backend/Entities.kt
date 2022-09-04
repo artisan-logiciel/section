@@ -218,11 +218,14 @@ data class EmailEntity(
 
 @Table("`authority`")
 data class AuthorityEntity(
-    @Id
+        @Id
     @field:NotNull
     @field:Size(max = 50)
-    val role: String
-) : Persistable<String> {
+    override val role: String
+) : IAuthorityModel
+
+interface IAuthorityModel: Persistable<String> {
+val role:String
     override fun getId() = role
     override fun isNew() = true
 }
