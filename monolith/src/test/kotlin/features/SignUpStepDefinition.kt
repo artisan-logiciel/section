@@ -45,7 +45,7 @@ class SignUpStepDefinition : Fr {
     init {
 //initialiser un coroutine context reactor
 
-        Etantdonné("une liste d'accounts") { dataTable: DataTable ->
+        Etantdonné("une liste de login, email, password, firstName, lastName") { dataTable: DataTable ->
             if (accounts.isNotEmpty()) (accounts as MutableList).clear()
             dataTable.asMaps().map {
                 (accounts as MutableList).add(
@@ -63,10 +63,10 @@ class SignUpStepDefinition : Fr {
                 )
             }
         }
-        Etantdonné("un utilisateur qui à pour login {string}") { login: String ->
+        Etantdonné("l'utilisateur qui à pour login {string}") { login: String ->
             currentAccount = accounts.first { it.login.equals(login, ignoreCase = true) }
         }
-        Quand("on inscrit {string}") { login: String ->
+        Quand("on envoie l'inscription de {string}") { login: String ->
             assertEquals(expected = currentAccount.login, actual = login)
             mono {
                 client.post().uri("/api/register")
@@ -78,7 +78,7 @@ class SignUpStepDefinition : Fr {
             }
         }
 
-        Alors("le résultat est un nouveau compte") {
+        Alors("le résultat est la création d'un nouveau compte non activé") {
 //                response.expectStatus().isCreated
 //            response.returnResult<Account>().status
 //            log.info(response.status)
