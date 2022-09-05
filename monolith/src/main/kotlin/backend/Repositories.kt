@@ -47,8 +47,6 @@ interface IAccountModelRepository {
 
     suspend fun save(accountCredentialsModel: AccountCredentialsModel): AccountModel?
 
-    suspend fun save(model: AccountModel): AccountModel?
-
     suspend fun delete(account: AccountModel)
 
     suspend fun findActivationKeyByLogin(login: String): String?
@@ -75,44 +73,24 @@ class AccountRepositoryInMemory(
     override suspend fun findOneByEmail(email: String): AccountModel? =
         accounts.find { it.email?.lowercase().equals(email.lowercase()) }?.toModel()
 
-    override suspend fun save(model: AccountModel): AccountModel? =
+    override suspend fun save(model: AccountCredentialsModel): AccountModel? =
         when {
-            //retourne null car save(AccountModel) ne créer pas de nouvelle ligne
-            accounts.none { it.login?.equals(model.login, ignoreCase = true) ?: (model.login == null) }
-                    && accounts.none { it.login?.equals(model.login, ignoreCase = true) ?: (model.login == null) } -> {
-                null
-            }
 
-            else -> {
-                //TODO:mettre a jour et throw une unique contraint violation exception
-                /*val inMemory: AccountCredentialsModel =*/
-                accounts.first {
-                    it.login?.equals(model.login,ignoreCase = true) ?: (model.login == null)
-                            || it.email?.equals(model.email,ignoreCase = true) ?: (model.email == null)
-                }.toCredentialsModel().apply {
-                    //TODO:update
-//                    if(email.equals(model.email,ignoreCase = true))
-                }.toAccount()
-            }
-        }
+            model.id == null && accounts.none {
+                it.login?.equals(model.login, ignoreCase = true) ?: (model.login == null)
+            } && accounts.none {
+                it.email?.equals(model.email, ignoreCase = true) ?: (model.email == null)
+            } -> model
+                .copy(id = UUID.randomUUID())
+                .apply { accounts += AccountEntity(this) as IAccountEntity<IAuthorityEntity> }
+                .toAccount()
 
-    override suspend fun save(accountCredentialsModel: AccountCredentialsModel): AccountModel? =
-        when {
-            accountCredentialsModel.id == null
-                    && accounts.none { it.login?.lowercase() == accountCredentialsModel.login }
-                    && accounts.none { it.email?.lowercase() == accountCredentialsModel.email }
-            -> accountCredentialsModel.copy(id = UUID.randomUUID())
-                .apply {
-                    accounts += AccountEntity(this) as IAccountEntity<IAuthorityEntity>
-                    log.info("accounts: $accounts")
-                }.toAccount()
 
-            accountCredentialsModel.id != null
-                    && accounts.none { it.login?.lowercase() == accountCredentialsModel.login }
-                    && accounts.none { it.email?.lowercase() == accountCredentialsModel.email }
-            -> AccountEntity(
-                accountCredentialsModel
-            ).apply {
+            model.id != null && accounts.none {
+                it.login?.equals(model.login, ignoreCase = true) ?: (model.login == null)
+            } && accounts.none {
+                it.email?.equals(model.email, ignoreCase = true) ?: (model.email == null)
+            } -> AccountEntity(model).apply {
                 try {
                     accounts.remove(accounts.first { this.id == it.id })
                     accounts += this as IAccountEntity<IAuthorityEntity>
@@ -121,7 +99,8 @@ class AccountRepositoryInMemory(
                 }
             }.toModel()
 
-            else -> accountCredentialsModel.toAccount()
+
+            else -> model.toAccount()
         }
 
 
