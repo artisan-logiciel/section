@@ -67,14 +67,14 @@ class AccountRepositoryInMemory(
         private val accounts by lazy { mutableSetOf<IAccountEntity<IAuthorityEntity>>() }
     }
 
-    override suspend fun findOneByLogin(login: String): AccountModel? =
-        accounts.find { it.login?.lowercase() == login.lowercase() }?.toModel()
+    override suspend fun findOneByLogin(login: String) =
+        accounts.find { login.equals(it.login, ignoreCase = true) }?.toModel()
 
-    override suspend fun findOneByEmail(email: String): AccountModel? =
-        accounts.find { it.email?.lowercase().equals(email.lowercase()) }?.toModel()
+    override suspend fun findOneByEmail(email: String) =
+        accounts.find { email.equals(it.email, ignoreCase = true) }?.toModel()
 
 
-    fun saveCurrent(model: AccountCredentialsModel): AccountModel? =
+    fun saveCurrent(model: AccountCredentialsModel) =
         create(model, accounts).run {
             when {
                 this != null -> return@run this
@@ -85,7 +85,7 @@ class AccountRepositoryInMemory(
     private fun create(
         model: AccountCredentialsModel,
         accounts: MutableSet<IAccountEntity<IAuthorityEntity>>
-    ): AccountModel? = if (`mail & login do not exist`(model, accounts))
+    ) = if (`mail & login do not exist`(model, accounts))
         model.copy(id = UUID.randomUUID()).apply {
             @Suppress("UNCHECKED_CAST")
             accounts += AccountEntity(this) as IAccountEntity<IAuthorityEntity>
@@ -94,7 +94,7 @@ class AccountRepositoryInMemory(
     private fun `mail & login do not exist`(
         model: AccountCredentialsModel,
         accounts: MutableSet<IAccountEntity<IAuthorityEntity>>
-    ): Boolean = accounts.none {
+    ) = accounts.none {
         it.login.equals(model.login, ignoreCase = true)
                 && it.email.equals(model.email, ignoreCase = true)
     }
@@ -103,7 +103,7 @@ class AccountRepositoryInMemory(
     private fun `mail exists and login exists`(
         model: AccountCredentialsModel,
         accounts: MutableSet<IAccountEntity<IAuthorityEntity>>
-    ): Boolean = accounts.any {
+    ) = accounts.any {
         model.email.equals(it.email, ignoreCase = true)
                 && model.login.equals(it.login, ignoreCase = true)
     }
