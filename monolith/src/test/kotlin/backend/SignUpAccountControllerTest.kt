@@ -5,9 +5,9 @@
 package backend
 
 import backend.Constants.ROLE_USER
+import backend.Log.log
 import backend.data.Data.defaultAccount
 import backend.data.Data.defaultUser
-import backend.Log.log
 import backend.tdd.testLoader
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.AfterAll
@@ -250,7 +250,6 @@ internal class SignUpAccountControllerTest {
         assertEquals(0, accountRepository.count())
     }
 
-    //    @Ignore
     @Test
     fun `test register account avec un email dupliqué`(): Unit = runBlocking {
 

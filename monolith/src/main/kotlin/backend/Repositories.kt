@@ -66,7 +66,7 @@ class AccountRepositoryInMemory(
 ) : IAccountModelRepository {
 
     companion object {
-        private val accounts by lazy { mutableSetOf<AccountEntity>() }
+        private val accounts by lazy { mutableSetOf<IAccountEntity<IAuthorityEntity>>() }
     }
 
     override suspend fun findOneByLogin(login: String): AccountModel? =
@@ -77,6 +77,7 @@ class AccountRepositoryInMemory(
 
     override suspend fun save(accountModel: AccountModel): AccountModel? {
         TODO("Not yet implemented")
+        val inMemory:AccountCredentialsModel= accounts.first().toCredentialsModel()
     }
 
     override suspend fun save(accountCredentialsModel: AccountCredentialsModel): AccountModel? =
@@ -86,7 +87,7 @@ class AccountRepositoryInMemory(
                     && accounts.none { it.email?.lowercase() == accountCredentialsModel.email }
             -> accountCredentialsModel.copy(id = UUID.randomUUID())
                 .apply {
-                    accounts.add(AccountEntity(this))
+                    accounts += AccountEntity(this) as IAccountEntity<IAuthorityEntity>
                     log.info("accounts: $accounts")
                 }.toAccount()
 
@@ -98,7 +99,7 @@ class AccountRepositoryInMemory(
             ).apply {
                 try {
                     accounts.remove(accounts.first { this.id == it.id })
-                    accounts.add(this)
+                    accounts += this as IAccountEntity<IAuthorityEntity>
                     log.info("accounts: $accounts")
                 } catch (_: NoSuchElementException) {
                 }
