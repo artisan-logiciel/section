@@ -1,4 +1,4 @@
-@file:Suppress("unused")
+@file:Suppress("unused", "FunctionName")
 
 package backend
 
@@ -74,14 +74,60 @@ class AccountRepositoryInMemory(
         accounts.find { it.email?.lowercase().equals(email.lowercase()) }?.toModel()
 
 
-    fun saveCurrent(model: AccountCredentialsModel): AccountModel? {
-        create(model, accounts)?.run {
-            if(this !=null)return@run null else null
+    fun saveCurrent(model: AccountCredentialsModel): AccountModel? =
+        create(model, accounts).run {
+            when {
+                this != null -> return@run this
+                else -> update(model, accounts)
+            }
         }
-        return null
-    }
 
     private fun create(
+        model: AccountCredentialsModel,
+        accounts: MutableSet<IAccountEntity<IAuthorityEntity>>
+    ): AccountModel? {
+        return if (`mail & login do not exist`(model, accounts)) {
+            model
+                .copy(id = UUID.randomUUID())
+                .apply {
+                    @Suppress("UNCHECKED_CAST")
+                    accounts += AccountEntity(this) as IAccountEntity<IAuthorityEntity>
+                }.toAccount()
+        } else null
+    }
+
+    private fun `mail & login do not exist`(
+        model: AccountCredentialsModel,
+        accounts: MutableSet<IAccountEntity<IAuthorityEntity>>
+    ): Boolean = accounts.none {
+        it.login.equals(model.login, ignoreCase = true)
+                && it.email.equals(model.email, ignoreCase = true)
+    }
+
+    private fun `mail exists and login exists`(
+        model: AccountCredentialsModel,
+        accounts: MutableSet<IAccountEntity<IAuthorityEntity>>
+    ): Boolean = accounts.none {
+        model.email.equals(it.email, ignoreCase = true)
+                && model.login.equals(it.login, ignoreCase = true)
+    }
+
+
+    private fun `mail exists and login does not`(
+        model: AccountCredentialsModel,
+        accounts: MutableSet<IAccountEntity<IAuthorityEntity>>
+    ) {
+
+    }
+
+    private fun `mail does not exist and login exists`(
+        model: AccountCredentialsModel,
+        accounts: MutableSet<IAccountEntity<IAuthorityEntity>>
+    ) {
+
+    }
+
+    private fun update(
         model: AccountCredentialsModel,
         accounts: MutableSet<IAccountEntity<IAuthorityEntity>>
     ): AccountModel? {
