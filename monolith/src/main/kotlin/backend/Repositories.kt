@@ -85,16 +85,11 @@ class AccountRepositoryInMemory(
     private fun create(
         model: AccountCredentialsModel,
         accounts: MutableSet<IAccountEntity<IAuthorityEntity>>
-    ): AccountModel? {
-        return if (`mail & login do not exist`(model, accounts)) {
-            model
-                .copy(id = UUID.randomUUID())
-                .apply {
-                    @Suppress("UNCHECKED_CAST")
-                    accounts += AccountEntity(this) as IAccountEntity<IAuthorityEntity>
-                }.toAccount()
-        } else null
-    }
+    ): AccountModel? = if (`mail & login do not exist`(model, accounts))
+        model.copy(id = UUID.randomUUID()).apply {
+        @Suppress("UNCHECKED_CAST")
+        accounts += AccountEntity(this) as IAccountEntity<IAuthorityEntity>
+    }.toAccount() else null
 
     private fun `mail & login do not exist`(
         model: AccountCredentialsModel,
@@ -108,25 +103,27 @@ class AccountRepositoryInMemory(
     private fun `mail exists and login exists`(
         model: AccountCredentialsModel,
         accounts: MutableSet<IAccountEntity<IAuthorityEntity>>
-    ): Boolean = @Suppress("SimplifiableCallChain")
-    accounts.filter {
+    ): Boolean = accounts.any {
         model.email.equals(it.email, ignoreCase = true)
                 && model.login.equals(it.login, ignoreCase = true)
-    }.isEmpty()
+    }
 
 
     private fun `mail exists and login does not`(
         model: AccountCredentialsModel,
         accounts: MutableSet<IAccountEntity<IAuthorityEntity>>
-    ) {
-
+    ) = accounts.any {
+        model.email.equals(it.email, ignoreCase = true)
+                && !model.login.equals(it.login, ignoreCase = true)
     }
+
 
     private fun `mail does not exist and login exists`(
         model: AccountCredentialsModel,
         accounts: MutableSet<IAccountEntity<IAuthorityEntity>>
-    ) {
-
+    )= accounts.any {
+        !model.email.equals(it.email, ignoreCase = true)
+                && model.login.equals(it.login, ignoreCase = true)
     }
 
     private fun update(
