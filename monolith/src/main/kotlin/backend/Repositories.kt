@@ -75,22 +75,23 @@ class AccountRepositoryInMemory(
     override suspend fun findOneByEmail(email: String): AccountModel? =
         accounts.find { it.email?.lowercase().equals(email.lowercase()) }?.toModel()
 
-    override suspend fun save(model: AccountModel): AccountModel? {
-//        TODO("Not yet implemented")
-        if(accounts.none{ it.login?.lowercase() ==model.login?.lowercase()} && accounts.none{ it.login?.lowercase() ==model.login?.lowercase()}){
-            //TODO: ajouter un nouveau
+    override suspend fun save(model: AccountModel): AccountModel? =
+        when {
             //retourne null car save(AccountModel) ne créer pas de nouvelle ligne
-        }else{
-            //TODO:mettre a jour et throw une unique contraint violation exception
-            val inMemory: AccountCredentialsModel = accounts.first {
-                it.login!!.lowercase() == model.login!!.lowercase()
-                        && it.email!!.lowercase() == model.email!!.lowercase()
-            }.toCredentialsModel()
+            accounts.none { it.login?.lowercase() == model.login?.lowercase() } && accounts.none { it.login?.lowercase() == model.login?.lowercase() } -> {
+                null
+            }
+            else -> {
+                //TODO:mettre a jour et throw une unique contraint violation exception
+                /*val inMemory: AccountCredentialsModel =*/
+                accounts.first {
+                    it.login?.lowercase() == model.login?.lowercase()
+                            || it.email?.lowercase() == model.email?.lowercase()
+                }.toCredentialsModel().apply {
+                    //TODO:update
+                }.toAccount()
+            }
         }
-
-
-        return null
-    }
 
     override suspend fun save(accountCredentialsModel: AccountCredentialsModel): AccountModel? =
         when {
