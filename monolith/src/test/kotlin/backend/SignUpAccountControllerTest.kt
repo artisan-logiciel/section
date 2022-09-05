@@ -5,9 +5,10 @@
 package backend
 
 import backend.Constants.ROLE_USER
-import backend.Data.defaultAccount
-import backend.Data.defaultUser
+import backend.data.Data.defaultAccount
+import backend.data.Data.defaultUser
 import backend.Log.log
+import backend.util.testLoader
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
@@ -19,7 +20,28 @@ import org.springframework.test.web.reactive.server.WebTestClient
 import org.springframework.test.web.reactive.server.returnResult
 import kotlin.test.*
 
+/**
+ *
+#language: fr
+#noinspection CucumberUndefinedStep
+Fonctionnalité: Inscription d'un compte utilisateur.
 
+Contexte:
+Etant donné une liste de login, email, password, firstName, lastName
+
+| login | email          | password | firstName | lastName |
+| admin | admin@acme.com | admin    | admin     | admin    |
+| user  | user@acme.com  | user     | user      | user     |
+| test1 | test1@acme.com | test1    | test1     | test1    |
+| test2 | test2@acme.com | test2    | test2     | test2    |
+| test3 | test3@acme.com | test3    | test3     | test3    |
+
+Scénario: Création d'un nouveau compte utilisateur.
+Etant donné l'utilisateur de la liste qui a pour login "user"
+Quand on envoie la requête d'inscription de "user"
+Alors le résultat est la création d'un nouveau compte non activé
+ *
+ */
 internal class SignUpAccountControllerTest {
 
     companion object {
@@ -55,7 +77,7 @@ internal class SignUpAccountControllerTest {
             .bodyValue(defaultAccount)
             .exchange()
             .returnResult<Unit>().run {
-                assert(requestBodyContent!!.isNotEmpty())
+                assertTrue(requestBodyContent!!.isNotEmpty())
                 requestBodyContent
                     ?.map { it.toInt().toChar().toString() }
                     ?.reduce { acc: String, s: String -> acc + s }.apply requestContent@{
@@ -67,8 +89,7 @@ internal class SignUpAccountControllerTest {
                                 "\"firstName\":\"${firstName}\"",
                                 "\"lastName\":\"${lastName}\"",
                                 "\"email\":\"${email}\"",
-                                "\"imageUrl\":\"${imageUrl}\""
-                            ).map { assert(this@requestContent?.contains(it) ?: false) }
+                            ).map { assertTrue(this@requestContent?.contains(it) ?: false) }
                         }
                     }
             }
@@ -89,7 +110,7 @@ internal class SignUpAccountControllerTest {
             .expectStatus()
             .isCreated
             .returnResult<Unit>()
-            .run { responseBodyContent?.isEmpty()?.let { assert(it) } }
+            .run { responseBodyContent?.isEmpty()?.let { assertTrue(it) } }
         assertEquals(countUserBefore + 1, accountRepository.count())
         assertEquals(countUserAuthBefore + 1, accountAuthorityRepository.count())
         assertFalse(accountRepository.findOneByEmail(defaultAccount.email!!)!!.activated)
@@ -115,7 +136,7 @@ internal class SignUpAccountControllerTest {
             .expectStatus()
             .isBadRequest
             .returnResult<Unit>()
-            .run { responseBodyContent?.isNotEmpty()?.let { assert(it) } }
+            .run { responseBodyContent?.isNotEmpty()?.let { assertTrue(it) } }
         assertEquals(accountRepository.count(), 0)
     }
 
@@ -132,7 +153,7 @@ internal class SignUpAccountControllerTest {
             .expectStatus()
             .isBadRequest
             .returnResult<Unit>()
-            .run { responseBodyContent?.isNotEmpty()?.let { assert(it) } }
+            .run { responseBodyContent?.isNotEmpty()?.let { assertTrue(it) } }
         assertEquals(0, accountRepository.count())
     }
 
@@ -147,12 +168,12 @@ internal class SignUpAccountControllerTest {
             .expectStatus()
             .isBadRequest
             .returnResult<Unit>()
-            .run { responseBodyContent?.isNotEmpty()?.let { assert(it) } }
+            .run { responseBodyContent?.isNotEmpty()?.let { assertTrue(it) } }
         assertEquals(0, accountRepository.count())
     }
 
     @Test
-    fun `test register account avec un password null`(): Unit = runBlocking {
+    fun `test register account avec un password null`() = runBlocking {
         assertEquals(0, accountRepository.count())
         client
             .post()
@@ -163,7 +184,7 @@ internal class SignUpAccountControllerTest {
             .expectStatus()
             .isBadRequest
             .returnResult<Unit>()
-            .run { responseBodyContent?.isNotEmpty()?.let { assert(it) } }
+            .run { responseBodyContent?.isNotEmpty()?.let { assertTrue(it) } }
         assertEquals(0, accountRepository.count())
     }
 
@@ -177,7 +198,7 @@ internal class SignUpAccountControllerTest {
         )
         assertEquals(1, accountRepository.count())
         assertEquals(1, accountAuthorityRepository.count())
-        assert(accountRepository.findOneByEmail(defaultAccount.email!!)!!.activated)
+        assertTrue(accountRepository.findOneByEmail(defaultAccount.email!!)!!.activated)
 
         client
             .post()
@@ -188,7 +209,7 @@ internal class SignUpAccountControllerTest {
             .expectStatus()
             .isBadRequest
             .returnResult<Unit>()
-            .run { responseBodyContent?.isNotEmpty()?.let { assert(it) } }
+            .run { responseBodyContent?.isNotEmpty()?.let { assertTrue(it) } }
 
         accountRepository.findOneByLogin(defaultAccount.login!!).run {
             accountAuthorityRepository.deleteAllByAccountId(this?.id!!)
@@ -206,7 +227,7 @@ internal class SignUpAccountControllerTest {
             accountRepository.save(defaultAccount.copy(activated = true))?.id!!,
             ROLE_USER
         )
-        assert(accountRepository.findOneByEmail(defaultAccount.email!!)!!.activated)
+        assertTrue(accountRepository.findOneByEmail(defaultAccount.email!!)!!.activated)
         assertEquals(1, accountRepository.count())
         assertEquals(1, accountAuthorityRepository.count())
 
@@ -219,7 +240,7 @@ internal class SignUpAccountControllerTest {
             .expectStatus()
             .isBadRequest
             .returnResult<Unit>()
-            .run { responseBodyContent?.isNotEmpty()?.let { assert(it) } }
+            .run { responseBodyContent?.isNotEmpty()?.let { assertTrue(it) } }
 
         accountRepository.findOneByLogin(defaultAccount.login!!).run {
             accountAuthorityRepository.deleteAllByAccountId(this?.id!!)
@@ -246,7 +267,7 @@ internal class SignUpAccountControllerTest {
             .expectStatus()
             .isCreated
             .returnResult<Unit>()
-            .run { responseBodyContent?.isEmpty()?.let { assert(it) } }
+            .run { responseBodyContent?.isEmpty()?.let { assertTrue(it) } }
         assertEquals(1, accountRepository.count())
         assertEquals(1, accountAuthorityRepository.count())
         assertFalse(accountRepository.findOneByEmail(defaultAccount.email!!)!!.activated)
@@ -263,7 +284,7 @@ internal class SignUpAccountControllerTest {
             .expectStatus()
             .isCreated
             .returnResult<Unit>()
-            .run { responseBodyContent?.isEmpty()?.let { assert(it) } }
+            .run { responseBodyContent?.isEmpty()?.let { assertTrue(it) } }
         assertEquals(1, accountRepository.count())
         assertEquals(1, accountAuthorityRepository.count())
         assertNull(accountRepository.findOneByLogin(defaultAccount.login!!))
@@ -291,7 +312,7 @@ internal class SignUpAccountControllerTest {
             .expectStatus()
             .isCreated
             .returnResult<Unit>()
-            .run { responseBodyContent?.isEmpty()?.let { assert(it) } }
+            .run { responseBodyContent?.isEmpty()?.let { assertTrue(it) } }
         assertEquals(1, accountRepository.count())
         assertEquals(1, accountAuthorityRepository.count())
         assertNull(accountRepository.findOneByLogin(secondLogin))
@@ -308,7 +329,7 @@ internal class SignUpAccountControllerTest {
 
         log.info("accountRepository.findOneByEmail(defaultAccount.email!!): ${
             accountRepository.findOneByEmail(defaultAccount.email!!)}")
-//        assert(accountRepository.findOneByEmail(defaultAccount.email!!)!!.activated)
+//        assertTrue(accountRepository.findOneByEmail(defaultAccount.email!!)!!.activated)
 //
 //        // Register 4th (already activated) user
 //        client
@@ -320,7 +341,7 @@ internal class SignUpAccountControllerTest {
 //            .expectStatus()
 //            .isBadRequest
 //            .returnResult<Unit>()
-//            .run { responseBodyContent?.isEmpty()?.let { assert(it) } }
+//            .run { responseBodyContent?.isEmpty()?.let { assertTrue(it) } }
         assertEquals(1, accountRepository.count())
         assertEquals(1, accountAuthorityRepository.count())
 //        assertNull(accountRepository.findOneByLogin(secondLogin))
@@ -328,7 +349,7 @@ internal class SignUpAccountControllerTest {
 //            assertNotNull(this)
 ////            assertEquals(defaultAccount.email!!.lowercase(), email!!.lowercase())
 //        }
-//        assert(accountRepository.findOneByEmail(defaultAccount.email!!)!!.activated)
+//        assertTrue(accountRepository.findOneByEmail(defaultAccount.email!!)!!.activated)
 
         //netoyage des accounts et accountAuthorities à la fin du test
         accountRepository.findOneByEmail(defaultAccount.email!!).run {

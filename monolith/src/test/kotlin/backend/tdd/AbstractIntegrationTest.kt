@@ -4,14 +4,16 @@
     "SqlDialectInspection", "unused"
 )
 
-package backend
+package backend.tdd
 
+import backend.User
 import backend.Constants.ROLE_ADMIN
 import backend.Constants.ROLE_ANONYMOUS
 import backend.Constants.ROLE_USER
-import backend.Data.defaultAccount
-import backend.Data.defaultUser
+import backend.data.Data.defaultAccount
+import backend.data.Data.defaultUser
 import backend.Log.log
+import backend.UserAuthority
 import com.fasterxml.jackson.databind.ObjectMapper
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.count

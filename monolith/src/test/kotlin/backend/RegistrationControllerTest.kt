@@ -4,7 +4,8 @@
 
 package backend
 
-import backend.Data.defaultAccount
+import backend.data.Data.defaultAccount
+import backend.util.testLoader
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
