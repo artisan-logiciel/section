@@ -77,10 +77,18 @@ class AccountRepositoryInMemory(
 
     override suspend fun save(model: AccountModel): AccountModel? {
 //        TODO("Not yet implemented")
-        val inMemory: AccountCredentialsModel = accounts.first {
-            it.login!!.lowercase() == model.login!!.lowercase()
-                    && it.email!!.lowercase() == model.email!!.lowercase()
-        }.toCredentialsModel()
+        if(accounts.none{ it.login?.lowercase() ==model.login?.lowercase()} && accounts.none{ it.login?.lowercase() ==model.login?.lowercase()}){
+            //TODO: ajouter un nouveau
+            //retourne null car save(AccountModel) ne créer pas de nouvelle ligne
+        }else{
+            //TODO:mettre a jour et throw une unique contraint violation exception
+            val inMemory: AccountCredentialsModel = accounts.first {
+                it.login!!.lowercase() == model.login!!.lowercase()
+                        && it.email!!.lowercase() == model.email!!.lowercase()
+            }.toCredentialsModel()
+        }
+
+
         return null
     }
 
@@ -196,7 +204,7 @@ interface AccountRepository {
 }
 
 
-@Repository//("emailRepository")
+@Repository
 interface EmailRepository : CoroutineSortingRepository<Email, String>
 
 interface UserRepositoryPageable : R2dbcRepository<User, UUID> {
@@ -204,7 +212,7 @@ interface UserRepositoryPageable : R2dbcRepository<User, UUID> {
     fun findAllByIdNotNull(pageable: Pageable): Flux<User>
 }
 
-@Repository//("userRepository")
+@Repository
 class UserRepository(
     private val iUserRepository: IUserRepository,
     private val userAuthRepository: UserAuthRepository,
