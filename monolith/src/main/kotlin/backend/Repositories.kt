@@ -75,85 +75,71 @@ class AccountRepositoryInMemory(
 
 
     fun saveCurrent(model: AccountCredentialsModel) =
-        create(model, accounts).run {
+        create(model).run {
             when {
                 this != null -> return@run this
-                else -> update(model, accounts)
+                else -> update(model)
             }
         }
 
-    private fun create(
-        model: AccountCredentialsModel,
-        accounts: MutableSet<IAccountEntity<IAuthorityEntity>>
-    ) = if (`mail & login do not exist`(model, accounts))
-        model.copy(id = UUID.randomUUID()).apply {
-            @Suppress("UNCHECKED_CAST")
-            accounts += AccountEntity(this) as IAccountEntity<IAuthorityEntity>
-        }.toAccount() else null
+    private fun create(model: AccountCredentialsModel) =
+        if (`mail & login do not exist`(model))
+            model.copy(id = UUID.randomUUID()).apply {
+                @Suppress("UNCHECKED_CAST")
+                accounts += AccountEntity(this) as IAccountEntity<IAuthorityEntity>
+            }.toAccount() else null
 
-    private fun `mail & login do not exist`(
-        model: AccountCredentialsModel,
-        accounts: MutableSet<IAccountEntity<IAuthorityEntity>>
-    ) = accounts.none {
-        it.login.equals(model.login, ignoreCase = true)
-                && it.email.equals(model.email, ignoreCase = true)
-    }
+    private fun `mail & login do not exist`(model: AccountCredentialsModel) =
+        accounts.none {
+            it.login.equals(model.login, ignoreCase = true)
+                    && it.email.equals(model.email, ignoreCase = true)
+        }
 
 
-    private fun `mail exists and login exists`(
-        model: AccountCredentialsModel,
-        accounts: MutableSet<IAccountEntity<IAuthorityEntity>>
-    ) = accounts.any {
-        model.email.equals(it.email, ignoreCase = true)
-                && model.login.equals(it.login, ignoreCase = true)
-    }
+    private fun `mail exists and login exists`(model: AccountCredentialsModel) =
+        accounts.any {
+            model.email.equals(it.email, ignoreCase = true)
+                    && model.login.equals(it.login, ignoreCase = true)
+        }
 
 
-    private fun `mail exists and login does not`(
-        model: AccountCredentialsModel,
-        accounts: MutableSet<IAccountEntity<IAuthorityEntity>>
-    ) = accounts.any {
-        model.email.equals(it.email, ignoreCase = true)
-                && !model.login.equals(it.login, ignoreCase = true)
-    }
+    private fun `mail exists and login does not`(model: AccountCredentialsModel) =
+        accounts.any {
+            model.email.equals(it.email, ignoreCase = true)
+                    && !model.login.equals(it.login, ignoreCase = true)
+        }
 
 
-    private fun `mail does not exist and login exists`(
-        model: AccountCredentialsModel,
-        accounts: MutableSet<IAccountEntity<IAuthorityEntity>>
-    ) = accounts.any {
-        !model.email.equals(it.email, ignoreCase = true)
-                && model.login.equals(it.login, ignoreCase = true)
-    }
+    private fun `mail does not exist and login exists`(model: AccountCredentialsModel) =
+        accounts.any {
+            !model.email.equals(it.email, ignoreCase = true)
+                    && model.login.equals(it.login, ignoreCase = true)
+        }
 
     private fun update(
         model: AccountCredentialsModel,
-        accounts: MutableSet<IAccountEntity<IAuthorityEntity>>
     ): AccountModel? = when {
-        `mail exists and login does not`(model, accounts) -> changeLogin(model, accounts)
-        `mail does not exist and login exists`(model, accounts) -> changeEmail(model, accounts)
-        `mail exists and login exists`(model, accounts) -> patch(model, accounts)
+        `mail exists and login does not`(model) -> changeLogin(model)?.run { patch(this) }
+        `mail does not exist and login exists`(model) -> changeEmail(model)?.run { patch(this) }
+        `mail exists and login exists`(model) -> patch(model)
         else -> null
-    }?.toAccount()
+    }
 
-    private fun patch(
+    private fun changeLogin(
         model: AccountCredentialsModel,
-        accounts: MutableSet<IAccountEntity<IAuthorityEntity>>
-    ): AccountCredentialsModel {
+    ): AccountCredentialsModel? {
         TODO("Not yet implemented")
     }
 
     private fun changeEmail(
         model: AccountCredentialsModel,
-        accounts: MutableSet<IAccountEntity<IAuthorityEntity>>
-    ): AccountCredentialsModel {
+    ): AccountCredentialsModel? {
         TODO("Not yet implemented")
     }
 
-    private fun changeLogin(
+    private fun patch(
         model: AccountCredentialsModel,
-        accounts: MutableSet<IAccountEntity<IAuthorityEntity>>
-    ): AccountCredentialsModel {
+    ): AccountModel? {
         TODO("Not yet implemented")
     }
 
@@ -189,14 +175,13 @@ class AccountRepositoryInMemory(
             model.toAccount()
         }
 
-    fun `foo`() {}
     override suspend fun delete(account: AccountModel) {
         accounts.apply { if (isNotEmpty()) remove(find { it.id == account.id }) }
     }
 
     override suspend fun findActivationKeyByLogin(login: String): String? =
         accounts.find {
-            it.login?.lowercase().equals(login.lowercase())
+            it.login.equals(login, ignoreCase = true)
         }?.activationKey
 
     override suspend fun count(): Long = accounts.size.toLong()
