@@ -41,7 +41,7 @@ class MessageSourceFuncTest : AbstractBaseFunctionalTest() {
             ),
             Locale.getDefault()
         )
-        assert(msg == i18nMsg)
+        assertTrue(msg == i18nMsg)
         Log.log.info(i18nMsg)
     }
 }

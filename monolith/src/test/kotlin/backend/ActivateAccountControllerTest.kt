@@ -47,7 +47,7 @@ internal class ActivateAccountControllerTest {
 //            .bodyValue(defaultAccount)
 //            .exchange()
 //            .returnResult<Unit>().run {
-//                assert(requestBodyContent!!.isNotEmpty())
+//                assertTrue(requestBodyContent!!.isNotEmpty())
 //                requestBodyContent
 //                    ?.map { it.toInt().toChar().toString() }
 //                    ?.reduce { acc: String, s: String -> acc + s }.apply requestContent@{
@@ -60,7 +60,7 @@ internal class ActivateAccountControllerTest {
 //                                "\"lastName\":\"${lastName}\"",
 //                                "\"email\":\"${email}\"",
 //                                "\"imageUrl\":\"${imageUrl}\""
-//                            ).map { assert(this@requestContent?.contains(it) ?: false) }
+//                            ).map { assertTrue(this@requestContent?.contains(it) ?: false) }
 //                        }
 //                    }
 //            }

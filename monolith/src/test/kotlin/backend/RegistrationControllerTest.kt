@@ -17,6 +17,7 @@ import org.springframework.test.web.reactive.server.WebTestClient
 import org.springframework.test.web.reactive.server.returnResult
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 
 internal class RegistrationControllerTest {
@@ -54,7 +55,7 @@ internal class RegistrationControllerTest {
             .bodyValue(defaultAccount)
             .exchange()
             .returnResult<Unit>().apply {
-                assert(requestBodyContent!!.isNotEmpty())
+                assertTrue(requestBodyContent!!.isNotEmpty())
                 requestBodyContent
                     ?.map { it.toInt().toChar().toString() }
                     ?.reduce { acc: String, s: String -> acc + s }.apply requestContent@{
@@ -67,10 +68,10 @@ internal class RegistrationControllerTest {
                                 "\"lastName\":\"${lastName}\"",
                                 "\"email\":\"${email}\"",
                                 "\"imageUrl\":\"${imageUrl}\""
-                            ).map { assert(this@requestContent?.contains(it) ?: false) }
+                            ).map { assertTrue(this@requestContent?.contains(it) ?: false) }
                         }
                     }
-                responseBodyContent?.isEmpty()?.let { assert(it) }
+                responseBodyContent?.isEmpty()?.let { assertTrue(it) }
                 assertEquals(expected = HttpStatus.CREATED, actual = status)
             }
         assertEquals(countUserBefore + 1, context.getBean<UserRepository>().count())

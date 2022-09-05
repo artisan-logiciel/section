@@ -23,11 +23,11 @@ class IntTest {
 //
 //    @Test
 //    fun `Check Properties`() {
-//        assert(
+//        assertTrue(
 //            "anno-r2dbc-jwt@localhost" ==
 //                    context.environment.getProperty("anno.mail.from")
 //        )
-//        assert(
+//        assertTrue(
 //            "http://127.0.0.1:8080" ==
 //                    context.environment.getProperty("anno.mail.base-url")
 //        )
