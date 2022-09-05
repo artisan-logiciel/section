@@ -78,17 +78,20 @@ class AccountRepositoryInMemory(
     override suspend fun save(model: AccountModel): AccountModel? =
         when {
             //retourne null car save(AccountModel) ne créer pas de nouvelle ligne
-            accounts.none { it.login?.lowercase() == model.login?.lowercase() } && accounts.none { it.login?.lowercase() == model.login?.lowercase() } -> {
+            accounts.none { it.login?.equals(model.login, ignoreCase = true) ?: (model.login == null) }
+                    && accounts.none { it.login?.equals(model.login, ignoreCase = true) ?: (model.login == null) } -> {
                 null
             }
+
             else -> {
                 //TODO:mettre a jour et throw une unique contraint violation exception
                 /*val inMemory: AccountCredentialsModel =*/
                 accounts.first {
-                    it.login?.lowercase() == model.login?.lowercase()
-                            || it.email?.lowercase() == model.email?.lowercase()
+                    it.login?.equals(model.login,ignoreCase = true) ?: (model.login == null)
+                            || it.email?.equals(model.email,ignoreCase = true) ?: (model.email == null)
                 }.toCredentialsModel().apply {
                     //TODO:update
+//                    if(email.equals(model.email,ignoreCase = true))
                 }.toAccount()
             }
         }
