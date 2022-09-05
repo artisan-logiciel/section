@@ -87,9 +87,9 @@ class AccountRepositoryInMemory(
         accounts: MutableSet<IAccountEntity<IAuthorityEntity>>
     ): AccountModel? = if (`mail & login do not exist`(model, accounts))
         model.copy(id = UUID.randomUUID()).apply {
-        @Suppress("UNCHECKED_CAST")
-        accounts += AccountEntity(this) as IAccountEntity<IAuthorityEntity>
-    }.toAccount() else null
+            @Suppress("UNCHECKED_CAST")
+            accounts += AccountEntity(this) as IAccountEntity<IAuthorityEntity>
+        }.toAccount() else null
 
     private fun `mail & login do not exist`(
         model: AccountCredentialsModel,
@@ -121,7 +121,7 @@ class AccountRepositoryInMemory(
     private fun `mail does not exist and login exists`(
         model: AccountCredentialsModel,
         accounts: MutableSet<IAccountEntity<IAuthorityEntity>>
-    )= accounts.any {
+    ) = accounts.any {
         !model.email.equals(it.email, ignoreCase = true)
                 && model.login.equals(it.login, ignoreCase = true)
     }
@@ -130,6 +130,24 @@ class AccountRepositoryInMemory(
         model: AccountCredentialsModel,
         accounts: MutableSet<IAccountEntity<IAuthorityEntity>>
     ): AccountModel? {
+        var result: AccountCredentialsModel =
+            if (`mail exists and login does not`(model, accounts)) changeLogin(model, accounts)
+            else if (`mail exists and login exists`(model, accounts)) changeEmail(model, accounts)
+            else model
+        TODO("Not yet implemented")
+    }
+
+    private fun changeEmail(
+        model: AccountCredentialsModel,
+        accounts: MutableSet<IAccountEntity<IAuthorityEntity>>
+    ): AccountCredentialsModel {
+        TODO("Not yet implemented")
+    }
+
+    private fun changeLogin(
+        model: AccountCredentialsModel,
+        accounts: MutableSet<IAccountEntity<IAuthorityEntity>>
+    ): AccountCredentialsModel {
         TODO("Not yet implemented")
     }
 
