@@ -70,7 +70,7 @@ class AccountRepositoryInMemory(
     }
 
     override suspend fun findOneByLogin(login: String): AccountModel? =
-        accounts.find { it.login!!.lowercase() == login.lowercase() }!!.toModel()
+        accounts.find { it.login?.lowercase() == login.lowercase() }?.toModel()
 
     override suspend fun findOneByEmail(email: String): AccountModel? =
         accounts.find { it.email?.lowercase().equals(email.lowercase()) }?.toModel()
@@ -334,7 +334,7 @@ interface UserAuthRepository : CoroutineCrudRepository<UserAuthority, Long> {
     suspend fun findByUserIdAndRole(userId: UUID, role: String): UserAuthRepository?
 }
 
-@Repository//(value = "accountRepository")
+@Repository
 class AccountRepositoryR2dbc(
     private val userRepository: UserRepository
 ) : AccountRepository {

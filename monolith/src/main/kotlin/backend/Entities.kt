@@ -146,22 +146,20 @@ data class User(
 
 
     constructor(account: Account.AccountCredentials) : this() {
-//        User().apply {
         id = account.id
-        this.login = account.login
-        this.email = account.email
-        this.firstName = account.firstName
-        this.lastName = account.lastName
-        this.langKey = account.langKey
-        this.activated = account.activated
-        this.createdBy = account.createdBy
-        this.createdDate = account.createdDate
-        this.lastModifiedBy = account.lastModifiedBy
-        this.lastModifiedDate = account.lastModifiedDate
-        this.imageUrl = account.imageUrl
-        this.authorities = account.authorities?.map { Authority(it) }?.toMutableSet()
-        this.password = account.password
-//        }
+        login = account.login
+        email = account.email
+        firstName = account.firstName
+        lastName = account.lastName
+        langKey = account.langKey
+        activated = account.activated
+        createdBy = account.createdBy
+        createdDate = account.createdDate
+        lastModifiedBy = account.lastModifiedBy
+        lastModifiedDate = account.lastModifiedDate
+        imageUrl = account.imageUrl
+        authorities = account.authorities?.map { Authority(it) }?.toMutableSet()
+        password = account.password
     }
 
     fun toAccount(): Account = Account(
