@@ -47,7 +47,7 @@ interface IAccountModelRepository {
 
     suspend fun save(accountCredentialsModel: AccountCredentialsModel): AccountModel?
 
-    suspend fun save(accountModel: AccountModel): AccountModel?
+    suspend fun save(model: AccountModel): AccountModel?
 
     suspend fun delete(account: AccountModel)
 
@@ -70,14 +70,18 @@ class AccountRepositoryInMemory(
     }
 
     override suspend fun findOneByLogin(login: String): AccountModel? =
-        accounts.find { it.login?.lowercase().equals(login.lowercase()) }?.toModel()
+        accounts.find { it.login!!.lowercase() == login.lowercase() }!!.toModel()
 
     override suspend fun findOneByEmail(email: String): AccountModel? =
         accounts.find { it.email?.lowercase().equals(email.lowercase()) }?.toModel()
 
-    override suspend fun save(accountModel: AccountModel): AccountModel? {
-        TODO("Not yet implemented")
-        val inMemory:AccountCredentialsModel= accounts.first().toCredentialsModel()
+    override suspend fun save(model: AccountModel): AccountModel? {
+//        TODO("Not yet implemented")
+        val inMemory: AccountCredentialsModel = accounts.first {
+            it.login!!.lowercase() == model.login!!.lowercase()
+                    && it.email!!.lowercase() == model.email!!.lowercase()
+        }.toCredentialsModel()
+        return null
     }
 
     override suspend fun save(accountCredentialsModel: AccountCredentialsModel): AccountModel? =
@@ -107,7 +111,6 @@ class AccountRepositoryInMemory(
 
             else -> accountCredentialsModel.toAccount()
         }
-
 
 
     override suspend fun delete(account: AccountModel) {
