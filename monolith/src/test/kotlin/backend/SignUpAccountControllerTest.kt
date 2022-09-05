@@ -69,7 +69,7 @@ internal class SignUpAccountControllerTest {
 
 
     @Test
-    fun `vérifie que la requete contient bien des données cohérentes`() {
+    fun `vérifie que la requête contient bien des données cohérentes`() {
         client
             .post()
             .uri("")
