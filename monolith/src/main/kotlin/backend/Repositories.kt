@@ -45,7 +45,7 @@ interface IAccountModelRepository {
 
     suspend fun findOneByEmail(email: String): AccountModel?
 
-    suspend fun save(accountCredentialsModel: AccountCredentialsModel): AccountModel?
+    suspend fun save(model: AccountCredentialsModel): AccountModel?
 
     suspend fun delete(account: AccountModel)
 
@@ -73,13 +73,31 @@ class AccountRepositoryInMemory(
     override suspend fun findOneByEmail(email: String): AccountModel? =
         accounts.find { it.email?.lowercase().equals(email.lowercase()) }?.toModel()
 
+
+    fun saveCurrent(model: AccountCredentialsModel): AccountModel? {
+        create(model, accounts)?.run {
+            if(this !=null)return@run null else null
+        }
+        return null
+    }
+
+    private fun create(
+        model: AccountCredentialsModel,
+        accounts: MutableSet<IAccountEntity<IAuthorityEntity>>
+    ): AccountModel? {
+        TODO("Not yet implemented")
+    }
+
     override suspend fun save(model: AccountCredentialsModel): AccountModel? =
         if (model.id == null && accounts.none {
                 it.login?.equals(model.login, ignoreCase = true) ?: (model.login == null)
                         && it.email?.equals(model.email, ignoreCase = true) ?: (model.email == null)
             }) model
             .copy(id = UUID.randomUUID())
-            .apply { accounts += AccountEntity(this) as IAccountEntity<IAuthorityEntity> }
+            .apply {
+                @Suppress("UNCHECKED_CAST")
+                accounts += AccountEntity(this) as IAccountEntity<IAuthorityEntity>
+            }
             .toAccount()
         //TODO: les id non null sans coherence login password renvoi null
         else if (model.id != null && accounts.none {
@@ -89,6 +107,7 @@ class AccountRepositoryInMemory(
             }) AccountEntity(model).apply {
             try {
                 accounts.remove(accounts.first { this.id == it.id })
+                @Suppress("UNCHECKED_CAST")
                 accounts += this as IAccountEntity<IAuthorityEntity>
                 log.info("accounts: $accounts")
             } catch (_: NoSuchElementException) {
@@ -101,7 +120,7 @@ class AccountRepositoryInMemory(
             model.toAccount()
         }
 
-
+    fun `foo`() {}
     override suspend fun delete(account: AccountModel) {
         accounts.apply { if (isNotEmpty()) remove(find { it.id == account.id }) }
     }
