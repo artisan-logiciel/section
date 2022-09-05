@@ -72,7 +72,7 @@ internal class SignUpAccountControllerTest {
     fun `vérifie que la requete contient bien des données cohérentes`() {
         client
             .post()
-            .uri("/api/foo")
+            .uri("")
             .contentType(MediaType.APPLICATION_JSON)
             .bodyValue(defaultAccount)
             .exchange()
