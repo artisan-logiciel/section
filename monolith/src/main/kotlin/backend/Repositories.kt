@@ -74,33 +74,31 @@ class AccountRepositoryInMemory(
         accounts.find { it.email?.lowercase().equals(email.lowercase()) }?.toModel()
 
     override suspend fun save(model: AccountCredentialsModel): AccountModel? =
-        when {
-
-            model.id == null && accounts.none {
+        if (model.id == null && accounts.none {
+                it.login?.equals(model.login, ignoreCase = true) ?: (model.login == null)
+                        && it.email?.equals(model.email, ignoreCase = true) ?: (model.email == null)
+            }) model
+            .copy(id = UUID.randomUUID())
+            .apply { accounts += AccountEntity(this) as IAccountEntity<IAuthorityEntity> }
+            .toAccount()
+        //TODO: les id non null sans coherence login password renvoi null
+        else if (model.id != null && accounts.none {
                 it.login?.equals(model.login, ignoreCase = true) ?: (model.login == null)
             } && accounts.none {
                 it.email?.equals(model.email, ignoreCase = true) ?: (model.email == null)
-            } -> model
-                .copy(id = UUID.randomUUID())
-                .apply { accounts += AccountEntity(this) as IAccountEntity<IAuthorityEntity> }
-                .toAccount()
-
-
-            model.id != null && accounts.none {
-                it.login?.equals(model.login, ignoreCase = true) ?: (model.login == null)
-            } && accounts.none {
-                it.email?.equals(model.email, ignoreCase = true) ?: (model.email == null)
-            } -> AccountEntity(model).apply {
-                try {
-                    accounts.remove(accounts.first { this.id == it.id })
-                    accounts += this as IAccountEntity<IAuthorityEntity>
-                    log.info("accounts: $accounts")
-                } catch (_: NoSuchElementException) {
-                }
-            }.toModel()
-
-
-            else -> model.toAccount()
+            }) AccountEntity(model).apply {
+            try {
+                accounts.remove(accounts.first { this.id == it.id })
+                accounts += this as IAccountEntity<IAuthorityEntity>
+                log.info("accounts: $accounts")
+            } catch (_: NoSuchElementException) {
+            }
+        }.toModel() else {
+            //changer de login
+            //changer d'email
+            //changer firstName lastName imageUrl activated langKey
+            //changer d'authorities
+            model.toAccount()
         }
 
 
@@ -121,7 +119,7 @@ class AccountRepositoryInMemory(
 
     override suspend fun signup(model: AccountCredentialsModel) {
         accountAuthorityRepository.save(save(model)?.id!!, ROLE_USER)
-        save(model)
+//        save(model)
     }
 
     override suspend fun findOneActivationKey(key: String): AccountCredentialsModel? {
