@@ -192,7 +192,7 @@ interface AccountRepository {
 }
 
 
-@Repository("emailRepository")
+@Repository//("emailRepository")
 interface EmailRepository : CoroutineSortingRepository<Email, String>
 
 interface UserRepositoryPageable : R2dbcRepository<User, UUID> {
@@ -200,7 +200,7 @@ interface UserRepositoryPageable : R2dbcRepository<User, UUID> {
     fun findAllByIdNotNull(pageable: Pageable): Flux<User>
 }
 
-@Repository("userRepository")
+@Repository//("userRepository")
 class UserRepository(
     private val iUserRepository: IUserRepository,
     private val userAuthRepository: UserAuthRepository,
@@ -330,7 +330,7 @@ interface UserAuthRepository : CoroutineCrudRepository<UserAuthority, Long> {
     suspend fun findByUserIdAndRole(userId: UUID, role: String): UserAuthRepository?
 }
 
-@Repository(value = "accountRepository")
+@Repository//(value = "accountRepository")
 class AccountRepositoryR2dbc(
     private val userRepository: UserRepository
 ) : AccountRepository {

@@ -17,6 +17,7 @@ import org.springframework.boot.test.context.SpringBootTest.WebEnvironment.DEFIN
 import org.springframework.http.HttpHeaders.CONTENT_TYPE
 import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
 import org.springframework.test.context.ActiveProfiles
+import org.springframework.test.web.reactive.server.FluxExchangeResult
 import org.springframework.test.web.reactive.server.WebTestClient
 import org.springframework.test.web.reactive.server.returnResult
 import reactor.kotlin.core.publisher.toMono
@@ -32,14 +33,13 @@ class SignUpStepDefinition : Fr {
     private lateinit var objectMapper: ObjectMapper
 
     //    private lateinit var response: org.springframework.web.reactive.function.client.ClientResponse
-    private lateinit var response: WebTestClient.ResponseSpec
+    private var response: FluxExchangeResult<Account>? = null
     private val client = WebTestClient.bindToServer()
         .baseUrl("http://localhost:8080")
         .defaultHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
         .build()
     private lateinit var currentAccount: AccountCredentials
     private var accounts: List<AccountCredentials> = mutableListOf()
-
 
 
     init {
@@ -73,20 +73,18 @@ class SignUpStepDefinition : Fr {
                     .bodyValue(currentAccount)
                     .toMono()
                     .block()
-                    ?.exchange().apply { response = this!! }
-                    ?.returnResult<Account>().apply { log.info(this!!.status) }
+                    ?.exchange().apply { }
+                    ?.returnResult<Account>().apply {
+                        log.info(this!!.status)
+                        response = this
+                    }
             }
         }
 
         Alors("le résultat est la création d'un nouveau compte non activé") {
-//                response.expectStatus().isCreated
-//            response.returnResult<Account>().status
-//            log.info(response.status)
-//            mono {
-//                mono { log.info(response.awaitEntity<Account>().statusCode) }.block()
-//            println("passé par ici")
-//            log.info("passé par ici")
-//            }
+            assert(response != null)
+            response?.status?.is2xxSuccessful
+            log.info(response?.status)
             //TODO: ne pas oublier de nettoyer la base
         }
     }
