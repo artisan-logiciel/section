@@ -129,15 +129,12 @@ class AccountRepositoryInMemory(
     private fun update(
         model: AccountCredentialsModel,
         accounts: MutableSet<IAccountEntity<IAuthorityEntity>>
-    ): AccountModel? {
-        var result: AccountCredentialsModel =
-            if (`mail exists and login does not`(model, accounts)) changeLogin(model, accounts)
-            else if (`mail exists and login exists`(model, accounts)) changeEmail(model, accounts)
-            else if(`mail exists and login exists`(model,accounts))patch(model,accounts)
-        else null
-
-        TODO("Not yet implemented")
-    }
+    ): AccountModel? = when {
+        `mail exists and login does not`(model, accounts) -> changeLogin(model, accounts)
+        `mail does not exist and login exists`(model, accounts) -> changeEmail(model, accounts)
+        `mail exists and login exists`(model, accounts) -> patch(model, accounts)
+        else -> null
+    }?.toAccount()
 
     private fun patch(
         model: AccountCredentialsModel,
