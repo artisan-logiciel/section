@@ -4,7 +4,7 @@
 
 package backend
 
-import backend.util.testLoader
+import backend.tdd.testLoader
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
 import org.springframework.beans.factory.getBean

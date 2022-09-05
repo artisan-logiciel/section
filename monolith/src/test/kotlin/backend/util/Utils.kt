@@ -6,13 +6,9 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include.NON_EMPTY
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.SerializationFeature.WRITE_DURATIONS_AS_TIMESTAMPS
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
-import backend.Constants.SPRING_PROFILE_CONF_DEFAULT_KEY
-import backend.Constants.SPRING_PROFILE_TEST
-import backend.User
 import org.assertj.core.api.Assertions.assertThat
 import org.hamcrest.Description
 import org.hamcrest.TypeSafeDiagnosingMatcher
-import org.springframework.boot.SpringApplication
 import java.io.IOException
 import java.lang.Byte.parseByte
 import java.time.ZonedDateTime
@@ -20,8 +16,6 @@ import java.time.ZonedDateTime.parse
 import java.time.format.DateTimeParseException
 import kotlin.reflect.KClass
 import kotlin.reflect.full.createInstance
-
-const val TEST_USER_LOGIN = "test"
 
 //fun User.unlockUser() {
 //    apply {
@@ -31,14 +25,6 @@ const val TEST_USER_LOGIN = "test"
 //        }
 //    }
 //}
-
-fun testLoader(app: SpringApplication) = with(app) {
-    setDefaultProperties(
-        hashMapOf<String, Any>().apply {
-            set(SPRING_PROFILE_CONF_DEFAULT_KEY, SPRING_PROFILE_TEST)
-        })
-    setAdditionalProfiles(SPRING_PROFILE_TEST)
-}
 
 private val mapper = createObjectMapper()
 
