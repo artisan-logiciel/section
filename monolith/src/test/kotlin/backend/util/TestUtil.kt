@@ -23,14 +23,14 @@ import kotlin.reflect.full.createInstance
 
 const val TEST_USER_LOGIN = "test"
 
-fun User.unlockUser() {
-    apply {
-        if (id != null) {
-            id = null
-            version = null
-        }
-    }
-}
+//fun User.unlockUser() {
+//    apply {
+//        if (id != null) {
+//            id = null
+//            version = null
+//        }
+//    }
+//}
 
 fun testLoader(app: SpringApplication) = with(app) {
     setDefaultProperties(
