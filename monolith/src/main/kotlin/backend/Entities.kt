@@ -288,6 +288,7 @@ interface IAccountEntity<AUTH : IAuthorityEntity> {
         lastModifiedDate = lastModifiedDate,
         authorities = authorities?.map { it.role }?.toMutableSet()
     )
+
 }
 
 @Table("`user`")
