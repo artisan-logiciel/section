@@ -104,13 +104,15 @@ class AccountRepositoryInMemory(
                 && it.email.equals(model.email, ignoreCase = true)
     }
 
+
     private fun `mail exists and login exists`(
         model: AccountCredentialsModel,
         accounts: MutableSet<IAccountEntity<IAuthorityEntity>>
-    ): Boolean = accounts.none {
+    ): Boolean = @Suppress("SimplifiableCallChain")
+    accounts.filter {
         model.email.equals(it.email, ignoreCase = true)
                 && model.login.equals(it.login, ignoreCase = true)
-    }
+    }.isEmpty()
 
 
     private fun `mail exists and login does not`(
