@@ -146,22 +146,22 @@ data class User(
 
 
     constructor(account: Account.AccountCredentials) : this() {
-        User().apply {
-            this@User.id = account.id
-            this@User.login = account.login
-            this@User.email = account.email
-            this@User.firstName = account.firstName
-            this@User.lastName = account.lastName
-            this@User.langKey = account.langKey
-            this@User.activated = account.activated
-            this@User.createdBy = account.createdBy
-            this@User.createdDate = account.createdDate
-            this@User.lastModifiedBy = account.lastModifiedBy
-            this@User.lastModifiedDate = account.lastModifiedDate
-            this@User.imageUrl = account.imageUrl
-            this@User.authorities = account.authorities?.map { Authority(it) }?.toMutableSet()
-            this@User.password = account.password
-        }
+//        User().apply {
+        id = account.id
+        this.login = account.login
+        this.email = account.email
+        this.firstName = account.firstName
+        this.lastName = account.lastName
+        this.langKey = account.langKey
+        this.activated = account.activated
+        this.createdBy = account.createdBy
+        this.createdDate = account.createdDate
+        this.lastModifiedBy = account.lastModifiedBy
+        this.lastModifiedDate = account.lastModifiedDate
+        this.imageUrl = account.imageUrl
+        this.authorities = account.authorities?.map { Authority(it) }?.toMutableSet()
+        this.password = account.password
+//        }
     }
 
     fun toAccount(): Account = Account(
@@ -209,9 +209,7 @@ data class CountryPhoneCodeEntity(
 }
 
 @Table("`email`")
-data class EmailEntity(
-    @Id val value: @EmailConstraint String
-) : Persistable<String> {
+data class EmailEntity(@Id val value: @EmailConstraint String) : Persistable<String> {
     override fun getId() = value
     override fun isNew() = true
 }
@@ -222,9 +220,9 @@ data class AuthorityEntity(
     @field:NotNull
     @field:Size(max = 50)
     override val role: String
-) : IAuthorityModel
+) : IAuthorityEntity
 
-interface IAuthorityModel : Persistable<String> {
+interface IAuthorityEntity : Persistable<String> {
     val role: String
     override fun getId() = role
     override fun isNew() = true
@@ -239,49 +237,102 @@ data class AccountAuthority(
     val role: String
 )
 
+interface IAccountEntity<AUTH : IAuthorityEntity> {
+    var id: UUID?
+    var login: String?
+    var password: String?
+    var firstName: String?
+    var lastName: String?
+    var email: String?
+    var activated: Boolean
+    var langKey: String?
+    var imageUrl: String?
+    var activationKey: String?
+    var resetKey: String?
+    var resetDate: Instant?
+    var authorities: MutableSet<AUTH>?
+    var createdBy: String?
+    var createdDate: Instant?
+    var lastModifiedBy: String?
+    var lastModifiedDate: Instant?
+    fun toModel(): AccountModel = AccountModel(
+        id = id,
+        login = login,
+        firstName = firstName,
+        lastName = lastName,
+        email = email,
+        imageUrl = imageUrl,
+        activated = activated,
+        langKey = langKey,
+        createdBy = createdBy,
+        createdDate = createdDate,
+        lastModifiedBy = lastModifiedBy,
+        lastModifiedDate = lastModifiedDate,
+        authorities = authorities?.map { it.role }?.toMutableSet()
+    )
+
+    fun toCredentialsModel(): AccountCredentialsModel = AccountCredentialsModel(
+        id = id,
+        login = login,
+        firstName = firstName,
+        lastName = lastName,
+        email = email,
+        password = password,
+        activationKey = activationKey,
+        imageUrl = imageUrl,
+        activated = activated,
+        langKey = langKey,
+        createdBy = createdBy,
+        createdDate = createdDate,
+        lastModifiedBy = lastModifiedBy,
+        lastModifiedDate = lastModifiedDate,
+        authorities = authorities?.map { it.role }?.toMutableSet()
+    )
+}
+
 @Table("`user`")
 data class AccountEntity(
-    @Id var id: UUID? = null,
+    @Id override var id: UUID? = null,
     @field:NotNull
     @field:Pattern(regexp = LOGIN_REGEX)
     @field:Size(min = 1, max = 50)
-    var login: String? = null,
+    override var login: String? = null,
     @JsonIgnore @Column("password_hash")
     @field:NotNull
     @field:Size(min = 60, max = 60)
-    var password: String? = null,
+    override var password: String? = null,
     @field:Size(max = 50)
-    var firstName: String? = null,
+    override var firstName: String? = null,
     @field:Size(max = 50)
-    var lastName: String? = null,
+    override var lastName: String? = null,
     @field:EmailConstraint
     @field:Size(min = 5, max = 254)
-    var email: String? = null,
+    override var email: String? = null,
     @field:NotNull
-    var activated: Boolean = false,
+    override var activated: Boolean = false,
     @field:Size(min = 2, max = 10)
-    var langKey: String? = null,
+    override var langKey: String? = null,
     @field:Size(max = 256)
-    var imageUrl: String? = null,
+    override var imageUrl: String? = null,
     @JsonIgnore
     @field:Size(max = 20)
-    var activationKey: String? = null,
+    override var activationKey: String? = null,
     @JsonIgnore
     @field:Size(max = 20)
-    var resetKey: String? = null,
-    var resetDate: Instant? = null,
+    override var resetKey: String? = null,
+    override var resetDate: Instant? = null,
     @JsonIgnore @Transient
-    var authorities: MutableSet<AuthorityEntity>? = mutableSetOf(),
+    override var authorities: MutableSet<AuthorityEntity>? = mutableSetOf(),
     @JsonIgnore
-    var createdBy: String? = null,
+    override var createdBy: String? = null,
     @JsonIgnore @CreatedDate
-    var createdDate: Instant? = Instant.now(),
+    override var createdDate: Instant? = Instant.now(),
     @JsonIgnore
-    var lastModifiedBy: String? = null,
+    override var lastModifiedBy: String? = null,
     @JsonIgnore @LastModifiedDate
-    var lastModifiedDate: Instant? = Instant.now(),
+    override var lastModifiedDate: Instant? = Instant.now(),
     @Version @JsonIgnore var version: Long? = null
-) {
+) : IAccountEntity<AuthorityEntity> {
     @PersistenceCreator
     constructor(
         id: UUID?,
@@ -322,45 +373,21 @@ data class AccountEntity(
 
 
     constructor(model: AccountCredentialsModel) : this() {
-        AccountEntity().apply {
-            this@AccountEntity.id = model.id
-            this@AccountEntity.login = model.login
-            this@AccountEntity.email = model.email
-            this@AccountEntity.firstName = model.firstName
-            this@AccountEntity.lastName = model.lastName
-            this@AccountEntity.langKey = model.langKey
-            this@AccountEntity.activated = model.activated
-            this@AccountEntity.createdBy = model.createdBy
-            this@AccountEntity.createdDate = model.createdDate
-            this@AccountEntity.lastModifiedBy = model.lastModifiedBy
-            this@AccountEntity.lastModifiedDate = model.lastModifiedDate
-            this@AccountEntity.imageUrl = model.imageUrl
-            this@AccountEntity.authorities = model.authorities?.map { AuthorityEntity(it) }?.toMutableSet()
-            this@AccountEntity.password = model.password
-        }
+        id = model.id
+        login = model.login
+        email = model.email
+        firstName = model.firstName
+        lastName = model.lastName
+        langKey = model.langKey
+        activated = model.activated
+        createdBy = model.createdBy
+        createdDate = model.createdDate
+        lastModifiedBy = model.lastModifiedBy
+        lastModifiedDate = model.lastModifiedDate
+        imageUrl = model.imageUrl
+        authorities = model.authorities?.map { AuthorityEntity(it) }?.toMutableSet()
+        password = model.password
     }
 
-    fun toModel(): AccountModel = AccountModel(
-        id = id,
-        login = login,
-        firstName = firstName,
-        lastName = lastName,
-        email = email,
-        imageUrl = imageUrl,
-        activated = activated,
-        langKey = langKey,
-        createdBy = createdBy,
-        createdDate = createdDate,
-        lastModifiedBy = lastModifiedBy,
-        lastModifiedDate = lastModifiedDate,
-        authorities = authorities?.map { it.role }?.toMutableSet()
-    )
 
-    fun copyAuthorities(that: AccountEntity): AccountEntity = this.apply {
-        if (authorities == null) authorities = mutableSetOf()
-        else authorities!!.clear()
-        that.authorities?.forEach {
-            authorities!!.add(it)
-        }
-    }
 }
