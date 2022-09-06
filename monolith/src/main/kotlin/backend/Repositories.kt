@@ -145,6 +145,7 @@ class AccountRepositoryInMemory(
     private fun changeEmail(
         model: AccountCredentialsModel,
     ): AccountCredentialsModel? = try {
+        @Suppress("CAST_NEVER_SUCCEEDS")
         (accounts.first { model.login.equals(it.login, ignoreCase = true) } as AccountCredentialsModel).run {
             val retrieved: AccountCredentialsModel = copy(email = model.email)
             accounts.remove(this as IAccountEntity<IAuthorityEntity>?)
