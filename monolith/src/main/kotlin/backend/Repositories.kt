@@ -18,6 +18,7 @@ import org.springframework.stereotype.Repository
 import reactor.core.publisher.Flux
 import java.time.LocalDateTime
 import java.util.*
+import kotlin.NoSuchElementException
 
 interface IAuthorityRepository {
     suspend fun findOne(role: String): String?
@@ -136,7 +137,7 @@ class AccountRepositoryInMemory(
                 (result as IAccountEntity<IAuthorityEntity>?)?.run { accounts.add(this) }
                 model
             }
-        } catch (nsee: NoSuchElementException) {
+        } catch (_: NoSuchElementException) {
             null
         }
 
@@ -150,19 +151,22 @@ class AccountRepositoryInMemory(
             (result as IAccountEntity<IAuthorityEntity>?)?.run { accounts.add(this) }
             model
         }
-    } catch (nsee: NoSuchElementException) {
+    } catch (_: NoSuchElementException) {
         null
     }
 
     //TODO: ("Not yet implemented")
     private fun patch(
         model: AccountCredentialsModel?,
-    ): AccountModel? = model?.run {
-        val result = accounts.find { email.equals(it.email, ignoreCase = true) }
+    ): AccountModel? = try {
+        model?.run {
+            val result = accounts.find { email.equals(it.email, ignoreCase = true) }
 
-        toAccount()
+            return@run result?.toModel()
+        }
+    } catch (_: NoSuchElementException) {
+        null
     }
-
 
     override suspend fun save(model: AccountCredentialsModel): AccountModel? =
         if (model.id == null && accounts.none {
