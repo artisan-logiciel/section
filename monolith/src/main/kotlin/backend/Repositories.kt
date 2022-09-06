@@ -125,7 +125,8 @@ class AccountRepositoryInMemory(
         else -> null
     }
 
-    private fun changeLogin(//TODO: pas faire une copie
+    private fun changeLogin(
+//TODO: ne pas renvoyer la copie
         model: AccountCredentialsModel,
     ): AccountCredentialsModel? =
         try {
@@ -133,7 +134,7 @@ class AccountRepositoryInMemory(
                 val result: AccountCredentialsModel = copy(login = model.login)
                 accounts.remove(this as IAccountEntity<IAuthorityEntity>?)
                 (result as IAccountEntity<IAuthorityEntity>?)?.run { accounts.add(this) }
-                result
+                model
             }
         } catch (nsee: NoSuchElementException) {
             null
@@ -147,18 +148,21 @@ class AccountRepositoryInMemory(
             val result: AccountCredentialsModel = copy(email = model.email)
             accounts.remove(this as IAccountEntity<IAuthorityEntity>?)
             (result as IAccountEntity<IAuthorityEntity>?)?.run { accounts.add(this) }
-            result
+            model
         }
     } catch (nsee: NoSuchElementException) {
         null
     }
 
+    //TODO: ("Not yet implemented")
     private fun patch(
-        model: AccountCredentialsModel,
-    ): AccountModel? {
+        model: AccountCredentialsModel?,
+    ): AccountModel? = model?.run {
+        val result = accounts.find { email.equals(it.email, ignoreCase = true) }
 
-        TODO("Not yet implemented")
+        toAccount()
     }
+
 
     override suspend fun save(model: AccountCredentialsModel): AccountModel? =
         if (model.id == null && accounts.none {
