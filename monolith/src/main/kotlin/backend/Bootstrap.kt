@@ -6,7 +6,7 @@ import org.springframework.boot.SpringApplication
 import org.springframework.boot.runApplication
 import org.springframework.context.ApplicationContext
 import org.springframework.context.MessageSource
-import java.net.InetAddress
+import java.net.InetAddress.*
 import java.net.UnknownHostException
 import java.util.*
 
@@ -67,7 +67,7 @@ fun startupLog(context: ApplicationContext): Unit =
 private val evaluatedHostAddress: String
     get() {
         try {
-            return InetAddress.getLocalHost().hostAddress
+            return getLocalHost().hostAddress
         } catch (e: UnknownHostException) {
             log.warn(
                 "The host name could not be determined, " +
