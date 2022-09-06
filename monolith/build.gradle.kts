@@ -22,26 +22,12 @@ plugins {
     jacoco
 }
 
-//allOpen{
-//    annotation("javax.validation.constraints.NotBlank")
-//    annotation("javax.validation.constraints.Pattern")
-//    annotation("javax.validation.constraints.Size")
-//    annotation("javax.validation.constraints.Email")
-//    annotation("javax.validation.constraints.NotNull")
-//}
 repositories {
     mavenCentral()
     maven("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/bootstrap/")
     maven("https://repo.spring.io/milestone")
     maven("https://repo.spring.io/snapshot")
 }
-
-//dependencyManagement {
-//    imports {
-//        mavenBom("org.testcontainers:testcontainers-bom:${properties["testcontainers.version"]}")
-//        mavenBom("org.springframework.cloud:spring-cloud-dependencies:${properties["spring_cloud.version"]}")
-//    }
-//}
 
 dependencies {
 //    implementation(project(path = ":common"))
@@ -50,20 +36,21 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("io.projectreactor.kotlin:reactor-kotlin-extensions")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
-//    implementation("io.projectreactor.tools:blockhound:${properties["blockhound_version"]}")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:${properties["kotlinx_serialization_json.version"]}")
     // kotlin TDD
     testImplementation("org.jetbrains.kotlin:kotlin-test")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
     testImplementation("io.projectreactor:reactor-test")
-//    testImplementation("io.projectreactor.tools:blockhound-junit-platform:${properties["blockhound_version"]}")
     testImplementation("org.mockito.kotlin:mockito-kotlin:${properties["mockito_kotlin_version"]}")
+    //blockhound
+//    implementation("io.projectreactor.tools:blockhound:${properties["blockhound_version"]}")
+//    testImplementation("io.projectreactor.tools:blockhound-junit-platform:${properties["blockhound_version"]}")
 
     //jackson mapping (json/xml)
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
-    // String manipulation
+    //strings manipulation
     implementation("org.apache.commons:commons-lang3")
-    //Http Request Exception Response
+    //Http Request Exception to Problem Response
     implementation("org.zalando:problem-spring-webflux:${properties["zalando_problem.version"]}")
     //spring conf
     annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
@@ -75,6 +62,10 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-r2dbc")
     //spring javax.mail
     implementation("org.springframework.boot:spring-boot-starter-mail")
+    //to get mail constants
+    implementation("org.apache.commons:commons-email:${properties["commons_email.version"]}") {
+        setOf("junit", "org.easymock", "org.powermock", "org.slf4j ", "commons-io", "org.subethamail", "com.sun.mail").map { exclude(it) }
+    }
     //Spring bean validation JSR 303
     implementation("org.springframework.boot:spring-boot-starter-validation")
     //spring thymeleaf for mail templating
@@ -87,6 +78,13 @@ dependencies {
     //Postgresql
 //    runtimeOnly("io.r2dbc:r2dbc-postgresql")
 //    runtimeOnly("org.postgresql:postgresql")
+    //Spring Security
+//    implementation( "org.springframework.boot:spring-boot-starter-security")
+//    implementation( "org.springframework.security:spring-security-data")
+//    testImplementation( "org.springframework.security:spring-security-test")
+    // JWT authentication
+    implementation("io.jsonwebtoken:jjwt-impl:${properties["jsonwebtoken.version"]}")
+    implementation("io.jsonwebtoken:jjwt-jackson:${properties["jsonwebtoken.version"]}")
     //SSL
     implementation("io.netty:netty-tcnative-boringssl-static:${properties["boring_ssl.version"]}")
     // spring Test dependencies
@@ -103,39 +101,19 @@ dependencies {
 //    testImplementation("org.testcontainers:r2dbc")
     //testImplementation("com.tngtech.archunit:archunit-junit5-api:${properties["archunit_junit5_version"]}")
     //testRuntimeOnly("com.tngtech.archunit:archunit-junit5-engine:${properties["archunit_junit5_version"]}")
-    // Spring Security
-//    implementation( "org.springframework.boot:spring-boot-starter-security")
-//    implementation( "org.springframework.security:spring-security-data")
-//    testImplementation( "org.springframework.security:spring-security-test")
-    // JWT authentication
-    implementation("io.jsonwebtoken:jjwt-impl:${properties["jsonwebtoken.version"]}")
-    implementation("io.jsonwebtoken:jjwt-jackson:${properties["jsonwebtoken.version"]}")
+
+
 //    testImplementation( "org.springframework.cloud:spring-cloud-starter-contract-verifier")
-    // to get Constants
-    implementation("org.apache.commons:commons-email:${properties["commons_email.version"]}") {
-        exclude(group = "junit")
-        exclude(group = "org.easymock")
-        exclude(group = "org.powermock")
-        exclude(group = "org.slf4j ")
-        exclude(group = "commons-io")
-        exclude(group = "org.subethamail")
-        exclude(group = "com.sun.mail")
-    }
 }
 
 configurations {
     compileOnly { extendsFrom(configurations.annotationProcessor.get()) }
     implementation.configure {
         setOf(
-            setOf("org.junit.vintage", "junit-vintage-engine"),
-            setOf("org.springframework.boot", "spring-boot-starter-tomcat"),
-            setOf("org.apache.tomcat")
-        ).map {
-            when (it.size) {
-                2 -> exclude(group = it.first(), module = it.last())
-                else -> exclude(group = it.first())
-            }
-        }
+            "org.junit.vintage" to "junit-vintage-engine",
+            "org.springframework.boot" to "spring-boot-starter-tomcat",
+            "org.apache.tomcat" to null
+        ).map { exclude(it.first, it.second) }
     }
 }
 
@@ -173,7 +151,7 @@ tasks.register<TestReport>("testReport") {
 
 open class DeployGAE : Exec() {
     init {
-        this.workingDir = project.rootDir
+        workingDir = project.rootDir
         this.commandLine(
             "/snap/bin/gcloud",
             "-v"
@@ -181,7 +159,7 @@ open class DeployGAE : Exec() {
 //            "deploy",
 //            "${projectDir.absolutePath}/src/main/appengine/app.yml"
         )
-        this.standardOutput = ByteArrayOutputStream()
+        standardOutput = ByteArrayOutputStream()
     }
 }
 
