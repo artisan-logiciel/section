@@ -130,6 +130,7 @@ class AccountRepositoryInMemory(
         model: AccountCredentialsModel,
     ): AccountCredentialsModel? =
         try {
+            @Suppress("CAST_NEVER_SUCCEEDS")
             (accounts.first { model.email.equals(it.email, ignoreCase = true) } as AccountCredentialsModel).run {
                 val retrieved: AccountCredentialsModel = copy(login = model.login)
                 accounts.remove(this as IAccountEntity<IAuthorityEntity>?)
