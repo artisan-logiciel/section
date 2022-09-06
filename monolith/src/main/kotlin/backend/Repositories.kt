@@ -128,7 +128,14 @@ class AccountRepositoryInMemory(
     private fun changeLogin(
         model: AccountCredentialsModel,
     ): AccountCredentialsModel? {
-        TODO("Not yet implemented")
+        val result=(accounts.first { model.email.equals(it.email, ignoreCase = true) } as AccountCredentialsModel).apply {
+//            copy(login = model.login)
+
+
+
+//        TODO("Not yet implemented")
+    }
+        return     result
     }
 
     private fun changeEmail(
