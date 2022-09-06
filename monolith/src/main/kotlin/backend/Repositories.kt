@@ -164,7 +164,7 @@ class AccountRepositoryInMemory(
             (retrieved as AccountCredentialsModel).copy(
                 password = `if password is null or empty then no change`(model, retrieved),
                 activationKey = `switch activationKey case then patch`(model, retrieved),
-                authorities = `if password null or empty then no change`(model, retrieved)
+                authorities = `if authorities are null or empty then no change`(model, retrieved)
             ).apply {
                 @Suppress("CAST_NEVER_SUCCEEDS")
                 accounts.add(this as IAccountEntity<IAuthorityEntity>)
@@ -188,10 +188,16 @@ class AccountRepositoryInMemory(
         model: AccountCredentialsModel?,
         retrieved: AccountCredentialsModel
     ): String? {
+//        when {
+//            model == null -> retrieved.activationKey
+//            model.activationKey == null -> retrieved.activationKey
+//            model.activationKey.isNotEmpty()  -> model.activationKey
+//            else -> retrieved.password!!
+//        }
         TODO("Not yet implemented")
     }
 
-    private fun `if password null or empty then no change`(
+    private fun `if authorities are null or empty then no change`(
         model: AccountCredentialsModel?,
         retrieved: AccountCredentialsModel
     ): Set<String> {
@@ -255,15 +261,15 @@ class AccountRepositoryInMemory(
 }
 
 interface IAccountAuthorityRepository {
-    suspend fun save(id: UUID, authority: String)
+    suspend fun save(id: UUID, authority: String): Unit
 
-    suspend fun delete(id: UUID, authority: String)
+    suspend fun delete(id: UUID, authority: String): Unit
 
     suspend fun count(): Long
 
-    suspend fun deleteAll()
+    suspend fun deleteAll(): Unit
 
-    suspend fun deleteAllByAccountId(id: UUID)
+    suspend fun deleteAllByAccountId(id: UUID): Unit
 }
 
 @Repository
@@ -279,17 +285,17 @@ class AccountAuthorityRepositoryInMemory : IAccountAuthorityRepository {
     }
 
 
-    override suspend fun delete(id: UUID, authority: String) {
-        accountAuthorities.apply {
+    override suspend fun delete(id: UUID, authority: String): Unit =
+        accountAuthorities.run {
             filter { it.userId == id && it.role == authority }
                 .map { remove(it) }
         }
-    }
+
 
     override suspend fun deleteAll() = accountAuthorities.clear()
 
 
-    override suspend fun deleteAllByAccountId(id: UUID):Unit =
+    override suspend fun deleteAllByAccountId(id: UUID): Unit =
         accountAuthorities.run {
             filter { it.userId == id }
                 .map { remove(it) }
@@ -306,7 +312,7 @@ interface AccountRepository {
 
     suspend fun save(accountCredentials: Account.AccountCredentials): Account
 
-    suspend fun delete(account: Account)
+    suspend fun delete(account: Account): Unit
 
     suspend fun findActivationKeyByLogin(login: String): String
 }
