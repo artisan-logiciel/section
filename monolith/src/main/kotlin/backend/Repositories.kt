@@ -131,9 +131,9 @@ class AccountRepositoryInMemory(
     ): AccountCredentialsModel? =
         try {
             (accounts.first { model.email.equals(it.email, ignoreCase = true) } as AccountCredentialsModel).run {
-                val result: AccountCredentialsModel = copy(login = model.login)
+                val retrieved: AccountCredentialsModel = copy(login = model.login)
                 accounts.remove(this as IAccountEntity<IAuthorityEntity>?)
-                (result as IAccountEntity<IAuthorityEntity>?)?.run { accounts.add(this) }
+                (retrieved as IAccountEntity<IAuthorityEntity>?)?.run { accounts.add(this) }
                 model
             }
         } catch (_: NoSuchElementException) {
@@ -145,27 +145,28 @@ class AccountRepositoryInMemory(
         model: AccountCredentialsModel,
     ): AccountCredentialsModel? = try {
         (accounts.first { model.login.equals(it.login, ignoreCase = true) } as AccountCredentialsModel).run {
-            val result: AccountCredentialsModel = copy(email = model.email)
+            val retrieved: AccountCredentialsModel = copy(email = model.email)
             accounts.remove(this as IAccountEntity<IAuthorityEntity>?)
-            (result as IAccountEntity<IAuthorityEntity>?)?.run { accounts.add(this) }
+            (retrieved as IAccountEntity<IAuthorityEntity>?)?.run { accounts.add(this) }
             model
         }
     } catch (_: NoSuchElementException) {
         null
     }
 
-    //TODO: ("Not yet implemented")
     private fun patch(
         model: AccountCredentialsModel?,
     ): AccountModel? = try {
         model.run {
-            val result = accounts.find { this?.email?.equals(it.email, ignoreCase = true)!! }
+            val retrieved = accounts.find { this?.email?.equals(it.email, ignoreCase = true)!! }
             accounts.remove(accounts.find { this?.email?.equals(it.email, ignoreCase = true)!! })
-            (result as AccountCredentialsModel).copy(
+            @Suppress("CAST_NEVER_SUCCEEDS")
+            (retrieved as AccountCredentialsModel).copy(
                 password = `if password is null or empty then no change`(model),
                 activationKey = `switch activationKey case then patch`(model),
                 authorities = `if password null or empty then no change`(model)
             ).apply {
+                @Suppress("CAST_NEVER_SUCCEEDS")
                 accounts.add(this as IAccountEntity<IAuthorityEntity>)
             }.toAccount()
         }
