@@ -289,12 +289,12 @@ class AccountAuthorityRepositoryInMemory : IAccountAuthorityRepository {
     override suspend fun deleteAll() = accountAuthorities.clear()
 
 
-    override suspend fun deleteAllByAccountId(id: UUID) {
-        accountAuthorities.apply {
+    override suspend fun deleteAllByAccountId(id: UUID):Unit =
+        accountAuthorities.run {
             filter { it.userId == id }
                 .map { remove(it) }
         }
-    }
+
 }
 
 
