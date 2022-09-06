@@ -1,7 +1,0 @@
-= browser
-
-A kotlin js compose browser app.
-
-==== **to run the app**
-Open terminal and run : ```./gradlew :browser:jsBrowserDevelopmentRun``` +
-and launch http://localhost:8080/
