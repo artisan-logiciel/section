@@ -127,7 +127,6 @@ class AccountRepositoryInMemory(
     }
 
     private fun changeLogin(
-//TODO: ne pas renvoyer la copie
         model: AccountCredentialsModel,
     ): AccountCredentialsModel? =
         try {
@@ -159,10 +158,12 @@ class AccountRepositoryInMemory(
     private fun patch(
         model: AccountCredentialsModel?,
     ): AccountModel? = try {
-        model?.run {
-            val result = accounts.find { email.equals(it.email, ignoreCase = true) }
-
-            return@run result?.toModel()
+        model.run {
+            val result = accounts.find { this?.email?.equals(it.email, ignoreCase = true)!! }
+            accounts.remove(accounts.find { this?.email?.equals(it.email, ignoreCase = true)!! })
+            (result as AccountCredentialsModel).copy(email = "").apply {
+                accounts.add(this as IAccountEntity<IAuthorityEntity>)
+            }.toAccount()
         }
     } catch (_: NoSuchElementException) {
         null
