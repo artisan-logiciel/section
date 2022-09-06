@@ -162,13 +162,27 @@ class AccountRepositoryInMemory(
             val result = accounts.find { this?.email?.equals(it.email, ignoreCase = true)!! }
             accounts.remove(accounts.find { this?.email?.equals(it.email, ignoreCase = true)!! })
             (result as AccountCredentialsModel).copy(
-                email = ""
+                password = `if password is null or empty then no change`(model),
+                activationKey = `switch activationKey case then patch`(model),
+                authorities = `if password null or empty then no change`(model)
             ).apply {
                 accounts.add(this as IAccountEntity<IAuthorityEntity>)
             }.toAccount()
         }
     } catch (_: NoSuchElementException) {
         null
+    }
+
+    private fun `if password null or empty then no change`(model: AccountCredentialsModel?): Set<String> {
+        TODO("Not yet implemented")
+    }
+
+    private fun `switch activationKey case then patch`(model: AccountCredentialsModel?): String? {
+        TODO("Not yet implemented")
+    }
+
+    private fun `if password is null or empty then no change`(model: AccountCredentialsModel?): String {
+        TODO("Not yet implemented")
     }
 
     override suspend fun save(model: AccountCredentialsModel): AccountModel? =
