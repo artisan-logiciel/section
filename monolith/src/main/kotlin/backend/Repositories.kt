@@ -162,9 +162,9 @@ class AccountRepositoryInMemory(
             accounts.remove(accounts.find { this?.email?.equals(it.email, ignoreCase = true)!! })
             @Suppress("CAST_NEVER_SUCCEEDS")
             (retrieved as AccountCredentialsModel).copy(
-                password = `if password is null or empty then no change`(model),
-                activationKey = `switch activationKey case then patch`(model),
-                authorities = `if password null or empty then no change`(model)
+                password = `if password is null or empty then no change`(model, retrieved),
+                activationKey = `switch activationKey case then patch`(model, retrieved),
+                authorities = `if password null or empty then no change`(model, retrieved)
             ).apply {
                 @Suppress("CAST_NEVER_SUCCEEDS")
                 accounts.add(this as IAccountEntity<IAuthorityEntity>)
@@ -174,15 +174,27 @@ class AccountRepositoryInMemory(
         null
     }
 
-    private fun `if password is null or empty then no change`(model: AccountCredentialsModel?): String {
+    private fun `if password is null or empty then no change`(
+        model: AccountCredentialsModel?,
+        retrieved: AccountCredentialsModel
+    ): String = when {
+        model == null -> retrieved.password!!
+        model.password == null -> retrieved.password!!
+        model.password.isNotEmpty() -> model.password
+        else -> retrieved.password!!
+    }
+
+    private fun `switch activationKey case then patch`(
+        model: AccountCredentialsModel?,
+        retrieved: AccountCredentialsModel
+    ): String? {
         TODO("Not yet implemented")
     }
 
-    private fun `switch activationKey case then patch`(model: AccountCredentialsModel?): String? {
-        TODO("Not yet implemented")
-    }
-
-    private fun `if password null or empty then no change`(model: AccountCredentialsModel?): Set<String> {
+    private fun `if password null or empty then no change`(
+        model: AccountCredentialsModel?,
+        retrieved: AccountCredentialsModel
+    ): Set<String> {
         TODO("Not yet implemented")
     }
 
