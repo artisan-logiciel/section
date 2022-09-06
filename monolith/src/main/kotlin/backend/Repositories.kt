@@ -174,7 +174,7 @@ class AccountRepositoryInMemory(
         null
     }
 
-    private fun `if password null or empty then no change`(model: AccountCredentialsModel?): Set<String> {
+    private fun `if password is null or empty then no change`(model: AccountCredentialsModel?): String {
         TODO("Not yet implemented")
     }
 
@@ -182,7 +182,7 @@ class AccountRepositoryInMemory(
         TODO("Not yet implemented")
     }
 
-    private fun `if password is null or empty then no change`(model: AccountCredentialsModel?): String {
+    private fun `if password null or empty then no change`(model: AccountCredentialsModel?): Set<String> {
         TODO("Not yet implemented")
     }
 
