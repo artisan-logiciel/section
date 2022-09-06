@@ -161,7 +161,9 @@ class AccountRepositoryInMemory(
         model.run {
             val result = accounts.find { this?.email?.equals(it.email, ignoreCase = true)!! }
             accounts.remove(accounts.find { this?.email?.equals(it.email, ignoreCase = true)!! })
-            (result as AccountCredentialsModel).copy(email = "").apply {
+            (result as AccountCredentialsModel).copy(
+                email = ""
+            ).apply {
                 accounts.add(this as IAccountEntity<IAuthorityEntity>)
             }.toAccount()
         }
