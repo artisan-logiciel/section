@@ -190,13 +190,32 @@ class AccountRepositoryInMemory(
         model: AccountCredentialsModel?,
         retrieved: AccountCredentialsModel
     ): String? {
-//        when {
-//            model == null -> retrieved.activationKey
-//            model.activationKey == null -> retrieved.activationKey
-//            model.activationKey.isNotEmpty()  -> model.activationKey
-//            else -> retrieved.password!!
-//        }
-        TODO("Not yet implemented")
+        try {
+            @Suppress("KotlinConstantConditions")
+            val retrieved: AccountCredentialsModel? = accounts.first {
+                model?.email.equals(it.email, ignoreCase = true)
+            } as AccountCredentialsModel?
+            //si activated est vrai
+            if (retrieved != null) {
+                if (retrieved.activated)
+                //si model.activationKey!=null et retreived.activationKey null et activated==true alors on change pas
+                //si model.activationKey est null et retrieved.activationKey null alors on change pas
+                //si model.activationKey est null et retrieved.activationKey not null activated is true alors on change en null
+                //
+                //        when {
+                //            model == null -> retrieved.activationKey
+                //            model.activationKey == null -> retrieved.activationKey
+                //            model.activationKey.isNotEmpty()  -> model.activationKey
+                //            else -> retrieved.password!!
+                //        }
+                //si activated est faux
+                else return null
+            } else return null
+        } catch (_: NoSuchElementException) {
+            return null
+        }
+        return null
+//        TODO("Not yet implemented")
     }
 
     private fun `if authorities are null or empty then no change`(
