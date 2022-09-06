@@ -235,7 +235,6 @@ class AccountRepositoryInMemory(
 
     override suspend fun signup(model: AccountCredentialsModel) {
         accountAuthorityRepository.save(save(model)?.id!!, ROLE_USER)
-//        save(model)
     }
 
     override suspend fun findOneActivationKey(key: String): AccountCredentialsModel? {
