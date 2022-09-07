@@ -7,12 +7,13 @@ import backend.Constants.ROLE_ANONYMOUS
 import backend.Constants.ROLE_USER
 import backend.tdd.testLoader
 import kotlinx.coroutines.runBlocking
-import org.junit.jupiter.api.*
-
-import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.AfterAll
+import org.junit.jupiter.api.BeforeAll
 import org.springframework.beans.factory.getBean
 import org.springframework.boot.runApplication
 import org.springframework.context.ConfigurableApplicationContext
+import kotlin.test.Test
+import kotlin.test.assertEquals
 
 internal class AuthorityRepositoryR2dbcTest {
     private lateinit var context: ConfigurableApplicationContext
