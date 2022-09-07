@@ -46,31 +46,20 @@ interface AccountAuthorityRepository {
 
 
 @Repository
-class AuthorityRepositoryR2dbc(
-   private val repository: R2dbcEntityTemplate
-) : AuthorityRepository {
+class AuthorityRepositoryInMemory : AuthorityRepository {
+    companion object {
+        private val authorities by lazy {
+            mutableSetOf(
+                "ADMIN",
+                "USER",
+                "ANONYMOUS"
+            ).map { AuthorityEntity(it) }.toSet()
+        }
+    }
+
     override suspend fun findOne(role: String): String? =
-        repository.select(AuthorityEntity::class.java)
-            .matching(Query.query(Criteria.where("role").`is`(role)))
-            .awaitOneOrNull()?.role
+        authorities.find { it.role == role }?.role
 }
-
-
-//@Repository
-//class AuthorityRepositoryInMemory : AuthorityRepository {
-//    companion object {
-//        private val authorities by lazy {
-//            mutableSetOf(
-//                "ADMIN",
-//                "USER",
-//                "ANONYMOUS"
-//            ).map { AuthorityEntity(it) }.toSet()
-//        }
-//    }
-//
-//    override suspend fun findOne(role: String): String? =
-//        authorities.find { it.role == role }?.role
-//}
 
 @Repository
 class AccountRepositoryInMemory(

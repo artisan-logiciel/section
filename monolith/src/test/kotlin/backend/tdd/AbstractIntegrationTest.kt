@@ -116,13 +116,13 @@ internal abstract class AbstractIntegrationTest {
         .await()
 
 
-    suspend fun deleteAuthorityByRole(role: String) = db
+    suspend fun deleteAuthorityByRole(role: String): Unit = db
         .sql("delete from `authority` a where lower(a.role)=lower(:role)")
         .bind("role", role)
         .await()
 
 
-    suspend fun deleteAllUserAuthorityByUserLogin(login: String) = db
+    suspend fun deleteAllUserAuthorityByUserLogin(login: String): Unit = db
         .sql(
             "DELETE FROM user_authority WHERE user_id = " +
                     "(select u.id from User u where u.login=:login)"
