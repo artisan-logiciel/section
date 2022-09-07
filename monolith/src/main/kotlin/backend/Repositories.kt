@@ -52,7 +52,7 @@ class AccountRepositoryInMemory(
 ) : IAccountModelRepository {
 
     companion object {
-        private val accounts by lazy { mutableSetOf<IAccountEntity<AuthorityRecord>>() }
+        private val accounts by lazy { mutableSetOf<AccountRecord<AuthorityRecord>>() }
     }
 
     override suspend fun findOneByLogin(login: String) =
@@ -74,7 +74,7 @@ class AccountRepositoryInMemory(
         if (`mail & login do not exist`(model))
             model.copy(id = UUID.randomUUID()).apply {
                 @Suppress("UNCHECKED_CAST")
-                accounts += AccountEntity(this) as IAccountEntity<AuthorityRecord>
+                accounts += AccountEntity(this) as AccountRecord<AuthorityRecord>
             }.toAccount() else null
 
     private fun `mail & login do not exist`(model: AccountCredentialsModel) =
@@ -120,8 +120,8 @@ class AccountRepositoryInMemory(
             @Suppress("CAST_NEVER_SUCCEEDS")
             (accounts.first { model.email.equals(it.email, ignoreCase = true) } as AccountCredentialsModel).run {
                 val retrieved: AccountCredentialsModel = copy(login = model.login)
-                accounts.remove(this as IAccountEntity<AuthorityRecord>?)
-                (retrieved as IAccountEntity<AuthorityRecord>?)?.run { accounts.add(this) }
+                accounts.remove(this as AccountRecord<AuthorityRecord>?)
+                (retrieved as AccountRecord<AuthorityRecord>?)?.run { accounts.add(this) }
                 model
             }
         } catch (_: NoSuchElementException) {
@@ -135,8 +135,8 @@ class AccountRepositoryInMemory(
         @Suppress("CAST_NEVER_SUCCEEDS")
         (accounts.first { model.login.equals(it.login, ignoreCase = true) } as AccountCredentialsModel).run {
             val retrieved: AccountCredentialsModel = copy(email = model.email)
-            accounts.remove(this as IAccountEntity<AuthorityRecord>?)
-            (retrieved as IAccountEntity<AuthorityRecord>?)?.run { accounts.add(this) }
+            accounts.remove(this as AccountRecord<AuthorityRecord>?)
+            (retrieved as AccountRecord<AuthorityRecord>?)?.run { accounts.add(this) }
             model
         }
     } catch (_: NoSuchElementException) {
@@ -155,7 +155,7 @@ class AccountRepositoryInMemory(
                 authorities = `if authorities are null or empty then no change`(model, retrieved.toCredentialsModel())
             ).apply {
                 @Suppress("UNCHECKED_CAST")
-                accounts.add(this?.let { AccountEntity(it) } as IAccountEntity<AuthorityRecord>)
+                accounts.add(this?.let { AccountEntity(it) } as AccountRecord<AuthorityRecord>)
             }?.toAccount())
         }
 

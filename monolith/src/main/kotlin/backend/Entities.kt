@@ -66,7 +66,7 @@ data class AccountAuthority(
     val role: String
 )
 
-interface IAccountEntity<AUTH : AuthorityRecord> {
+interface AccountRecord<AUTH : AuthorityRecord> {
     var id: UUID?
     var login: String?
     var password: String?
@@ -179,7 +179,7 @@ data class AccountEntity @JvmOverloads constructor(
     override var lastModifiedDate: Instant? = Instant.now(),
 
     @Version @JsonIgnore var version: Long? = null
-) : IAccountEntity<AuthorityEntity> {
+) : AccountRecord<AuthorityEntity> {
     @PersistenceCreator
     constructor(
         id: UUID?,
