@@ -210,13 +210,13 @@ class MailService(
 
 @Service(value = "accountService")
 class AccountService(
-    private val accountRepository: AccountRepository,
+    private val accountRepository: IAccountModelRepository,
     private val mailService: MailService,
 //    private val passwordEncoder:PasswordEncoder
 ) {
     @Transactional
     suspend fun register(
-        accountCredentials: Account.AccountCredentials
+        accountCredentials: AccountCredentialsModel
     ) {
         InvalidPasswordException().run { if (isPasswordLengthInvalid(accountCredentials.password)) throw this }
 
@@ -239,8 +239,8 @@ class AccountService(
             accountRepository.save(this)
             when {
                 accountRepository
-                    .findActivationKeyByLogin(login = accountCredentials.login!!)
-                    .isNotEmpty() -> mailService.sendActivationEmail(
+                    .findActivationKeyByLogin(login = accountCredentials.login)
+                    ?.isNotEmpty() == true -> mailService.sendActivationEmail(
                     AccountCredentialsModel(
                         password = password,
                         activationKey = activationKey,
@@ -263,7 +263,7 @@ class AccountService(
         }
     }
 
-    fun activateRegistration(key: String): Account? {
+    fun activateRegistration(key: String): AccountModel? {
         TODO("Not yet implemented")
     }
 //    @Transactional

@@ -5,7 +5,6 @@ package backend
 //import backend.services.SecurityUtils.getCurrentUserLogin
 
 
-import backend.Account.AccountCredentials
 import org.springframework.data.domain.Page
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
@@ -74,7 +73,7 @@ class RegistrationController(
     @PostMapping("register")
     @ResponseStatus(HttpStatus.CREATED)
     suspend fun registerAccount(
-        @RequestBody @Valid accountCredentials: AccountCredentials
+        @RequestBody @Valid accountCredentials: AccountCredentialsModel
     ) = accountService.register(accountCredentials)
 
     /**

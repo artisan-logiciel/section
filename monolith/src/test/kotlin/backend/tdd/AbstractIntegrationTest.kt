@@ -6,14 +6,14 @@
 
 package backend.tdd
 
-import backend.User
+import backend.AccountEntity
 import backend.Constants.ROLE_ADMIN
 import backend.Constants.ROLE_ANONYMOUS
 import backend.Constants.ROLE_USER
 import backend.data.Data.defaultAccount
 import backend.data.Data.defaultUser
 import backend.Log.log
-import backend.UserAuthority
+import backend.AccountAuthority
 import com.fasterxml.jackson.databind.ObjectMapper
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.count
@@ -49,7 +49,7 @@ import kotlin.test.assertTrue
 @ActiveProfiles("test")
 /* AbstractBaseFunctionalTest */
 internal abstract class AbstractIntegrationTest {
-    fun User.unlockUser() {
+    fun AccountEntity.unlockUser() {
         apply {
             if (id != null) {
                 id = null
@@ -136,7 +136,7 @@ internal abstract class AbstractIntegrationTest {
         .bind("userId", id)
         .await()
         .also {
-            r2dbcEntityTemplate.delete(User::class.java)
+            r2dbcEntityTemplate.delete(AccountEntity::class.java)
                 .matching(query(where("id").`is`(id)))
                 .allAndAwait()
         }
@@ -149,9 +149,9 @@ internal abstract class AbstractIntegrationTest {
         .sql("DELETE FROM `user`")
         .await()
 
-    suspend fun findAllUsers(): Flow<User> = r2dbcEntityTemplate
-        .select(User::class.java)
-        .flow<User>()
+    suspend fun findAllUsers(): Flow<AccountEntity> = r2dbcEntityTemplate
+        .select(AccountEntity::class.java)
+        .flow<AccountEntity>()
 
 
     suspend fun deleteAllUsers() {
@@ -165,14 +165,14 @@ internal abstract class AbstractIntegrationTest {
 
     suspend fun deleteUserByIdWithAuthorities(id: UUID) =
         deleteAllUserAuthorityByUserId(id).also {
-            r2dbcEntityTemplate.delete(User::class.java)
+            r2dbcEntityTemplate.delete(AccountEntity::class.java)
                 .matching(query(where("id").`is`(id)))
                 .allAndAwait()
         }
 
     suspend fun deleteUserByLoginWithAuthorities(login: String) =
         deleteAllUserAuthorityByUserLogin(login).also {
-            r2dbcEntityTemplate.delete(User::class.java)
+            r2dbcEntityTemplate.delete(AccountEntity::class.java)
                 .matching(query(where("login").`is`(login)))
                 .allAndAwait()
         }
@@ -182,18 +182,18 @@ internal abstract class AbstractIntegrationTest {
     suspend fun logCountUserAuthority() = log
         .info("countUserAuthority: ${countUserAuthority()}")
 
-    suspend fun saveUser(u: User): User? = r2dbcEntityTemplate
+    suspend fun saveUser(u: AccountEntity): AccountEntity? = r2dbcEntityTemplate
         .insert(u)
         .awaitFirstOrNull()
 
-    suspend fun saveUserWithAutorities(user: User): User? = r2dbcEntityTemplate
+    suspend fun saveUserWithAutorities(user: AccountEntity): AccountEntity? = r2dbcEntityTemplate
         .insert(user)
         .awaitSingle().apply {
             authorities?.forEach {
                 if (id != null)
                     r2dbcEntityTemplate
                         .insert(
-                            UserAuthority(
+                            AccountAuthority(
                                 userId = id!!,
                                 role = it.role
                             )
@@ -202,24 +202,24 @@ internal abstract class AbstractIntegrationTest {
             }
         }
 
-    suspend fun findAllAuthorites(): Flow<UserAuthority> = r2dbcEntityTemplate
-        .select(UserAuthority::class.java)
-        .flow<UserAuthority>()
+    suspend fun findAllAuthorites(): Flow<AccountAuthority> = r2dbcEntityTemplate
+        .select(AccountAuthority::class.java)
+        .flow<AccountAuthority>()
 
-    suspend fun findOneUserByEmail(email: String): User? = r2dbcEntityTemplate
-        .select(User::class.java)
+    suspend fun findOneUserByEmail(email: String): AccountAuthority? = r2dbcEntityTemplate
+        .select(AccountAuthority::class.java)
         .matching(query(where("email").`is`(email)))
         .awaitOneOrNull()
 
-    suspend fun findOneUserByLogin(login: String): User? = r2dbcEntityTemplate
-        .select(User::class.java)
+    suspend fun findOneUserByLogin(login: String): AccountAuthority? = r2dbcEntityTemplate
+        .select(AccountAuthority::class.java)
         .matching(query(where("login").`is`(login)))
         .awaitOneOrNull()
 
     suspend fun findAllByActivatedIsFalseAndActivationKeyIsNotNullAndCreatedDateBefore(
         dateTime: LocalDateTime
-    ): Flow<User> = r2dbcEntityTemplate
-        .select(User::class.java)
+    ): Flow<AccountAuthority> = r2dbcEntityTemplate
+        .select(AccountAuthority::class.java)
         .matching(
             query(
                 where("activated")
@@ -245,7 +245,7 @@ internal abstract class AbstractIntegrationTest {
         )
     }
 
-    suspend fun checkInitDatabaseWithDefaultUser(): User =
+    suspend fun checkInitDatabaseWithDefaultUser(): AccountEntity =
         saveUserWithAutorities(
             defaultUser
                 .copy()
