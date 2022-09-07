@@ -121,7 +121,7 @@ internal class SignUpAccountControllerTest {
         //clean accounts and accountAuthorities after test
         accountRepository.findOneByLogin(defaultAccount.login!!).run {
             accountAuthorityRepository.deleteAllByAccountId(this?.id!!)
-            accountRepository.delete(this)
+            accountRepository.delete(this.toAccount())
         }
 
         assertEquals(countUserAuthBefore, accountAuthorityRepository.count())
@@ -217,7 +217,7 @@ internal class SignUpAccountControllerTest {
 
         accountRepository.findOneByLogin(defaultAccount.login!!).run {
             accountAuthorityRepository.deleteAllByAccountId(this?.id!!)
-            accountRepository.delete(this)
+            accountRepository.delete(this.toAccount())
         }
         assertEquals(0, accountAuthorityRepository.count())
         assertEquals(0, accountRepository.count())
@@ -248,7 +248,7 @@ internal class SignUpAccountControllerTest {
 
         accountRepository.findOneByLogin(defaultAccount.login!!).run {
             accountAuthorityRepository.deleteAllByAccountId(this?.id!!)
-            accountRepository.delete(this)
+            accountRepository.delete(this.toAccount())
         }
         assertEquals(0, accountAuthorityRepository.count())
         assertEquals(0, accountRepository.count())

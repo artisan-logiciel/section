@@ -50,7 +50,7 @@ class SignUpService(
     private suspend fun loginValidation(model: AccountCredentials) {
         accountRepository.findOneByLogin(model.login!!).run {
             if (this != null) when {
-                !activated -> accountRepository.suppress(this)
+                !activated -> accountRepository.suppress(this.toAccount())
                 else -> throw UsernameAlreadyUsedException()
             }
         }
@@ -222,7 +222,7 @@ class AccountService(
 
         accountRepository.findOneByLogin(accountCredentials.login!!)?.run {
             when {
-                !activated -> accountRepository.delete(account = this)
+                !activated -> accountRepository.delete(account = this.toAccount())
                 else -> throw UsernameAlreadyUsedException()
             }
         }

@@ -16,7 +16,7 @@ interface AuthorityRepository {
 }
 
 interface AccountRepository {
-    suspend fun findOneByLogin(login: String): Account?
+    suspend fun findOneByLogin(login: String): AccountCredentials?
 
     suspend fun findOneByEmail(email: String): Account?
 
@@ -66,8 +66,8 @@ class AccountRepositoryInMemory(
         private val accounts by lazy { mutableSetOf<AccountRecord<AuthorityRecord>>() }
     }
 
-    override suspend fun findOneByLogin(login: String) =
-        accounts.find { login.equals(it.login, ignoreCase = true) }?.toModel()
+    override suspend fun findOneByLogin(login: String): AccountCredentials? =
+        accounts.find { login.equals(it.login, ignoreCase = true) }?.toCredentialsModel()
 
     override suspend fun findOneByEmail(email: String) =
         accounts.find { email.equals(it.email, ignoreCase = true) }?.toModel()
