@@ -1,5 +1,5 @@
 @file:Suppress(
-    "NonAsciiCharacters", "unused"
+    "NonAsciiCharacters", "unused", "GrazieInspection"
 )
 
 package backend
@@ -56,6 +56,10 @@ internal class SignUpAccountControllerTest {
             .baseUrl(BASE_URL)
             .build()
     }
+    //En controlant l'implementation désiré
+//    private val accountRepository: AccountRepositoryInMemory by lazy { context.getBean() }
+//    private val accountAuthorityRepository: AccountAuthorityRepositoryInMemory by lazy { context.getBean() }
+    //En laissant le conteneur injecter la dépendance
     private val accountRepository: AccountRepository by lazy { context.getBean() }
     private val accountAuthorityRepository: AccountAuthorityRepository by lazy { context.getBean() }
 

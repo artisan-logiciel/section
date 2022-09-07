@@ -11,23 +11,6 @@ interface AuthorityRepository {
     suspend fun findOne(role: String): String?
 }
 
-@Repository
-class AuthorityRepositoryInMemory : AuthorityRepository {
-    companion object {
-        private val authorities by lazy {
-            mutableSetOf(
-                "ADMIN",
-                "USER",
-                "ANONYMOUS"
-            ).map { AuthorityEntity(it) }.toSet()
-        }
-    }
-
-    override suspend fun findOne(role: String): String? =
-        authorities.find { it.role == role }?.role
-
-}
-
 interface AccountRepository {
     suspend fun findOneByLogin(login: String): Account?
 
@@ -43,6 +26,38 @@ interface AccountRepository {
     suspend fun suppress(account: Account)
     suspend fun signup(model: AccountCredentials)
     suspend fun findOneActivationKey(key: String): AccountCredentials?
+}
+
+interface AccountAuthorityRepository {
+    suspend fun save(id: UUID, authority: String): Unit
+
+    suspend fun delete(id: UUID, authority: String): Unit
+
+    suspend fun count(): Long
+
+    suspend fun deleteAll(): Unit
+
+    suspend fun deleteAllByAccountId(id: UUID): Unit
+}
+
+
+
+
+@Repository
+class AuthorityRepositoryInMemory : AuthorityRepository {
+
+    companion object {
+        private val authorities by lazy {
+            mutableSetOf(
+                "ADMIN",
+                "USER",
+                "ANONYMOUS"
+            ).map { AuthorityEntity(it) }.toSet()
+        }
+    }
+
+    override suspend fun findOne(role: String): String? =
+        authorities.find { it.role == role }?.role
 }
 
 @Repository
@@ -234,17 +249,6 @@ class AccountRepositoryInMemory(
     }
 }
 
-interface AccountAuthorityRepository {
-    suspend fun save(id: UUID, authority: String): Unit
-
-    suspend fun delete(id: UUID, authority: String): Unit
-
-    suspend fun count(): Long
-
-    suspend fun deleteAll(): Unit
-
-    suspend fun deleteAllByAccountId(id: UUID): Unit
-}
 
 @Repository
 class AccountAuthorityRepositoryInMemory : AccountAuthorityRepository {
