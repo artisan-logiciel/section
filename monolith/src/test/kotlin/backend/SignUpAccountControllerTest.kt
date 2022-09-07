@@ -57,7 +57,7 @@ internal class SignUpAccountControllerTest {
             .build()
     }
     private val accountRepository: AccountRepository by lazy { context.getBean() }
-    private val accountAuthorityRepository: IAccountAuthorityRepository by lazy { context.getBean() }
+    private val accountAuthorityRepository: AccountAuthorityRepository by lazy { context.getBean() }
 
     @BeforeAll
     fun `lance le server en profile test`() =

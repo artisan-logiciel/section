@@ -47,7 +47,7 @@ interface AccountRepository {
 
 @Repository
 class AccountRepositoryInMemory(
-    private val accountAuthorityRepository: IAccountAuthorityRepository,
+    private val accountAuthorityRepository: AccountAuthorityRepository,
     private val authorityRepository: AuthorityRepository
 ) : AccountRepository {
 
@@ -234,7 +234,7 @@ class AccountRepositoryInMemory(
     }
 }
 
-interface IAccountAuthorityRepository {
+interface AccountAuthorityRepository {
     suspend fun save(id: UUID, authority: String): Unit
 
     suspend fun delete(id: UUID, authority: String): Unit
@@ -247,7 +247,7 @@ interface IAccountAuthorityRepository {
 }
 
 @Repository
-class AccountAuthorityRepositoryInMemory : IAccountAuthorityRepository {
+class AccountAuthorityRepositoryInMemory : AccountAuthorityRepository {
     companion object {
         private val accountAuthorities by lazy { mutableSetOf<AccountAuthority>() }
     }

@@ -26,7 +26,7 @@ internal class ActivateAccountControllerTest {
         }
         private lateinit var context: ConfigurableApplicationContext
         private val accountRepository: AccountRepository by lazy { context.getBean() }
-        private val accountAuthorityRepository: IAccountAuthorityRepository by lazy { context.getBean() }
+        private val accountAuthorityRepository: AccountAuthorityRepository by lazy { context.getBean() }
     }
 
     @BeforeAll
