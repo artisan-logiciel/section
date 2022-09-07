@@ -111,17 +111,17 @@ data class AccountCredentialsModel(
 /**
  * représente le user view model minimaliste pour la view
  */
-data class AvatarModel(
+data class Avatar(
     val id: UUID? = null,
     val login: String? = null
 )
 
-data class KeyAndPasswordModel(
+data class KeyAndPassword(
     val key: String? = null,
     val newPassword: String? = null
 )
 
-data class LoginModel(
+data class Login(
     @field:NotNull
     val username:
     @Size(min = 1, max = 50)
@@ -133,7 +133,7 @@ data class LoginModel(
     val rememberMe: Boolean? = null
 )
 
-data class PasswordChangeModel(
+data class PasswordChange(
     val currentPassword: String? = null,
     val newPassword: String? = null
 )
