@@ -1,4 +1,4 @@
-@file:Suppress("unused", "FunctionName")
+@file:Suppress("unused", "FunctionN ame", "FunctionName")
 
 package backend
 
@@ -75,7 +75,7 @@ class AccountRepositoryInMemory(
         accounts.find { email.equals(it.email, ignoreCase = true) }?.toModel()
 
 
-    fun saveCurrent(model: AccountCredentialsModel) =
+    override suspend fun save(model: AccountCredentialsModel): AccountModel? =
         create(model).run {
             when {
                 this != null -> return@run this
@@ -158,23 +158,20 @@ class AccountRepositoryInMemory(
 
     private fun patch(
         model: AccountCredentialsModel?,
-    ): AccountModel? = try {
+    ): AccountModel? =
         model.run {
             val retrieved = accounts.find { this?.email?.equals(it.email, ignoreCase = true)!! }
             accounts.remove(accounts.find { this?.email?.equals(it.email, ignoreCase = true)!! })
-            @Suppress("CAST_NEVER_SUCCEEDS")
-            (retrieved as AccountCredentialsModel).copy(
-                password = `if password is null or empty then no change`(model, retrieved),
-                activationKey = `switch activationKey case then patch`(model, retrieved),
-                authorities = `if authorities are null or empty then no change`(model, retrieved)
+            ((retrieved?.toCredentialsModel())?.copy(
+                password = `if password is null or empty then no change`(model, retrieved.toCredentialsModel()),
+                activationKey = `switch activationKey case then patch`(model, retrieved.toCredentialsModel()),
+                authorities = `if authorities are null or empty then no change`(model, retrieved.toCredentialsModel())
             ).apply {
-                @Suppress("CAST_NEVER_SUCCEEDS")
-                accounts.add(this as IAccountEntity<IAuthorityEntity>)
-            }.toAccount()
+                @Suppress("UNCHECKED_CAST")
+                accounts.add(this?.let { AccountEntity(it) } as IAccountEntity<IAuthorityEntity>)
+            }?.toAccount())
         }
-    } catch (_: NoSuchElementException) {
-        null
-    }
+
 
     private fun `if password is null or empty then no change`(
         model: AccountCredentialsModel?,
@@ -186,46 +183,47 @@ class AccountRepositoryInMemory(
         else -> retrieved.password!!
     }
 
+    @Suppress("FunctionName")
     private fun `switch activationKey case then patch`(
         model: AccountCredentialsModel?,
         retrieved: AccountCredentialsModel
-    ): String? {
-        try {
-            @Suppress("KotlinConstantConditions")
-            val retrieved: AccountCredentialsModel? = accounts.first {
-                model?.email.equals(it.email, ignoreCase = true)
-            } as AccountCredentialsModel?
-            //si activated est vrai
-            if (retrieved != null) {
-                if (retrieved.activated)
-                //si model.activationKey!=null et retreived.activationKey null et activated==true alors on change pas
-                //si model.activationKey est null et retrieved.activationKey null alors on change pas
-                //si model.activationKey est null et retrieved.activationKey not null activated is true alors on change en null
-                //
-                //        when {
-                //            model == null -> retrieved.activationKey
-                //            model.activationKey == null -> retrieved.activationKey
-                //            model.activationKey.isNotEmpty()  -> model.activationKey
-                //            else -> retrieved.password!!
-                //        }
-                //si activated est faux
-                else return null
-            } else return null
-        } catch (_: NoSuchElementException) {
-            return null
-        }
-        return null
-//        TODO("Not yet implemented")
+    ): String? = when {
+        model == null -> null
+        model.activationKey == null -> null
+        !retrieved.activated
+                && retrieved.activationKey.isNullOrBlank()
+                && model.activationKey.isNotEmpty() -> model.activationKey
+
+        !retrieved.activated
+                && !retrieved.activationKey.isNullOrBlank()
+                && model.activationKey.isNotEmpty() -> retrieved.activationKey
+
+        else -> null
     }
 
     private fun `if authorities are null or empty then no change`(
         model: AccountCredentialsModel?,
         retrieved: AccountCredentialsModel
     ): Set<String> {
-        TODO("Not yet implemented")
+        if (model != null) {
+            if (model.authorities != null) {
+                if (model.authorities.isNotEmpty() && model.authorities.contains(ROLE_USER))
+                    return model.authorities
+                if (retrieved.authorities != null)
+                    if (retrieved.authorities.isNotEmpty()
+                        && retrieved.authorities.contains(ROLE_USER)
+                        && !model.authorities.contains(ROLE_USER)
+                    ) return retrieved.authorities
+            } else
+                if (!retrieved.authorities.isNullOrEmpty()
+                    && retrieved.authorities.contains(ROLE_USER)
+                ) return retrieved.authorities
+        }
+        return emptySet()
     }
 
-    override suspend fun save(model: AccountCredentialsModel): AccountModel? =
+
+    suspend fun savePrevious(model: AccountCredentialsModel): AccountModel? =
         if (model.id == null && accounts.none {
                 it.login?.equals(model.login, ignoreCase = true) ?: (model.login == null)
                         && it.email?.equals(model.email, ignoreCase = true) ?: (model.email == null)

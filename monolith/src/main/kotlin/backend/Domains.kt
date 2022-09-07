@@ -180,7 +180,7 @@ open class Account(
 /**
  * Représente le user view model sans le password
  */
-//TODO: add field suspended=false
+//TODO: add field enabled=false
 data class AccountModel(
     val id: UUID? = null,
     @field:NotBlank
