@@ -56,22 +56,6 @@ class AuthorityRepositoryR2dbc(
 }
 
 
-//@Repository
-//class AuthorityRepositoryInMemory : AuthorityRepository {
-//    companion object {
-//        private val authorities by lazy {
-//            mutableSetOf(
-//                "ADMIN",
-//                "USER",
-//                "ANONYMOUS"
-//            ).map { AuthorityEntity(it) }.toSet()
-//        }
-//    }
-//
-//    override suspend fun findOne(role: String): String? =
-//        authorities.find { it.role == role }?.role
-//}
-
 @Repository
 class AccountRepositoryInMemory(
     private val accountAuthorityRepository: AccountAuthorityRepository,
