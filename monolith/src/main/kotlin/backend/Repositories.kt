@@ -18,7 +18,7 @@ interface AuthorityRepository {
 interface AccountRepository {
     suspend fun findOneByLogin(login: String): AccountCredentials?
 
-    suspend fun findOneByEmail(email: String): Account?
+    suspend fun findOneByEmail(email: String): AccountCredentials?
 
     suspend fun save(model: AccountCredentials): Account?
 
@@ -69,8 +69,8 @@ class AccountRepositoryInMemory(
     override suspend fun findOneByLogin(login: String): AccountCredentials? =
         accounts.find { login.equals(it.login, ignoreCase = true) }?.toCredentialsModel()
 
-    override suspend fun findOneByEmail(email: String) =
-        accounts.find { email.equals(it.email, ignoreCase = true) }?.toModel()
+    override suspend fun findOneByEmail(email: String): AccountCredentials? =
+        accounts.find { email.equals(it.email, ignoreCase = true) }?.toCredentialsModel()
 
 
     override suspend fun save(model: AccountCredentials): Account? =

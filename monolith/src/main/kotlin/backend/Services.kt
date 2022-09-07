@@ -61,7 +61,7 @@ class SignUpService(
         accountRepository.findOneByEmail(model.email!!).run {
             if (this != null) {
                 when {
-                    !activated -> accountRepository.suppress(this)
+                    !activated -> accountRepository.suppress(this.toAccount())
                     else -> throw EmailAlreadyUsedException()
                 }
             }
@@ -228,7 +228,7 @@ class AccountService(
         }
         accountRepository.findOneByEmail(accountCredentials.email!!)?.run {
             when {
-                !activated -> accountRepository.delete(account = this)
+                !activated -> accountRepository.delete(account = this.toAccount())
                 else -> throw EmailAlreadyUsedException()
             }
         }

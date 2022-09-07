@@ -56,6 +56,7 @@ internal class SignUpAccountControllerTest {
             .baseUrl(BASE_URL)
             .build()
     }
+
     //En controlant l'implementation désiré
     private val accountRepository: AccountRepositoryInMemory by lazy { context.getBean() }
     private val accountAuthorityRepository: AccountAuthorityRepositoryInMemory by lazy { context.getBean() }
@@ -324,14 +325,14 @@ internal class SignUpAccountControllerTest {
             assertEquals(defaultAccount.email!!.uppercase(), email)
         }
         //activate third
-        accountRepository.save(
-            AccountCredentials(
-                accountRepository.findOneByEmail(defaultAccount.email!!)!!
-                    .copy(activated = true))
-        )
+        accountRepository.save(accountRepository.findOneByEmail(defaultAccount.email!!)!!.copy(activated = true))
 
-        log.info("accountRepository.findOneByEmail(defaultAccount.email!!): ${
-            accountRepository.findOneByEmail(defaultAccount.email!!)}")
+
+        log.info(
+            "accountRepository.findOneByEmail(defaultAccount.email!!): ${
+                accountRepository.findOneByEmail(defaultAccount.email!!)
+            }"
+        )
 //        assertTrue(accountRepository.findOneByEmail(defaultAccount.email!!)!!.activated)
 //
 //        // Register 4th (already activated) user
@@ -357,7 +358,7 @@ internal class SignUpAccountControllerTest {
         //netoyage des accounts et accountAuthorities à la fin du test
         accountRepository.findOneByEmail(defaultAccount.email!!).run {
             accountAuthorityRepository.deleteAllByAccountId(this!!.id!!)
-            accountRepository.delete(this)
+            accountRepository.delete(this.toAccount())
         }
         assertEquals(0, accountRepository.count())
         assertEquals(0, accountAuthorityRepository.count())
