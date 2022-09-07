@@ -59,7 +59,6 @@ import java.util.concurrent.Future
 
 
 @Configuration
-@Suppress("unused")
 class LocaleSupportConfiguration : DelegatingWebFluxConfiguration() {
 
     override fun createLocaleContextResolver(): LocaleContextResolver =
