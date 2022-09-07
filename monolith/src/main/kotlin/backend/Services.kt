@@ -208,7 +208,7 @@ class MailService(
         }
 }
 
-@Service(value = "accountService")
+@Service
 class AccountService(
     private val accountRepository: AccountRepository,
     private val mailService: MailService,
@@ -285,7 +285,7 @@ class AccountService(
 
 //@Service("userService")
 //@Suppress("unused")
-class UserService
+//class UserService
 // (
 //    private val passwordEncoder: PasswordEncoder,
 //    private val userRepository: UserRepository,
@@ -294,7 +294,7 @@ class UserService
 //    private val userAuthRepository: UserAuthRepository,
 //    private val authorityRepository: AuthorityRepository
 //)
-{
+//{
 //
 //    @Transactional
 //    suspend fun activateRegistration(key: String): User? =
@@ -582,4 +582,4 @@ class UserService
 //                }
 //            }
 //        }
-}
+//}
