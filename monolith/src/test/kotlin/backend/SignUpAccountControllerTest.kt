@@ -56,7 +56,7 @@ internal class SignUpAccountControllerTest {
             .baseUrl(BASE_URL)
             .build()
     }
-    private val accountRepository: IAccountModelRepository by lazy { context.getBean() }
+    private val accountRepository: AccountRepository by lazy { context.getBean() }
     private val accountAuthorityRepository: IAccountAuthorityRepository by lazy { context.getBean() }
 
     @BeforeAll

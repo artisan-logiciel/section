@@ -7,12 +7,12 @@ import backend.Constants.ROLE_USER
 import org.springframework.stereotype.Repository
 import java.util.*
 
-interface IAuthorityRepository {
+interface AuthorityRepository {
     suspend fun findOne(role: String): String?
 }
 
 @Repository
-class AuthorityRepositoryInMemory : IAuthorityRepository {
+class AuthorityRepositoryInMemory : AuthorityRepository {
     companion object {
         private val authorities by lazy {
             mutableSetOf(
@@ -28,7 +28,7 @@ class AuthorityRepositoryInMemory : IAuthorityRepository {
 
 }
 
-interface IAccountModelRepository {
+interface AccountRepository {
     suspend fun findOneByLogin(login: String): Account?
 
     suspend fun findOneByEmail(email: String): Account?
@@ -48,8 +48,8 @@ interface IAccountModelRepository {
 @Repository
 class AccountRepositoryInMemory(
     private val accountAuthorityRepository: IAccountAuthorityRepository,
-    private val authorityRepository: IAuthorityRepository
-) : IAccountModelRepository {
+    private val authorityRepository: AuthorityRepository
+) : AccountRepository {
 
     companion object {
         private val accounts by lazy { mutableSetOf<AccountRecord<AuthorityRecord>>() }

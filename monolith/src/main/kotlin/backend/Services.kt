@@ -22,7 +22,7 @@ import javax.mail.MessagingException
 
 @Service
 class SignUpService(
-    private val accountRepository: IAccountModelRepository,
+    private val accountRepository: AccountRepository,
     private val mailService: MailService
 ) {
 
@@ -210,7 +210,7 @@ class MailService(
 
 @Service(value = "accountService")
 class AccountService(
-    private val accountRepository: IAccountModelRepository,
+    private val accountRepository: AccountRepository,
     private val mailService: MailService,
 //    private val passwordEncoder:PasswordEncoder
 ) {
