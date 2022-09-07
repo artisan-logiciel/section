@@ -49,9 +49,9 @@ data class AuthorityEntity(
     @field:NotNull
     @field:Size(max = 50)
     override val role: String
-) : IAuthorityEntity
+) : AuthorityRecord
 
-interface IAuthorityEntity : Persistable<String> {
+interface AuthorityRecord : Persistable<String> {
     val role: String
     override fun getId() = role
     override fun isNew() = true
@@ -66,7 +66,7 @@ data class AccountAuthority(
     val role: String
 )
 
-interface IAccountEntity<AUTH : IAuthorityEntity> {
+interface IAccountEntity<AUTH : AuthorityRecord> {
     var id: UUID?
     var login: String?
     var password: String?
