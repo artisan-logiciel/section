@@ -29,20 +29,20 @@ class AuthorityRepositoryInMemory : IAuthorityRepository {
 }
 
 interface IAccountModelRepository {
-    suspend fun findOneByLogin(login: String): AccountModel?
+    suspend fun findOneByLogin(login: String): Account?
 
-    suspend fun findOneByEmail(email: String): AccountModel?
+    suspend fun findOneByEmail(email: String): Account?
 
-    suspend fun save(model: AccountCredentialsModel): AccountModel?
+    suspend fun save(model: AccountCredentials): Account?
 
-    suspend fun delete(account: AccountModel)
+    suspend fun delete(account: Account)
 
     suspend fun findActivationKeyByLogin(login: String): String?
 
     suspend fun count(): Long
-    suspend fun suppress(account: AccountModel)
-    suspend fun signup(model: AccountCredentialsModel)
-    suspend fun findOneActivationKey(key: String): AccountCredentialsModel?
+    suspend fun suppress(account: Account)
+    suspend fun signup(model: AccountCredentials)
+    suspend fun findOneActivationKey(key: String): AccountCredentials?
 }
 
 @Repository
@@ -62,7 +62,7 @@ class AccountRepositoryInMemory(
         accounts.find { email.equals(it.email, ignoreCase = true) }?.toModel()
 
 
-    override suspend fun save(model: AccountCredentialsModel): AccountModel? =
+    override suspend fun save(model: AccountCredentials): Account? =
         create(model).run {
             when {
                 this != null -> return@run this
@@ -70,43 +70,43 @@ class AccountRepositoryInMemory(
             }
         }
 
-    private fun create(model: AccountCredentialsModel) =
+    private fun create(model: AccountCredentials) =
         if (`mail & login do not exist`(model))
             model.copy(id = UUID.randomUUID()).apply {
                 @Suppress("UNCHECKED_CAST")
                 accounts += AccountEntity(this) as AccountRecord<AuthorityRecord>
             }.toAccount() else null
 
-    private fun `mail & login do not exist`(model: AccountCredentialsModel) =
+    private fun `mail & login do not exist`(model: AccountCredentials) =
         accounts.none {
             it.login.equals(model.login, ignoreCase = true)
                     && it.email.equals(model.email, ignoreCase = true)
         }
 
 
-    private fun `mail exists and login exists`(model: AccountCredentialsModel) =
+    private fun `mail exists and login exists`(model: AccountCredentials) =
         accounts.any {
             model.email.equals(it.email, ignoreCase = true)
                     && model.login.equals(it.login, ignoreCase = true)
         }
 
 
-    private fun `mail exists and login does not`(model: AccountCredentialsModel) =
+    private fun `mail exists and login does not`(model: AccountCredentials) =
         accounts.any {
             model.email.equals(it.email, ignoreCase = true)
                     && !model.login.equals(it.login, ignoreCase = true)
         }
 
 
-    private fun `mail does not exist and login exists`(model: AccountCredentialsModel) =
+    private fun `mail does not exist and login exists`(model: AccountCredentials) =
         accounts.any {
             !model.email.equals(it.email, ignoreCase = true)
                     && model.login.equals(it.login, ignoreCase = true)
         }
 
     private fun update(
-        model: AccountCredentialsModel,
-    ): AccountModel? = when {
+        model: AccountCredentials,
+    ): Account? = when {
         `mail exists and login does not`(model) -> changeLogin(model)?.run { patch(this) }
         `mail does not exist and login exists`(model) -> changeEmail(model)?.run { patch(this) }
         `mail exists and login exists`(model) -> patch(model)
@@ -114,12 +114,12 @@ class AccountRepositoryInMemory(
     }
 
     private fun changeLogin(
-        model: AccountCredentialsModel,
-    ): AccountCredentialsModel? =
+        model: AccountCredentials,
+    ): AccountCredentials? =
         try {
             @Suppress("CAST_NEVER_SUCCEEDS")
-            (accounts.first { model.email.equals(it.email, ignoreCase = true) } as AccountCredentialsModel).run {
-                val retrieved: AccountCredentialsModel = copy(login = model.login)
+            (accounts.first { model.email.equals(it.email, ignoreCase = true) } as AccountCredentials).run {
+                val retrieved: AccountCredentials = copy(login = model.login)
                 accounts.remove(this as AccountRecord<AuthorityRecord>?)
                 (retrieved as AccountRecord<AuthorityRecord>?)?.run { accounts.add(this) }
                 model
@@ -130,11 +130,11 @@ class AccountRepositoryInMemory(
 
 
     private fun changeEmail(
-        model: AccountCredentialsModel,
-    ): AccountCredentialsModel? = try {
+        model: AccountCredentials,
+    ): AccountCredentials? = try {
         @Suppress("CAST_NEVER_SUCCEEDS")
-        (accounts.first { model.login.equals(it.login, ignoreCase = true) } as AccountCredentialsModel).run {
-            val retrieved: AccountCredentialsModel = copy(email = model.email)
+        (accounts.first { model.login.equals(it.login, ignoreCase = true) } as AccountCredentials).run {
+            val retrieved: AccountCredentials = copy(email = model.email)
             accounts.remove(this as AccountRecord<AuthorityRecord>?)
             (retrieved as AccountRecord<AuthorityRecord>?)?.run { accounts.add(this) }
             model
@@ -144,8 +144,8 @@ class AccountRepositoryInMemory(
     }
 
     private fun patch(
-        model: AccountCredentialsModel?,
-    ): AccountModel? =
+        model: AccountCredentials?,
+    ): Account? =
         model.run {
             val retrieved = accounts.find { this?.email?.equals(it.email, ignoreCase = true)!! }
             accounts.remove(accounts.find { this?.email?.equals(it.email, ignoreCase = true)!! })
@@ -161,8 +161,8 @@ class AccountRepositoryInMemory(
 
 
     private fun `if password is null or empty then no change`(
-        model: AccountCredentialsModel?,
-        retrieved: AccountCredentialsModel
+        model: AccountCredentials?,
+        retrieved: AccountCredentials
     ): String = when {
         model == null -> retrieved.password!!
         model.password == null -> retrieved.password!!
@@ -172,8 +172,8 @@ class AccountRepositoryInMemory(
 
     @Suppress("FunctionName")
     private fun `switch activationKey case then patch`(
-        model: AccountCredentialsModel?,
-        retrieved: AccountCredentialsModel
+        model: AccountCredentials?,
+        retrieved: AccountCredentials
     ): String? = when {
         model == null -> null
         model.activationKey == null -> null
@@ -189,8 +189,8 @@ class AccountRepositoryInMemory(
     }
 
     private fun `if authorities are null or empty then no change`(
-        model: AccountCredentialsModel?,
-        retrieved: AccountCredentialsModel
+        model: AccountCredentials?,
+        retrieved: AccountCredentials
     ): Set<String> {
         if (model != null) {
             if (model.authorities != null) {
@@ -210,7 +210,7 @@ class AccountRepositoryInMemory(
     }
 
 
-    override suspend fun delete(account: AccountModel) {
+    override suspend fun delete(account: Account) {
         accounts.apply { if (isNotEmpty()) remove(find { it.id == account.id }) }
     }
 
@@ -220,16 +220,16 @@ class AccountRepositoryInMemory(
         }?.activationKey
 
     override suspend fun count(): Long = accounts.size.toLong()
-    override suspend fun suppress(account: AccountModel) {
+    override suspend fun suppress(account: Account) {
         accountAuthorityRepository.deleteAllByAccountId(account.id!!)
         delete(account)
     }
 
-    override suspend fun signup(model: AccountCredentialsModel) {
+    override suspend fun signup(model: AccountCredentials) {
         accountAuthorityRepository.save(save(model)?.id!!, ROLE_USER)
     }
 
-    override suspend fun findOneActivationKey(key: String): AccountCredentialsModel? {
+    override suspend fun findOneActivationKey(key: String): AccountCredentials? {
         TODO("Not yet implemented")
     }
 }

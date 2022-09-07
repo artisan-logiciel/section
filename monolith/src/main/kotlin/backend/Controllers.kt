@@ -34,7 +34,7 @@ class SignUpController(
     @PostMapping("signup")
     @ResponseStatus(HttpStatus.CREATED)
     suspend fun signup(
-        @RequestBody @Valid accountCredentials: AccountCredentialsModel
+        @RequestBody @Valid accountCredentials: AccountCredentials
     ) = signUpService.signup(accountCredentials)
 
     /**
@@ -73,7 +73,7 @@ class RegistrationController(
     @PostMapping("register")
     @ResponseStatus(HttpStatus.CREATED)
     suspend fun registerAccount(
-        @RequestBody @Valid accountCredentials: AccountCredentialsModel
+        @RequestBody @Valid accountCredentials: AccountCredentials
     ) = accountService.register(accountCredentials)
 
     /**

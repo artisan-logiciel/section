@@ -84,7 +84,7 @@ interface AccountRecord<AUTH : AuthorityRecord> {
     var createdDate: Instant?
     var lastModifiedBy: String?
     var lastModifiedDate: Instant?
-    fun toModel(): AccountModel = AccountModel(
+    fun toModel(): Account = Account(
         id = id,
         login = login,
         firstName = firstName,
@@ -100,7 +100,7 @@ interface AccountRecord<AUTH : AuthorityRecord> {
         authorities = authorities?.map { it.role }?.toMutableSet()
     )
 
-    fun toCredentialsModel(): AccountCredentialsModel = AccountCredentialsModel(
+    fun toCredentialsModel(): AccountCredentials = AccountCredentials(
         id = id,
         login = login,
         firstName = firstName,
@@ -219,7 +219,7 @@ data class AccountEntity @JvmOverloads constructor(
     )
 
 
-    constructor(model: AccountCredentialsModel) : this() {
+    constructor(model: AccountCredentials) : this() {
         id = model.id
         login = model.login
         email = model.email

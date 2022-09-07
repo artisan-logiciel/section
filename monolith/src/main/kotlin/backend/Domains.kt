@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 package backend
 
 import backend.Constants.IMAGE_URL_DEFAULT
@@ -13,7 +15,7 @@ import javax.validation.constraints.Email as EmailConstraints
  * Représente le user view model sans le password
  */
 //TODO: add field enabled=false
-data class AccountModel(
+data class Account(
     val id: UUID? = null,
     @field:NotBlank
     @field:Pattern(regexp = Constants.LOGIN_REGEX)
@@ -37,14 +39,13 @@ data class AccountModel(
     val lastModifiedDate: Instant? = null,
     val authorities: Set<String>? = null
 ) {
-    @Suppress("unused")
     fun isActivated(): Boolean = activated
 }
 
 /**
  * Représente l'account view model avec le password
  */
-data class AccountCredentialsModel(
+data class AccountCredentials(
     @field:NotNull
     @field:Size(
         min = Constants.PASSWORD_MIN_LENGTH,
@@ -76,7 +77,7 @@ data class AccountCredentialsModel(
     val authorities: Set<String>? = null
 ) {
 
-    constructor(account: AccountModel) : this(
+    constructor(account: Account) : this(
         id = account.id,
         login = account.login,
         email = account.email,
@@ -93,7 +94,7 @@ data class AccountCredentialsModel(
     )
 
 
-    fun toAccount(): AccountModel = AccountModel(
+    fun toAccount(): Account = Account(
         id = id,
         login = login,
         firstName = firstName,

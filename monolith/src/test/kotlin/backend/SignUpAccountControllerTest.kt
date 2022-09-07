@@ -321,7 +321,7 @@ internal class SignUpAccountControllerTest {
         }
         //activate third
         accountRepository.save(
-            AccountCredentialsModel(
+            AccountCredentials(
                 accountRepository.findOneByEmail(defaultAccount.email!!)!!
                     .copy(activated = true))
         )

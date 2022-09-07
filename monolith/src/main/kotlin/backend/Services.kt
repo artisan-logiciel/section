@@ -31,7 +31,7 @@ class SignUpService(
         UsernameAlreadyUsedException::class,
         UsernameAlreadyUsedException::class
     )
-    suspend fun signup(model: AccountCredentialsModel) {
+    suspend fun signup(model: AccountCredentials) {
         InvalidPasswordException().run {
             if (isPasswordLengthInvalid(model.password)) throw this
         }
@@ -47,7 +47,7 @@ class SignUpService(
     }
 
     @Throws(UsernameAlreadyUsedException::class)
-    private suspend fun loginValidation(model: AccountCredentialsModel) {
+    private suspend fun loginValidation(model: AccountCredentials) {
         accountRepository.findOneByLogin(model.login!!).run {
             if (this != null) when {
                 !activated -> accountRepository.suppress(this)
@@ -57,7 +57,7 @@ class SignUpService(
     }
 
     @Throws(UsernameAlreadyUsedException::class)
-    private suspend fun emailValidation(model: AccountCredentialsModel) {
+    private suspend fun emailValidation(model: AccountCredentials) {
         accountRepository.findOneByEmail(model.email!!).run {
             if (this != null) {
                 when {
@@ -68,7 +68,7 @@ class SignUpService(
         }
     }
 
-    private suspend fun suppress(model: AccountCredentialsModel) {
+    private suspend fun suppress(model: AccountCredentials) {
         accountRepository.suppress(model.toAccount())
     }
 
@@ -146,7 +146,7 @@ class MailService(
 
     @Async
     fun sendEmailFromTemplate(
-        account: AccountCredentialsModel,
+        account: AccountCredentials,
         templateName: String,
         titleKey: String
     ) {
@@ -175,7 +175,7 @@ class MailService(
     }
 
     @Async
-    fun sendActivationEmail(account: AccountCredentialsModel): Unit = log
+    fun sendActivationEmail(account: AccountCredentials): Unit = log
         .debug(
             "Sending activation email to '{}'",
             account.email
@@ -188,7 +188,7 @@ class MailService(
         }
 
     @Async
-    fun sendCreationEmail(account: AccountCredentialsModel): Unit = log
+    fun sendCreationEmail(account: AccountCredentials): Unit = log
         .debug("Sending creation email to '${account.email}'").run {
             sendEmailFromTemplate(
                 account,
@@ -198,7 +198,7 @@ class MailService(
         }
 
     @Async
-    fun sendPasswordResetMail(account: AccountCredentialsModel): Unit = log
+    fun sendPasswordResetMail(account: AccountCredentials): Unit = log
         .debug("Sending password reset email to '${account.email}'").run {
             sendEmailFromTemplate(
                 account,
@@ -216,7 +216,7 @@ class AccountService(
 ) {
     @Transactional
     suspend fun register(
-        accountCredentials: AccountCredentialsModel
+        accountCredentials: AccountCredentials
     ) {
         InvalidPasswordException().run { if (isPasswordLengthInvalid(accountCredentials.password)) throw this }
 
@@ -241,7 +241,7 @@ class AccountService(
                 accountRepository
                     .findActivationKeyByLogin(login = accountCredentials.login)
                     ?.isNotEmpty() == true -> mailService.sendActivationEmail(
-                    AccountCredentialsModel(
+                    AccountCredentials(
                         password = password,
                         activationKey = activationKey,
                         id = id,
@@ -263,7 +263,7 @@ class AccountService(
         }
     }
 
-    fun activateRegistration(key: String): AccountModel? {
+    fun activateRegistration(key: String): Account? {
         TODO("Not yet implemented")
     }
 //    @Transactional
