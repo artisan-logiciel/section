@@ -11,7 +11,7 @@ import backend.Constants.ROLE_ADMIN
 import backend.Constants.ROLE_ANONYMOUS
 import backend.Constants.ROLE_USER
 import backend.data.Data.defaultAccount
-import backend.data.Data.defaultUser
+import backend.data.Data.defaultAccountEntity
 import backend.Log.log
 import backend.AccountAuthority
 import com.fasterxml.jackson.databind.ObjectMapper
@@ -247,7 +247,7 @@ internal abstract class AbstractIntegrationTest {
 
     suspend fun checkInitDatabaseWithDefaultUser(): AccountEntity =
         saveUserWithAutorities(
-            defaultUser
+            defaultAccountEntity
                 .copy()
                 .apply {
                     unlockUser()
@@ -281,7 +281,7 @@ internal class TestAbstractIntegrationTest : AbstractIntegrationTest() {
         assertEquals(0, countUserBeforeSave)
         val countUserAuthorityBeforeSave = countUserAuthority()
         assertEquals(0, countUserAuthorityBeforeSave)
-        defaultUser.copy().apply {
+        defaultAccountEntity.copy().apply {
             unlockUser()
             val id = saveUserWithAutorities(this)?.id
             assertEquals(countUserBeforeSave + 1, countUser())

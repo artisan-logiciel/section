@@ -7,7 +7,7 @@ package backend
 import backend.Constants.ROLE_USER
 import backend.Log.log
 import backend.data.Data.defaultAccount
-import backend.data.Data.defaultUser
+import backend.data.Data.defaultAccountEntity
 import backend.tdd.testLoader
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.AfterAll
@@ -114,7 +114,7 @@ internal class SignUpAccountControllerTest {
             .post()
             .uri(SIGNUP_URI)
             .contentType(MediaType.APPLICATION_JSON)
-            .bodyValue(defaultUser.copy(login = "funky-log(n"))
+            .bodyValue(defaultAccountEntity.copy(login = "funky-log(n"))
             .exchange()
             .expectStatus()
             .isBadRequest

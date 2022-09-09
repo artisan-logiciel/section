@@ -12,56 +12,58 @@ import org.springframework.beans.factory.getBean
 import org.springframework.boot.runApplication
 import org.springframework.context.ConfigurableApplicationContext
 import org.springframework.data.r2dbc.core.R2dbcEntityTemplate
+import org.springframework.data.r2dbc.core.select
 import kotlin.test.Test
+import kotlin.test.assertEquals
 
 class AccountRepositoryR2dbc(
     private val repository: R2dbcEntityTemplate,
     private val authorityRepository: AuthorityRepository
 ) : AccountRepository {
-    override suspend fun save(model: AccountCredentials): Account? {
-        TODO("Not yet implemented")
-    }
+    override suspend fun save(model: AccountCredentials): Account? =
+        // TODO("Not yet implemented")
+    null
 
-    override suspend fun count(): Long {
-        TODO("Not yet implemented")
-    }
+    override suspend fun count(): Long
+        // TODO("Not yet implemented")
+    =-1L
 
     override suspend fun delete(account: Account) {
-        TODO("Not yet implemented")
+        // TODO("Not yet implemented")
     }
 
-    override suspend fun findOneByLogin(login: String): AccountCredentials? {
-        TODO("Not yet implemented")
-    }
+    override suspend fun findOneByLogin(login: String): AccountCredentials? =
+        // TODO("Not yet implemented")
+    null
 
-    override suspend fun findOneByEmail(email: String): AccountCredentials? {
-        TODO("Not yet implemented")
-    }
+    override suspend fun findOneByEmail(email: String): AccountCredentials? =
+        // TODO("Not yet implemented")
+    null
 
     override suspend fun suppress(account: Account) {
-        TODO("Not yet implemented")
+        // TODO("Not yet implemented")
     }
 
 
     override suspend fun signup(model: AccountCredentials) {
-        TODO("Not yet implemented")
+        // TODO("Not yet implemented")
     }
 
-    override suspend fun findActivationKeyByLogin(login: String): String? {
-        TODO("Not yet implemented")
-    }
+    override suspend fun findActivationKeyByLogin(login: String): String? =
+        // TODO("Not yet implemented")
+    null
 
-    override suspend fun findOneActivationKey(key: String): AccountCredentials? {
-        TODO("Not yet implemented")
-    }
+    override suspend fun findOneActivationKey(key: String): AccountCredentials? =
+        // TODO("Not yet implemented")
+    null
 }
 
 internal fun createAccounts(accounts: Set<AccountCredentials>, repository: R2dbcEntityTemplate) {
-    TODO("Not yet implemented")
+    // TODO("Not yet implemented")
 }
 
 internal fun deleteAccounts(accounts: Set<AccountCredentials>, repository: R2dbcEntityTemplate) {
-    TODO("Not yet implemented")
+    // TODO("Not yet implemented")
 }
 
 internal class AccountRepositoryR2dbcTest {
@@ -84,6 +86,9 @@ internal class AccountRepositoryR2dbcTest {
 
     @Test
     fun save() {
+        assertEquals(0, repository.select<AccountEntity>().count().block())
+        repository.insert(Data.defaultAccountEntity).block()
+        assertEquals(1, repository.select<AccountEntity>().count().block())
     }
 
     @Test
