@@ -9,12 +9,16 @@ import backend.Log.log
 import backend.data.Data.defaultAccount
 import backend.data.Data.defaultAccountEntity
 import backend.tdd.testLoader
+import kotlinx.coroutines.reactor.awaitSingle
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
 import org.springframework.beans.factory.getBean
 import org.springframework.boot.runApplication
 import org.springframework.context.ConfigurableApplicationContext
+import org.springframework.data.r2dbc.core.R2dbcEntityTemplate
+import org.springframework.data.r2dbc.core.allAndAwait
+import org.springframework.data.r2dbc.core.select
 import org.springframework.http.MediaType
 import org.springframework.test.web.reactive.server.WebTestClient
 import org.springframework.test.web.reactive.server.returnResult
@@ -28,6 +32,7 @@ internal class SignUpAccountControllerTest {
     }
 
     private lateinit var context: ConfigurableApplicationContext
+
     private val client: WebTestClient by lazy {
         WebTestClient
             .bindToServer()
@@ -35,12 +40,25 @@ internal class SignUpAccountControllerTest {
             .build()
     }
 
-    //En controlant l'implementation désiré
-    private val accountRepository: AccountRepository by lazy { context.getBean<AccountRepositoryR2dbc>() }
-    private val accountAuthorityRepository: AccountAuthorityRepository by lazy { context.getBean<AccountAuthorityRepositoryR2dbc>() }
-    //En laissant le conteneur injecter la dépendance
-//    private val accountRepository: AccountRepository by lazy { context.getBean() }
-//    private val accountAuthorityRepository: AccountAuthorityRepository by lazy { context.getBean() }
+    private val dao: R2dbcEntityTemplate by lazy { context.getBean() }
+
+    private suspend fun countAccount(): Int = countAccount(context.getBean())
+
+
+    private suspend fun countAccount(dao: R2dbcEntityTemplate): Int =
+        dao.select(AccountEntity::class.java).count().awaitSingle().toInt()
+
+    private suspend fun countAccountAuthority(): Int = countAccountAuthority(context.getBean())
+
+
+    private suspend fun countAccountAuthority(dao: R2dbcEntityTemplate): Int =
+        dao.select(AccountAuthorityEntity::class.java).count().awaitSingle().toInt()
+
+    private suspend fun deleteAllAccountAuthority(): Unit = deleteAllAccountAuthority(context.getBean())
+
+    private suspend fun deleteAllAccountAuthority(dao: R2dbcEntityTemplate) {
+        dao.delete(AccountAuthorityEntity::class.java).allAndAwait()
+    }
 
     @BeforeAll
     fun `lance le server en profile test`() =
@@ -80,8 +98,8 @@ internal class SignUpAccountControllerTest {
 
     @Test
     fun `signup avec un account valide`(): Unit = runBlocking {
-        val countUserBefore = accountRepository.count()
-        val countUserAuthBefore = accountAuthorityRepository.count()
+        val countUserBefore = dao.select<AccountEntity>().count().awaitSingle()
+        val countUserAuthBefore = getCountAccountAuthority()
         assertEquals(0, countUserBefore)
         assertEquals(0, countUserAuthBefore)
         client
@@ -94,16 +112,16 @@ internal class SignUpAccountControllerTest {
             .isCreated
             .returnResult<Unit>()
             .run { responseBodyContent?.isEmpty()?.let { assertTrue(it) } }
-        assertEquals(countUserBefore + 1, accountRepository.count())
-        assertEquals(countUserAuthBefore + 1, accountAuthorityRepository.count())
+        assertEquals(countUserBefore + 1, dao.select<AccountEntity>().count().awaitSingle())
+        assertEquals(countUserAuthBefore + 1, getCountAccountAuthority())
         assertFalse(accountRepository.findOneByEmail(defaultAccount.email!!)!!.activated)
         //clean accounts and accountAuthorities after test
         accountRepository.findOneByLogin(defaultAccount.login!!).run {
-            accountAuthorityRepository.deleteAllByAccountId(this?.id!!)
+            deleteAllAccountAuthority()
             accountRepository.delete(this.toAccount())
         }
 
-        assertEquals(countUserAuthBefore, accountAuthorityRepository.count())
+        assertEquals(countUserAuthBefore, getCountAccountAuthority())
         assertEquals(countUserBefore, accountRepository.count())
     }
 
@@ -174,13 +192,13 @@ internal class SignUpAccountControllerTest {
     @Test
     fun `test register account activé avec un email existant`(): Unit = runBlocking {
         assertEquals(0, accountRepository.count())
-        assertEquals(0, accountAuthorityRepository.count())
+        assertEquals(0, getCountAccountAuthority())
         accountAuthorityRepository.save(
             accountRepository.save(defaultAccount.copy(activated = true))?.id!!,
             ROLE_USER
         )
         assertEquals(1, accountRepository.count())
-        assertEquals(1, accountAuthorityRepository.count())
+        assertEquals(1, getCountAccountAuthority())
         assertTrue(accountRepository.findOneByEmail(defaultAccount.email!!)!!.activated)
 
         client
@@ -195,24 +213,24 @@ internal class SignUpAccountControllerTest {
             .run { responseBodyContent?.isNotEmpty()?.let { assertTrue(it) } }
 
         accountRepository.findOneByLogin(defaultAccount.login!!).run {
-            accountAuthorityRepository.deleteAllByAccountId(this?.id!!)
+            accountAuthorityRepository.deleteAllByAccountId(this.id!!)
             accountRepository.delete(this.toAccount())
         }
-        assertEquals(0, accountAuthorityRepository.count())
+        assertEquals(0, getCountAccountAuthority())
         assertEquals(0, accountRepository.count())
     }
 
     @Test
     fun `test register account activé avec un login existant`(): Unit = runBlocking {
         assertEquals(0, accountRepository.count())
-        assertEquals(0, accountAuthorityRepository.count())
+        assertEquals(0, getCountAccountAuthority())
         accountAuthorityRepository.save(
             accountRepository.save(defaultAccount.copy(activated = true))?.id!!,
             ROLE_USER
         )
         assertTrue(accountRepository.findOneByEmail(defaultAccount.email!!)!!.activated)
         assertEquals(1, accountRepository.count())
-        assertEquals(1, accountAuthorityRepository.count())
+        assertEquals(1, getCountAccountAuthority())
 
         client
             .post()
@@ -226,10 +244,10 @@ internal class SignUpAccountControllerTest {
             .run { responseBodyContent?.isNotEmpty()?.let { assertTrue(it) } }
 
         accountRepository.findOneByLogin(defaultAccount.login!!).run {
-            accountAuthorityRepository.deleteAllByAccountId(this?.id!!)
+            accountAuthorityRepository.deleteAllByAccountId(this.id!!)
             accountRepository.delete(this.toAccount())
         }
-        assertEquals(0, accountAuthorityRepository.count())
+        assertEquals(0, getCountAccountAuthority())
         assertEquals(0, accountRepository.count())
     }
 
@@ -237,7 +255,7 @@ internal class SignUpAccountControllerTest {
     fun `test register account avec un email dupliqué`(): Unit = runBlocking {
 
         assertEquals(0, accountRepository.count())
-        assertEquals(0, accountAuthorityRepository.count())
+        assertEquals(0, getCountAccountAuthority())
         // First user
         // Register first user
         client
@@ -251,7 +269,7 @@ internal class SignUpAccountControllerTest {
             .returnResult<Unit>()
             .run { responseBodyContent?.isEmpty()?.let { assertTrue(it) } }
         assertEquals(1, accountRepository.count())
-        assertEquals(1, accountAuthorityRepository.count())
+        assertEquals(1, getCountAccountAuthority())
         assertFalse(accountRepository.findOneByEmail(defaultAccount.email!!)!!.activated)
 
         // Duplicate email, different login
@@ -268,7 +286,7 @@ internal class SignUpAccountControllerTest {
             .returnResult<Unit>()
             .run { responseBodyContent?.isEmpty()?.let { assertTrue(it) } }
         assertEquals(1, accountRepository.count())
-        assertEquals(1, accountAuthorityRepository.count())
+        assertEquals(1, getCountAccountAuthority())
         assertNull(accountRepository.findOneByLogin(defaultAccount.login!!))
         accountRepository.findOneByLogin(secondLogin).run {
             assertNotNull(this)
@@ -296,7 +314,7 @@ internal class SignUpAccountControllerTest {
             .returnResult<Unit>()
             .run { responseBodyContent?.isEmpty()?.let { assertTrue(it) } }
         assertEquals(1, accountRepository.count())
-        assertEquals(1, accountAuthorityRepository.count())
+        assertEquals(1, getCountAccountAuthority())
         assertNull(accountRepository.findOneByLogin(secondLogin))
         accountRepository.findOneByLogin(thirdLogin).run {
             assertNotNull(this)
@@ -325,7 +343,7 @@ internal class SignUpAccountControllerTest {
 //            .returnResult<Unit>()
 //            .run { responseBodyContent?.isEmpty()?.let { assertTrue(it) } }
         assertEquals(1, accountRepository.count())
-        assertEquals(1, accountAuthorityRepository.count())
+        assertEquals(1, getCountAccountAuthority())
 //        assertNull(accountRepository.findOneByLogin(secondLogin))
 //        accountRepository.findOneByLogin(thirdLogin).run {
 //            assertNotNull(this)
@@ -335,11 +353,11 @@ internal class SignUpAccountControllerTest {
 
         //netoyage des accounts et accountAuthorities à la fin du test
         accountRepository.findOneByEmail(defaultAccount.email!!).run {
-            accountAuthorityRepository.deleteAllByAccountId(this!!.id!!)
+            accountAuthorityRepository.deleteAllByAccountId(this.id!!)
             accountRepository.delete(this.toAccount())
         }
         assertEquals(0, accountRepository.count())
-        assertEquals(0, accountAuthorityRepository.count())
+        assertEquals(0, getCountAccountAuthority())
 
         /*
             // First user
@@ -435,6 +453,7 @@ internal class SignUpAccountControllerTest {
      */
     }
 
+
 //    /*
 //        @Test//test en renseignant l'authorité admin est ignoré
 //        void testRegisterAdminIsIgnored() throws Exception {
@@ -468,3 +487,21 @@ internal class SignUpAccountControllerTest {
 //
 
 }
+import backend.Constants.ROLE_USER
+import backend.Log.log
+import backend.data.Data.defaultAccount
+import backend.data.Data.defaultAccountEntity
+import backend.tdd.testLoader
+import kotlinx.coroutines.reactor.awaitSingle
+import kotlinx.coroutines.runBlocking
+import org.junit.jupiter.api.AfterAll
+import org.junit.jupiter.api.BeforeAll
+import org.springframework.beans.factory.getBean
+import org.springframework.boot.runApplication
+import org.springframework.context.ConfigurableApplicationContext
+import org.springframework.data.r2dbc.core.R2dbcEntityTemplate
+import org.springframework.http.MediaType
+import org.springframework.test.web.reactive.server.WebTestClient
+import org.springframework.test.web.reactive.server.returnResult
+import kotlin.test.*
+

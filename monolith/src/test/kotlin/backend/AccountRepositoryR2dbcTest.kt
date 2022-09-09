@@ -51,7 +51,8 @@ class AccountAuthorityRepositoryR2dbc(
 
 @Repository
 class AccountRepositoryR2dbc(
-    private val dao: R2dbcEntityTemplate, private val authorityRepository: AuthorityRepository
+    private val dao: R2dbcEntityTemplate,
+//    private val authorityRepository: AuthorityRepository
 ) : AccountRepository {
     override suspend fun save(model: AccountCredentials): Account? =
         dao.insert(AccountEntity(model)).awaitSingleOrNull()?.toModel()
