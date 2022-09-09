@@ -19,13 +19,13 @@ class AccountRepositoryR2dbc(
     private val repository: R2dbcEntityTemplate,
     private val authorityRepository: AuthorityRepository
 ) : AccountRepository {
+    override suspend fun save(model: AccountCredentials): Account? {
+        TODO("Not yet implemented")
+    }
     override suspend fun count(): Long {
         TODO("Not yet implemented")
     }
     override suspend fun delete(account: Account) {
-        TODO("Not yet implemented")
-    }
-    override suspend fun save(model: AccountCredentials): Account? {
         TODO("Not yet implemented")
     }
     override suspend fun findOneByLogin(login: String): AccountCredentials? {
@@ -36,16 +36,16 @@ class AccountRepositoryR2dbc(
         TODO("Not yet implemented")
     }
 
-    override suspend fun findActivationKeyByLogin(login: String): String? {
-        TODO("Not yet implemented")
-    }
-
-
     override suspend fun suppress(account: Account) {
         TODO("Not yet implemented")
     }
 
+
     override suspend fun signup(model: AccountCredentials) {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun findActivationKeyByLogin(login: String): String? {
         TODO("Not yet implemented")
     }
 
@@ -67,9 +67,6 @@ internal class AccountRepositoryR2dbcTest {
     @AfterAll
     fun `arrête le serveur`() = context.close()
 
-    @Test
-    fun findOneByLogin(): Unit = runBlocking {
-    }
     @BeforeEach
     fun setUp() {
         createAccounts(Data.accounts,repository)
@@ -100,13 +97,12 @@ internal class AccountRepositoryR2dbcTest {
     fun delete() {
     }
 
-
     @Test
     fun findOneByEmail() {
     }
 
     @Test
-    fun findActivationKeyByLogin() {
+    fun findOneByLogin(): Unit = runBlocking {
     }
 
     @Test
@@ -115,6 +111,10 @@ internal class AccountRepositoryR2dbcTest {
 
     @Test
     fun signup() {
+    }
+
+    @Test
+    fun findActivationKeyByLogin() {
     }
 
     @Test
