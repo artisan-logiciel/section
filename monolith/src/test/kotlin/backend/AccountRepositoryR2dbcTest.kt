@@ -2,8 +2,8 @@
 
 package backend
 
-import backend.data.Data
 import backend.tdd.testLoader
+import kotlinx.coroutines.reactor.mono
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.AfterEach
@@ -13,6 +13,7 @@ import org.springframework.boot.runApplication
 import org.springframework.context.ConfigurableApplicationContext
 import org.springframework.data.r2dbc.core.R2dbcEntityTemplate
 import org.springframework.data.r2dbc.core.select
+import org.springframework.r2dbc.core.await
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -64,8 +65,14 @@ internal fun createAccounts(accounts: Set<AccountCredentials>, repository: R2dbc
     assertEquals(accounts.size.toLong(), repository.select<AccountEntity>().count().block())
 }
 
-internal fun deleteAccounts(accounts: Set<AccountCredentials>, repository: R2dbcEntityTemplate) {
-    // TODO("Not yet implemented")
+internal fun deleteAccounts(repository: R2dbcEntityTemplate) {
+    if (repository.select<AccountEntity>().count().block()!! > 0) {
+        mono {
+            repository.databaseClient
+                .sql("DELETE FROM user_authority")
+                .await()
+        }.block()
+    }
 }
 
 internal class AccountRepositoryR2dbcTest {
@@ -83,7 +90,7 @@ internal class AccountRepositoryR2dbcTest {
 
 
     @AfterEach
-    fun tearDown() = deleteAccounts(Data.accounts, repository)
+    fun tearDown() = deleteAccounts(repository)
 
 
     @Test
