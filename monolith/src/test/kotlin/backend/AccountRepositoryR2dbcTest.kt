@@ -8,12 +8,11 @@ import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeAll
-import org.junit.jupiter.api.BeforeEach
+import org.springframework.beans.factory.getBean
 import org.springframework.boot.runApplication
 import org.springframework.context.ConfigurableApplicationContext
 import org.springframework.data.r2dbc.core.R2dbcEntityTemplate
 import kotlin.test.Test
-import org.springframework.beans.factory.getBean
 
 class AccountRepositoryR2dbc(
     private val repository: R2dbcEntityTemplate,
@@ -22,12 +21,15 @@ class AccountRepositoryR2dbc(
     override suspend fun save(model: AccountCredentials): Account? {
         TODO("Not yet implemented")
     }
+
     override suspend fun count(): Long {
         TODO("Not yet implemented")
     }
+
     override suspend fun delete(account: Account) {
         TODO("Not yet implemented")
     }
+
     override suspend fun findOneByLogin(login: String): AccountCredentials? {
         TODO("Not yet implemented")
     }
@@ -54,8 +56,16 @@ class AccountRepositoryR2dbc(
     }
 }
 
+internal fun createAccounts(accounts: Set<AccountCredentials>, repository: R2dbcEntityTemplate) {
+    TODO("Not yet implemented")
+}
+
+internal fun deleteAccounts(accounts: Set<AccountCredentials>, repository: R2dbcEntityTemplate) {
+    TODO("Not yet implemented")
+}
+
 internal class AccountRepositoryR2dbcTest {
-        private lateinit var context: ConfigurableApplicationContext
+    private lateinit var context: ConfigurableApplicationContext
 
     private val repository: R2dbcEntityTemplate by lazy { context.getBean() }
 
@@ -67,23 +77,10 @@ internal class AccountRepositoryR2dbcTest {
     @AfterAll
     fun `arrête le serveur`() = context.close()
 
-    @BeforeEach
-    fun setUp() {
-        createAccounts(Data.accounts,repository)
-    }
-
-    private fun createAccounts(accounts: Set<AccountCredentials>, repository: R2dbcEntityTemplate) {
-        TODO("Not yet implemented")
-    }
 
     @AfterEach
-    fun tearDown() {
-        deleteAccounts(Data.accounts,repository)
-    }
+    fun tearDown() = deleteAccounts(Data.accounts, repository)
 
-    private fun deleteAccounts(accounts: Set<AccountCredentials>,repository: R2dbcEntityTemplate) {
-        TODO("Not yet implemented")
-    }
 
     @Test
     fun save() {
