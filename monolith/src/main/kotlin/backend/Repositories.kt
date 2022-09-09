@@ -252,13 +252,13 @@ class AccountRepositoryInMemory(
 @Repository
 class AccountAuthorityRepositoryInMemory : AccountAuthorityRepository {
     companion object {
-        private val accountAuthorities by lazy { mutableSetOf<AccountAuthority>() }
+        private val accountAuthorities by lazy { mutableSetOf<AccountAuthorityEntity>() }
     }
 
     override suspend fun count(): Long = accountAuthorities.size.toLong()
 
     override suspend fun save(id: UUID, authority: String) {
-        accountAuthorities.add(AccountAuthority(userId = id, role = authority))
+        accountAuthorities.add(AccountAuthorityEntity(userId = id, role = authority))
     }
 
 

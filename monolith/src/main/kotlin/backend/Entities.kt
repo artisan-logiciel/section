@@ -66,7 +66,7 @@ data class EmailEntity(@Id val value: @EmailConstraint String) : Persistable<Str
 
 
 @Table("`user_authority`")
-data class AccountAuthority(
+data class AccountAuthorityEntity(
     @Id var id: Long? = null,
     @field:NotNull
     val userId: UUID,

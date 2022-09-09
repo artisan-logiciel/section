@@ -16,6 +16,7 @@ import org.springframework.boot.runApplication
 import org.springframework.context.ConfigurableApplicationContext
 import org.springframework.data.r2dbc.core.R2dbcEntityTemplate
 import org.springframework.data.r2dbc.core.awaitOneOrNull
+import org.springframework.data.r2dbc.core.delete
 import org.springframework.data.r2dbc.core.select
 import org.springframework.data.relational.core.query.Criteria
 import org.springframework.data.relational.core.query.Query
@@ -49,6 +50,14 @@ class AccountRepositoryR2dbc(
             .awaitOneOrNull()?.toCredentialsModel()
 
     override suspend fun suppress(account: Account) {
+        repository.delete<AccountAuthorityEntity>()
+            .matching(
+                Query.query(
+                    Criteria.where("userId")
+                        .`is`(account.id!!)
+                )
+            ).toMono().awaitSingle()
+        repository.delete<AccountEntity>().toMono().awaitSingle()
 
     }
 
