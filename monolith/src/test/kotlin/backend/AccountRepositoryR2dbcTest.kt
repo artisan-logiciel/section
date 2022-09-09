@@ -2,6 +2,7 @@
 
 package backend
 
+import backend.data.Data
 import backend.tdd.testLoader
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.AfterAll
@@ -71,10 +72,24 @@ internal class AccountRepositoryR2dbcTest {
     }
     @BeforeEach
     fun setUp() {
+        createAccounts(Data.accounts,repository)
+    }
+
+    private fun createAccounts(accounts: Set<AccountCredentials>, repository: R2dbcEntityTemplate) {
+        TODO("Not yet implemented")
     }
 
     @AfterEach
     fun tearDown() {
+        deleteAccounts(Data.accounts,repository)
+    }
+
+    private fun deleteAccounts(accounts: Set<AccountCredentials>,repository: R2dbcEntityTemplate) {
+        TODO("Not yet implemented")
+    }
+
+    @Test
+    fun save() {
     }
 
     @Test
@@ -83,10 +98,6 @@ internal class AccountRepositoryR2dbcTest {
 
     @Test
     fun delete() {
-    }
-
-    @Test
-    fun save() {
     }
 
 
