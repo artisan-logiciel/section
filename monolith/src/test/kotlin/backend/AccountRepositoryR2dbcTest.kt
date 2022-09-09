@@ -22,11 +22,11 @@ class AccountRepositoryR2dbc(
 ) : AccountRepository {
     override suspend fun save(model: AccountCredentials): Account? =
         // TODO("Not yet implemented")
-    null
+        null
 
     override suspend fun count(): Long
-        // TODO("Not yet implemented")
-    =-1L
+    // TODO("Not yet implemented")
+            = -1L
 
     override suspend fun delete(account: Account) {
         // TODO("Not yet implemented")
@@ -34,11 +34,11 @@ class AccountRepositoryR2dbc(
 
     override suspend fun findOneByLogin(login: String): AccountCredentials? =
         // TODO("Not yet implemented")
-    null
+        null
 
     override suspend fun findOneByEmail(email: String): AccountCredentials? =
         // TODO("Not yet implemented")
-    null
+        null
 
     override suspend fun suppress(account: Account) {
         // TODO("Not yet implemented")
@@ -51,15 +51,17 @@ class AccountRepositoryR2dbc(
 
     override suspend fun findActivationKeyByLogin(login: String): String? =
         // TODO("Not yet implemented")
-    null
+        null
 
     override suspend fun findOneActivationKey(key: String): AccountCredentials? =
         // TODO("Not yet implemented")
-    null
+        null
 }
 
 internal fun createAccounts(accounts: Set<AccountCredentials>, repository: R2dbcEntityTemplate) {
-    // TODO("Not yet implemented")
+    assertEquals(0, repository.select<AccountEntity>().count().block())
+    accounts.map { repository.insert(AccountEntity(it)).block() }
+    assertEquals(accounts.size.toLong(), repository.select<AccountEntity>().count().block())
 }
 
 internal fun deleteAccounts(accounts: Set<AccountCredentials>, repository: R2dbcEntityTemplate) {
@@ -86,9 +88,7 @@ internal class AccountRepositoryR2dbcTest {
 
     @Test
     fun save() {
-        assertEquals(0, repository.select<AccountEntity>().count().block())
-        repository.insert(Data.defaultAccountEntity).block()
-        assertEquals(1, repository.select<AccountEntity>().count().block())
+
     }
 
     @Test
