@@ -105,7 +105,7 @@ internal fun createAccounts(accounts: Set<AccountCredentials>, repository: R2dbc
     assertEquals(accounts.size.toLong(), repository.select<AccountEntity>().count().block())
 }
 
-internal fun deleteAccounts(repository: R2dbcEntityTemplate) {
+internal suspend fun deleteAccounts(repository: R2dbcEntityTemplate) {
     if (repository.select<AccountEntity>().count().block()!! > 0) mono {
         repository.databaseClient.run {
             sql("DELETE FROM user_authority").toMono().block()

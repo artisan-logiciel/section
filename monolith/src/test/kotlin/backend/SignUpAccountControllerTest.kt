@@ -10,6 +10,7 @@ import backend.data.Data.defaultAccount
 import backend.data.Data.defaultAccountEntity
 import backend.tdd.testLoader
 import kotlinx.coroutines.reactor.awaitSingle
+import kotlinx.coroutines.reactor.mono
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
@@ -22,6 +23,7 @@ import org.springframework.data.r2dbc.core.select
 import org.springframework.http.MediaType
 import org.springframework.test.web.reactive.server.WebTestClient
 import org.springframework.test.web.reactive.server.returnResult
+import java.util.*
 import kotlin.test.*
 
 internal class SignUpAccountControllerTest {
@@ -54,7 +56,7 @@ internal class SignUpAccountControllerTest {
     private suspend fun countAccountAuthority(dao: R2dbcEntityTemplate): Int =
         dao.select(AccountAuthorityEntity::class.java).count().awaitSingle().toInt()
 
-    private suspend fun deleteAllAccountAuthority(): Unit = deleteAllAccountAuthority(context.getBean())
+//    private suspend fun deleteAllAccountAuthority(): Unit = deleteAllAccountAuthority(context.getBean())
 
     private suspend fun deleteAllAccountAuthority(dao: R2dbcEntityTemplate) {
         dao.delete(AccountAuthorityEntity::class.java).allAndAwait()
@@ -114,15 +116,25 @@ internal class SignUpAccountControllerTest {
             .run { responseBodyContent?.isEmpty()?.let { assertTrue(it) } }
         assertEquals(countUserBefore + 1, countAccount())
         assertEquals(countUserAuthBefore + 1, countAccountAuthority())
-        assertFalse(accountRepository.findOneByEmail(defaultAccount.email!!)!!.activated)
+        assertFalse(findOneByEmail(defaultAccount.email!!)!!.activated)
         //clean accounts and accountAuthorities after test
-        accountRepository.findOneByLogin(defaultAccount.login!!).run {
-            deleteAllAccountAuthority()
-            accountRepository.delete(this.toAccount())
+        findOneByLogin(defaultAccount.login!!).run {
+            mono {
+                deleteAllAccountAuthority(dao)
+                deleteAccounts(dao)                
+            }
         }
 
         assertEquals(countUserAuthBefore, countAccountAuthority())
         assertEquals(countUserBefore, countAccount())
+    }
+
+    private suspend fun findOneByLogin(login: String): AccountCredentials? {
+        TODO("Not yet implemented")
+    }
+
+    private suspend fun findOneByEmail(email: String): AccountCredentials? {
+        TODO("Not yet implemented")
     }
 
     @Test
@@ -193,13 +205,13 @@ internal class SignUpAccountControllerTest {
     fun `test register account activé avec un email existant`(): Unit = runBlocking {
         assertEquals(0, countAccount())
         assertEquals(0, countAccountAuthority())
-        accountAuthorityRepository.save(
-            accountRepository.save(defaultAccount.copy(activated = true))?.id!!,
+        saveAccountAuthority(
+            saveAccount(defaultAccount.copy(activated = true))?.id!!,
             ROLE_USER
         )
         assertEquals(1, countAccount())
         assertEquals(1, countAccountAuthority())
-        assertTrue(accountRepository.findOneByEmail(defaultAccount.email!!)!!.activated)
+        assertTrue(findOneByEmail(defaultAccount.email!!)!!.activated)
 
         client
             .post()
@@ -212,23 +224,27 @@ internal class SignUpAccountControllerTest {
             .returnResult<Unit>()
             .run { responseBodyContent?.isNotEmpty()?.let { assertTrue(it) } }
 
-        accountRepository.findOneByLogin(defaultAccount.login!!).run {
-            accountAuthorityRepository.deleteAllByAccountId(this.id!!)
-            accountRepository.delete(this.toAccount())
+        findOneByLogin(defaultAccount.login!!).run {
+            deleteAllAccountAuthority(dao)//accountAuthorityRepository.deleteAllByAccountId(this.id!!)
+            deleteAccounts(dao)// accountRepository.delete(this.toAccount())
         }
         assertEquals(0, countAccountAuthority())
         assertEquals(0, countAccount())
+    }
+
+    private fun saveAccount(model: AccountCredentials): Account? {
+        TODO("Not yet implemented")
     }
 
     @Test
     fun `test register account activé avec un login existant`(): Unit = runBlocking {
         assertEquals(0, countAccount())
         assertEquals(0, countAccountAuthority())
-        accountAuthorityRepository.save(
-            accountRepository.save(defaultAccount.copy(activated = true))?.id!!,
+        saveAccountAuthority(
+            saveAccount(defaultAccount.copy(activated = true))?.id!!,
             ROLE_USER
         )
-        assertTrue(accountRepository.findOneByEmail(defaultAccount.email!!)!!.activated)
+        assertTrue(findOneByEmail(defaultAccount.email!!)!!.activated)
         assertEquals(1, countAccount())
         assertEquals(1, countAccountAuthority())
 
@@ -243,12 +259,16 @@ internal class SignUpAccountControllerTest {
             .returnResult<Unit>()
             .run { responseBodyContent?.isNotEmpty()?.let { assertTrue(it) } }
 
-        accountRepository.findOneByLogin(defaultAccount.login!!).run {
-            accountAuthorityRepository.deleteAllByAccountId(this.id!!)
-            accountRepository.delete(this.toAccount())
-        }
+        deleteAllAccountAuthority(dao)
+        deleteAccounts(dao)
+
+
         assertEquals(0, countAccountAuthority())
         assertEquals(0, countAccount())
+    }
+
+    private fun saveAccountAuthority(id: UUID, roleUser: String) {
+        TODO("Not yet implemented")
     }
 
     @Test
@@ -270,7 +290,7 @@ internal class SignUpAccountControllerTest {
             .run { responseBodyContent?.isEmpty()?.let { assertTrue(it) } }
         assertEquals(1, countAccount())
         assertEquals(1, countAccountAuthority())
-        assertFalse(accountRepository.findOneByEmail(defaultAccount.email!!)!!.activated)
+        assertFalse(findOneByEmail(defaultAccount.email!!)!!.activated)
 
         // Duplicate email, different login
         // Register second (non activated) user
@@ -287,12 +307,12 @@ internal class SignUpAccountControllerTest {
             .run { responseBodyContent?.isEmpty()?.let { assertTrue(it) } }
         assertEquals(1, countAccount())
         assertEquals(1, countAccountAuthority())
-        assertNull(accountRepository.findOneByLogin(defaultAccount.login!!))
-        accountRepository.findOneByLogin(secondLogin).run {
+        assertNull(findOneByLogin(defaultAccount.login!!))
+        findOneByLogin(secondLogin).run {
             assertNotNull(this)
             assertEquals(defaultAccount.email!!, email)
         }
-        assertFalse(accountRepository.findOneByEmail(defaultAccount.email!!)!!.activated)
+        assertFalse(findOneByEmail(defaultAccount.email!!)!!.activated)
 
 
         // Duplicate email - with uppercase email address
@@ -315,21 +335,21 @@ internal class SignUpAccountControllerTest {
             .run { responseBodyContent?.isEmpty()?.let { assertTrue(it) } }
         assertEquals(1, countAccount())
         assertEquals(1, countAccountAuthority())
-        assertNull(accountRepository.findOneByLogin(secondLogin))
-        accountRepository.findOneByLogin(thirdLogin).run {
+        assertNull(findOneByLogin(secondLogin))
+        findOneByLogin(thirdLogin).run {
             assertNotNull(this)
             assertEquals(defaultAccount.email!!.uppercase(), email)
         }
         //activate third
-        accountRepository.save(accountRepository.findOneByEmail(defaultAccount.email!!)!!.copy(activated = true))
+        saveAccount(findOneByEmail(defaultAccount.email!!)!!.copy(activated = true))
 
 
         log.info(
-            "accountRepository.findOneByEmail(defaultAccount.email!!): ${
-                accountRepository.findOneByEmail(defaultAccount.email!!)
+            "findOneByEmail(defaultAccount.email!!): ${
+                findOneByEmail(defaultAccount.email!!)
             }"
         )
-//        assertTrue(accountRepository.findOneByEmail(defaultAccount.email!!)!!.activated)
+//        assertTrue(findOneByEmail(defaultAccount.email!!)!!.activated)
 //
 //        // Register 4th (already activated) user
 //        client
@@ -344,16 +364,16 @@ internal class SignUpAccountControllerTest {
 //            .run { responseBodyContent?.isEmpty()?.let { assertTrue(it) } }
         assertEquals(1, countAccount())
         assertEquals(1, countAccountAuthority())
-//        assertNull(accountRepository.findOneByLogin(secondLogin))
-//        accountRepository.findOneByLogin(thirdLogin).run {
+//        assertNull(findOneByLogin(secondLogin))
+//        findOneByLogin(thirdLogin).run {
 //            assertNotNull(this)
 ////            assertEquals(defaultAccount.email!!.lowercase(), email!!.lowercase())
 //        }
-//        assertTrue(accountRepository.findOneByEmail(defaultAccount.email!!)!!.activated)
+//        assertTrue(findOneByEmail(defaultAccount.email!!)!!.activated)
 
         //netoyage des accounts et accountAuthorities à la fin du test
         findOneByEmail(defaultAccount.email!!).run {
-            deleteAllAccountAuthority()
+            mono {  deleteAllAccountAuthority(dao)}.block()
             deleteAccounts(dao)
         }
         assertEquals(0, countAccount())
