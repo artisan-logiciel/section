@@ -5,14 +5,14 @@ package backend
 
 import backend.AuthorityRecord.Companion.ROLE_COLUMN
 import backend.Constants.ROLE_USER
+import kotlinx.coroutines.reactor.awaitSingle
+import kotlinx.coroutines.reactor.awaitSingleOrNull
+import org.springframework.data.r2dbc.core.*
 import org.springframework.stereotype.Repository
 import java.util.*
-import org.springframework.data.r2dbc.core.R2dbcEntityTemplate
-import org.springframework.data.r2dbc.core.awaitOneOrNull
 import org.springframework.data.relational.core.query.Criteria
 import org.springframework.data.relational.core.query.Query
-
-
+import reactor.kotlin.core.publisher.toMono
 
 
 interface AuthorityRepository {
@@ -48,6 +48,82 @@ interface AccountAuthorityRepository {
     suspend fun deleteAllByAccountId(id: UUID): Unit
 }
 
+
+@Repository
+class AccountAuthorityRepositoryR2dbc(
+    private val dao: R2dbcEntityTemplate,
+) : AccountAuthorityRepository {
+    override suspend fun save(id: UUID, authority: String) {
+        dao.insert(AccountAuthorityEntity(userId = id, role = authority)).awaitSingle()
+    }
+
+    override suspend fun delete(id: UUID, authority: String) {
+        dao.delete(AccountAuthorityEntity(userId = id, role = authority)).awaitSingle()
+    }
+
+    override suspend fun count(): Long = dao.select<AccountAuthorityEntity>().count().awaitSingle()
+
+
+    override suspend fun deleteAll() {
+        dao.delete<AccountAuthorityEntity>().allAndAwait()
+    }
+
+    override suspend fun deleteAllByAccountId(id: UUID) {
+        dao.delete<AccountAuthorityEntity>().matching(Query.query(Criteria.where("userId").`is`(id))).allAndAwait()
+    }
+
+}
+
+
+@Repository
+class AccountRepositoryR2dbc(
+    private val dao: R2dbcEntityTemplate,
+//    private val authorityRepository: AuthorityRepository
+) : AccountRepository {
+    override suspend fun save(model: AccountCredentials): Account? =
+        dao.insert(AccountEntity(model)).awaitSingleOrNull()?.toModel()
+
+    override suspend fun count(): Long = dao.select<AccountEntity>().count().awaitSingle()
+
+    override suspend fun delete(account: Account) {
+        dao.delete(account).awaitSingleOrNull()
+    }
+
+    override suspend fun findOneByLogin(login: String): AccountCredentials? =
+        dao.select<AccountEntity>().matching(Query.query(Criteria.where("login").`is`(login))).awaitOneOrNull()?.toCredentialsModel()
+
+
+    override suspend fun findOneByEmail(email: String): AccountCredentials? =
+        dao.select<AccountEntity>().matching(Query.query(Criteria.where("email").`is`(email))).awaitOneOrNull()?.toCredentialsModel()
+
+    override suspend fun suppress(account: Account) {
+        dao.run {
+            delete<AccountAuthorityEntity>().matching(Query.query(Criteria.where("userId").`is`(account.id!!))).toMono().awaitSingle()
+            delete<AccountEntity>().toMono().awaitSingle()
+        }
+    }
+
+
+    override suspend fun signup(model: AccountCredentials) {
+        dao.run {
+            AccountEntity(model).run {
+                val id = insert(this).toMono().awaitSingleOrNull()?.id
+                if (id != null) authorities?.map {
+                    insert(AccountAuthorityEntity(userId = id, role = it.role)).awaitSingle()
+                }
+            }
+
+        }
+    }
+
+    override suspend fun findActivationKeyByLogin(login: String): String? =
+        dao.select<AccountEntity>().matching(Query.query(Criteria.where("login").`is`(login))).awaitOneOrNull()?.activationKey
+
+
+    override suspend fun findOneActivationKey(key: String): AccountCredentials? =
+        dao.select<AccountEntity>().matching(Query.query(Criteria.where("activationKey").`is`(key))).awaitOneOrNull()
+            ?.toCredentialsModel()
+}
 @Repository
 class AuthorityRepositoryR2dbc(
    private val repository: R2dbcEntityTemplate
@@ -60,222 +136,222 @@ class AuthorityRepositoryR2dbc(
 
 
 //@Repository
-class AccountRepositoryInMemory(
-    private val accountAuthorityRepository: AccountAuthorityRepository,
-    private val authorityRepository: AuthorityRepository
-) : AccountRepository {
-
-    companion object {
-        private val accounts by lazy { mutableSetOf<AccountRecord<AuthorityRecord>>() }
-    }
-
-    override suspend fun findOneByLogin(login: String): AccountCredentials? =
-        accounts.find { login.equals(it.login,  true) }?.toCredentialsModel()
-
-    override suspend fun findOneByEmail(email: String): AccountCredentials? =
-        accounts.find { email.equals(it.email,  true) }?.toCredentialsModel()
-
-
-    override suspend fun save(model: AccountCredentials): Account? =
-        create(model).run {
-            when {
-                this != null -> return@run this
-                else -> update(model)
-            }
-        }
-
-    private fun create(model: AccountCredentials) =
-        if (`mail & login do not exist`(model))
-            model.copy(id = UUID.randomUUID()).apply {
-                @Suppress("UNCHECKED_CAST")
-                accounts += AccountEntity(this) as AccountRecord<AuthorityRecord>
-            }.toAccount() else null
-
-    private fun `mail & login do not exist`(model: AccountCredentials) =
-        accounts.none {
-            it.login.equals(model.login,  true)
-                    && it.email.equals(model.email,  true)
-        }
-
-
-    private fun `mail exists and login exists`(model: AccountCredentials) =
-        accounts.any {
-            model.email.equals(it.email,  true)
-                    && model.login.equals(it.login,  true)
-        }
-
-
-    private fun `mail exists and login does not`(model: AccountCredentials) =
-        accounts.any {
-            model.email.equals(it.email,  true)
-                    && !model.login.equals(it.login,  true)
-        }
-
-
-    private fun `mail does not exist and login exists`(model: AccountCredentials) =
-        accounts.any {
-            !model.email.equals(it.email,  true)
-                    && model.login.equals(it.login,  true)
-        }
-
-    private fun update(
-        model: AccountCredentials,
-    ): Account? = when {
-        `mail exists and login does not`(model) -> changeLogin(model)?.run { patch(this) }
-        `mail does not exist and login exists`(model) -> changeEmail(model)?.run { patch(this) }
-        `mail exists and login exists`(model) -> patch(model)
-        else -> null
-    }
-
-    private fun changeLogin(
-        model: AccountCredentials,
-    ): AccountCredentials? =
-        try {
-            @Suppress("CAST_NEVER_SUCCEEDS")
-            (accounts.first { model.email.equals(it.email,  true) } as AccountCredentials).run {
-                val retrieved: AccountCredentials = copy(login = model.login)
-                accounts.remove(this as AccountRecord<AuthorityRecord>?)
-                (retrieved as AccountRecord<AuthorityRecord>?)?.run { accounts.add(this) }
-                model
-            }
-        } catch (_: NoSuchElementException) {
-            null
-        }
-
-
-    private fun changeEmail(
-        model: AccountCredentials,
-    ): AccountCredentials? = try {
-        @Suppress("CAST_NEVER_SUCCEEDS")
-        (accounts.first { model.login.equals(it.login,  true) } as AccountCredentials).run {
-            val retrieved: AccountCredentials = copy(email = model.email)
-            accounts.remove(this as AccountRecord<AuthorityRecord>?)
-            (retrieved as AccountRecord<AuthorityRecord>?)?.run { accounts.add(this) }
-            model
-        }
-    } catch (_: NoSuchElementException) {
-        null
-    }
-
-    private fun patch(
-        model: AccountCredentials?,
-    ): Account? =
-        model.run {
-            val retrieved = accounts.find { this?.email?.equals(it.email,  true)!! }
-            accounts.remove(accounts.find { this?.email?.equals(it.email,  true)!! })
-            ((retrieved?.toCredentialsModel())?.copy(
-                password = `if password is null or empty then no change`(model, retrieved.toCredentialsModel()),
-                activationKey = `switch activationKey case then patch`(model, retrieved.toCredentialsModel()),
-                authorities = `if authorities are null or empty then no change`(model, retrieved.toCredentialsModel())
-            ).apply {
-                @Suppress("UNCHECKED_CAST")
-                accounts.add(this?.let { AccountEntity(it) } as AccountRecord<AuthorityRecord>)
-            }?.toAccount())
-        }
-
-
-    private fun `if password is null or empty then no change`(
-        model: AccountCredentials?,
-        retrieved: AccountCredentials
-    ): String = when {
-        model == null -> retrieved.password!!
-        model.password == null -> retrieved.password!!
-        model.password.isNotEmpty() -> model.password
-        else -> retrieved.password!!
-    }
-
-    @Suppress("FunctionName")
-    private fun `switch activationKey case then patch`(
-        model: AccountCredentials?,
-        retrieved: AccountCredentials
-    ): String? = when {
-        model == null -> null
-        model.activationKey == null -> null
-        !retrieved.activated
-                && retrieved.activationKey.isNullOrBlank()
-                && model.activationKey.isNotEmpty() -> model.activationKey
-
-        !retrieved.activated
-                && !retrieved.activationKey.isNullOrBlank()
-                && model.activationKey.isNotEmpty() -> retrieved.activationKey
-
-        else -> null
-    }
-
-    private fun `if authorities are null or empty then no change`(
-        model: AccountCredentials?,
-        retrieved: AccountCredentials
-    ): Set<String> {
-        if (model != null) {
-            if (model.authorities != null) {
-                if (model.authorities.isNotEmpty() && model.authorities.contains(ROLE_USER))
-                    return model.authorities
-                if (retrieved.authorities != null)
-                    if (retrieved.authorities.isNotEmpty()
-                        && retrieved.authorities.contains(ROLE_USER)
-                        && !model.authorities.contains(ROLE_USER)
-                    ) return retrieved.authorities
-            } else
-                if (!retrieved.authorities.isNullOrEmpty()
-                    && retrieved.authorities.contains(ROLE_USER)
-                ) return retrieved.authorities
-        }
-        return emptySet()
-    }
-
-
-    override suspend fun delete(account: Account) {
-        accounts.apply { if (isNotEmpty()) remove(find { it.id == account.id }) }
-    }
-
-    override suspend fun findActivationKeyByLogin(login: String): String? =
-        accounts.find {
-            it.login.equals(login,  true)
-        }?.activationKey
-
-    override suspend fun count(): Long = accounts.size.toLong()
-    override suspend fun suppress(account: Account) {
-        accountAuthorityRepository.deleteAllByAccountId(account.id!!)
-        delete(account)
-    }
-
-    override suspend fun signup(model: AccountCredentials) {
-        accountAuthorityRepository.save(save(model)?.id!!, ROLE_USER)
-    }
-
-    override suspend fun findOneActivationKey(key: String): AccountCredentials? {
-        TODO("Not yet implemented")
-    }
-}
-
-
-@Repository
-class AccountAuthorityRepositoryInMemory : AccountAuthorityRepository {
-    companion object {
-        private val accountAuthorities by lazy { mutableSetOf<AccountAuthorityEntity>() }
-    }
-
-    override suspend fun count(): Long = accountAuthorities.size.toLong()
-
-    override suspend fun save(id: UUID, authority: String) {
-        accountAuthorities.add(AccountAuthorityEntity(userId = id, role = authority))
-    }
-
-
-    override suspend fun delete(id: UUID, authority: String): Unit =
-        accountAuthorities.run {
-            filter { it.userId == id && it.role == authority }
-                .map { remove(it) }
-        }
-
-
-    override suspend fun deleteAll() = accountAuthorities.clear()
-
-
-    override suspend fun deleteAllByAccountId(id: UUID): Unit =
-        accountAuthorities.run {
-            filter { it.userId == id }
-                .map { remove(it) }
-        }
-
-}
+//class AccountRepositoryInMemory(
+//    private val accountAuthorityRepository: AccountAuthorityRepository,
+//    private val authorityRepository: AuthorityRepository
+//) : AccountRepository {
+//
+//    companion object {
+//        private val accounts by lazy { mutableSetOf<AccountRecord<AuthorityRecord>>() }
+//    }
+//
+//    override suspend fun findOneByLogin(login: String): AccountCredentials? =
+//        accounts.find { login.equals(it.login,  true) }?.toCredentialsModel()
+//
+//    override suspend fun findOneByEmail(email: String): AccountCredentials? =
+//        accounts.find { email.equals(it.email,  true) }?.toCredentialsModel()
+//
+//
+//    override suspend fun save(model: AccountCredentials): Account? =
+//        create(model).run {
+//            when {
+//                this != null -> return@run this
+//                else -> update(model)
+//            }
+//        }
+//
+//    private fun create(model: AccountCredentials) =
+//        if (`mail & login do not exist`(model))
+//            model.copy(id = UUID.randomUUID()).apply {
+//                @Suppress("UNCHECKED_CAST")
+//                accounts += AccountEntity(this) as AccountRecord<AuthorityRecord>
+//            }.toAccount() else null
+//
+//    private fun `mail & login do not exist`(model: AccountCredentials) =
+//        accounts.none {
+//            it.login.equals(model.login,  true)
+//                    && it.email.equals(model.email,  true)
+//        }
+//
+//
+//    private fun `mail exists and login exists`(model: AccountCredentials) =
+//        accounts.any {
+//            model.email.equals(it.email,  true)
+//                    && model.login.equals(it.login,  true)
+//        }
+//
+//
+//    private fun `mail exists and login does not`(model: AccountCredentials) =
+//        accounts.any {
+//            model.email.equals(it.email,  true)
+//                    && !model.login.equals(it.login,  true)
+//        }
+//
+//
+//    private fun `mail does not exist and login exists`(model: AccountCredentials) =
+//        accounts.any {
+//            !model.email.equals(it.email,  true)
+//                    && model.login.equals(it.login,  true)
+//        }
+//
+//    private fun update(
+//        model: AccountCredentials,
+//    ): Account? = when {
+//        `mail exists and login does not`(model) -> changeLogin(model)?.run { patch(this) }
+//        `mail does not exist and login exists`(model) -> changeEmail(model)?.run { patch(this) }
+//        `mail exists and login exists`(model) -> patch(model)
+//        else -> null
+//    }
+//
+//    private fun changeLogin(
+//        model: AccountCredentials,
+//    ): AccountCredentials? =
+//        try {
+//            @Suppress("CAST_NEVER_SUCCEEDS")
+//            (accounts.first { model.email.equals(it.email,  true) } as AccountCredentials).run {
+//                val retrieved: AccountCredentials = copy(login = model.login)
+//                accounts.remove(this as AccountRecord<AuthorityRecord>?)
+//                (retrieved as AccountRecord<AuthorityRecord>?)?.run { accounts.add(this) }
+//                model
+//            }
+//        } catch (_: NoSuchElementException) {
+//            null
+//        }
+//
+//
+//    private fun changeEmail(
+//        model: AccountCredentials,
+//    ): AccountCredentials? = try {
+//        @Suppress("CAST_NEVER_SUCCEEDS")
+//        (accounts.first { model.login.equals(it.login,  true) } as AccountCredentials).run {
+//            val retrieved: AccountCredentials = copy(email = model.email)
+//            accounts.remove(this as AccountRecord<AuthorityRecord>?)
+//            (retrieved as AccountRecord<AuthorityRecord>?)?.run { accounts.add(this) }
+//            model
+//        }
+//    } catch (_: NoSuchElementException) {
+//        null
+//    }
+//
+//    private fun patch(
+//        model: AccountCredentials?,
+//    ): Account? =
+//        model.run {
+//            val retrieved = accounts.find { this?.email?.equals(it.email,  true)!! }
+//            accounts.remove(accounts.find { this?.email?.equals(it.email,  true)!! })
+//            ((retrieved?.toCredentialsModel())?.copy(
+//                password = `if password is null or empty then no change`(model, retrieved.toCredentialsModel()),
+//                activationKey = `switch activationKey case then patch`(model, retrieved.toCredentialsModel()),
+//                authorities = `if authorities are null or empty then no change`(model, retrieved.toCredentialsModel())
+//            ).apply {
+//                @Suppress("UNCHECKED_CAST")
+//                accounts.add(this?.let { AccountEntity(it) } as AccountRecord<AuthorityRecord>)
+//            }?.toAccount())
+//        }
+//
+//
+//    private fun `if password is null or empty then no change`(
+//        model: AccountCredentials?,
+//        retrieved: AccountCredentials
+//    ): String = when {
+//        model == null -> retrieved.password!!
+//        model.password == null -> retrieved.password!!
+//        model.password.isNotEmpty() -> model.password
+//        else -> retrieved.password!!
+//    }
+//
+//    @Suppress("FunctionName")
+//    private fun `switch activationKey case then patch`(
+//        model: AccountCredentials?,
+//        retrieved: AccountCredentials
+//    ): String? = when {
+//        model == null -> null
+//        model.activationKey == null -> null
+//        !retrieved.activated
+//                && retrieved.activationKey.isNullOrBlank()
+//                && model.activationKey.isNotEmpty() -> model.activationKey
+//
+//        !retrieved.activated
+//                && !retrieved.activationKey.isNullOrBlank()
+//                && model.activationKey.isNotEmpty() -> retrieved.activationKey
+//
+//        else -> null
+//    }
+//
+//    private fun `if authorities are null or empty then no change`(
+//        model: AccountCredentials?,
+//        retrieved: AccountCredentials
+//    ): Set<String> {
+//        if (model != null) {
+//            if (model.authorities != null) {
+//                if (model.authorities.isNotEmpty() && model.authorities.contains(ROLE_USER))
+//                    return model.authorities
+//                if (retrieved.authorities != null)
+//                    if (retrieved.authorities.isNotEmpty()
+//                        && retrieved.authorities.contains(ROLE_USER)
+//                        && !model.authorities.contains(ROLE_USER)
+//                    ) return retrieved.authorities
+//            } else
+//                if (!retrieved.authorities.isNullOrEmpty()
+//                    && retrieved.authorities.contains(ROLE_USER)
+//                ) return retrieved.authorities
+//        }
+//        return emptySet()
+//    }
+//
+//
+//    override suspend fun delete(account: Account) {
+//        accounts.apply { if (isNotEmpty()) remove(find { it.id == account.id }) }
+//    }
+//
+//    override suspend fun findActivationKeyByLogin(login: String): String? =
+//        accounts.find {
+//            it.login.equals(login,  true)
+//        }?.activationKey
+//
+//    override suspend fun count(): Long = accounts.size.toLong()
+//    override suspend fun suppress(account: Account) {
+//        accountAuthorityRepository.deleteAllByAccountId(account.id!!)
+//        delete(account)
+//    }
+//
+//    override suspend fun signup(model: AccountCredentials) {
+//        accountAuthorityRepository.save(save(model)?.id!!, ROLE_USER)
+//    }
+//
+//    override suspend fun findOneActivationKey(key: String): AccountCredentials? {
+//        TODO("Not yet implemented")
+//    }
+//}
+//
+//
+//@Repository
+//class AccountAuthorityRepositoryInMemory : AccountAuthorityRepository {
+//    companion object {
+//        private val accountAuthorities by lazy { mutableSetOf<AccountAuthorityEntity>() }
+//    }
+//
+//    override suspend fun count(): Long = accountAuthorities.size.toLong()
+//
+//    override suspend fun save(id: UUID, authority: String) {
+//        accountAuthorities.add(AccountAuthorityEntity(userId = id, role = authority))
+//    }
+//
+//
+//    override suspend fun delete(id: UUID, authority: String): Unit =
+//        accountAuthorities.run {
+//            filter { it.userId == id && it.role == authority }
+//                .map { remove(it) }
+//        }
+//
+//
+//    override suspend fun deleteAll() = accountAuthorities.clear()
+//
+//
+//    override suspend fun deleteAllByAccountId(id: UUID): Unit =
+//        accountAuthorities.run {
+//            filter { it.userId == id }
+//                .map { remove(it) }
+//        }
+//
+//}
