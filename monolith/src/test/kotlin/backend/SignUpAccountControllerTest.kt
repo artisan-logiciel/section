@@ -36,8 +36,8 @@ internal class SignUpAccountControllerTest {
     }
 
     //En controlant l'implementation désiré
-    private val accountRepository: AccountRepository by lazy { context.getBean<AccountRepositoryInMemory>() }
-    private val accountAuthorityRepository: AccountAuthorityRepository by lazy { context.getBean<AccountAuthorityRepositoryInMemory>() }
+    private val accountRepository: AccountRepository by lazy { context.getBean<AccountRepositoryR2dbc>() }
+    private val accountAuthorityRepository: AccountAuthorityRepository by lazy { context.getBean<AccountAuthorityRepositoryR2dbc>() }
     //En laissant le conteneur injecter la dépendance
 //    private val accountRepository: AccountRepository by lazy { context.getBean() }
 //    private val accountAuthorityRepository: AccountAuthorityRepository by lazy { context.getBean() }

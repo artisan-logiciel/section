@@ -18,14 +18,40 @@ import org.springframework.data.r2dbc.core.R2dbcEntityTemplate
 import org.springframework.data.r2dbc.core.awaitOneOrNull
 import org.springframework.data.r2dbc.core.delete
 import org.springframework.data.r2dbc.core.select
-import org.springframework.data.relational.core.query.Criteria
 import org.springframework.data.relational.core.query.Criteria.where
-import org.springframework.data.relational.core.query.Query
 import org.springframework.data.relational.core.query.Query.query
+import org.springframework.stereotype.Repository
 import reactor.kotlin.core.publisher.toMono
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import java.util.*
 
+@Repository
+class AccountAuthorityRepositoryR2dbc :AccountAuthorityRepository{
+    override suspend fun save(id: UUID, authority: String) {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun delete(id: UUID, authority: String) {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun count(): Long {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun deleteAll() {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun deleteAllByAccountId(id: UUID) {
+        TODO("Not yet implemented")
+    }
+
+}
+
+
+@Repository
 class AccountRepositoryR2dbc(
     private val repository: R2dbcEntityTemplate,
     private val authorityRepository: AuthorityRepository
@@ -72,12 +98,14 @@ class AccountRepositoryR2dbc(
         }
     }
 
-    override suspend fun findActivationKeyByLogin(login: String): String? {
-        return repository.select<AccountEntity>().matching(query(where("login").`is`(login)))
+    override suspend fun findActivationKeyByLogin(login: String): String? =
+        repository.select<AccountEntity>().matching(query(where("login").`is`(login)))
             .awaitOneOrNull()?.activationKey
-    }
 
-    override suspend fun findOneActivationKey(key: String): AccountCredentials? = null
+
+    override suspend fun findOneActivationKey(key: String): AccountCredentials? =
+        repository.select<AccountEntity>().matching(query(where("activationKey").`is`(key)))
+            .awaitOneOrNull()?.toCredentialsModel()
 }
 
 internal fun createAccounts(accounts: Set<AccountCredentials>, repository: R2dbcEntityTemplate) {

@@ -59,7 +59,7 @@ class AuthorityRepositoryR2dbc(
 }
 
 
-@Repository
+//@Repository
 class AccountRepositoryInMemory(
     private val accountAuthorityRepository: AccountAuthorityRepository,
     private val authorityRepository: AuthorityRepository
