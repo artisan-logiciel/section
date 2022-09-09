@@ -1,8 +1,7 @@
+##############################################################################
 backend:
-  message: hello
-  item: item
-#  message: go visit https://www.cheroliv.com
-#  item: monolith
+  message: go visit https://www.cheroliv.com
+  item: monolith
   clientApp:
     name: 'server'
   database:
@@ -36,8 +35,10 @@ backend:
     exposed-headers: 'Authorization,Link,X-Total-Count'
     allow-credentials: true
     max-age: 1800
+##############################################################################
 server:
   port: 8080
+##############################################################################
 spring:
   application:
     name: server
@@ -56,3 +57,11 @@ spring:
     encoding: UTF-8
   main:
     allow-bean-definition-overriding: true
+##############################################################################
+logging:
+  level:
+    org:
+      springframework:
+        r2dbc: DEBUG
+        org.hibernate.SQL: DEBUG
+##############################################################################

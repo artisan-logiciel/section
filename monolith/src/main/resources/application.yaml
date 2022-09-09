@@ -55,3 +55,9 @@ spring:
   messages:
     basename: i18n/messages
     encoding: UTF-8
+logging:
+  level:
+    org:
+      springframework:
+        r2dbc: INFO
+        org.hibernate.SQL: INFO

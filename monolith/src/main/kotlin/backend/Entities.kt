@@ -3,6 +3,7 @@
 package backend
 
 
+import backend.AuthorityRecord.Companion.ROLE_COLUMN
 import backend.Constants.LOGIN_REGEX
 import com.fasterxml.jackson.annotation.JsonIgnore
 import org.springframework.data.annotation.*
@@ -15,6 +16,26 @@ import javax.validation.constraints.NotNull
 import javax.validation.constraints.Pattern
 import javax.validation.constraints.Size
 import javax.validation.constraints.Email as EmailConstraint
+
+interface AuthorityRecord : Persistable<String> {
+    val role: String
+    override fun getId() = role
+    override fun isNew() = true
+
+    companion object {
+        const val ROLE_COLUMN = "role"
+    }
+}
+
+@Table("`authority`")
+data class AuthorityEntity(
+    @Id
+    @field:NotNull
+    @field:Size(max = 50)
+    @Column(ROLE_COLUMN)
+    override val role: String
+) : AuthorityRecord
+
 
 
 @Table("`phone`")
@@ -41,23 +62,8 @@ data class EmailEntity(@Id val value: @EmailConstraint String) : Persistable<Str
     override fun isNew() = true
 }
 
-@Table("`authority`")
-data class AuthorityEntity(
-    @Id
-    @field:NotNull
-    @field:Size(max = 50)
-    override val role: String
-) : AuthorityRecord
 
-interface AuthorityRecord : Persistable<String> {
-    val role: String
-    override fun getId() = role
-    override fun isNew() = true
 
-    companion object {
-        const val ROLE_COLUMN = "role"
-    }
-}
 
 @Table("`user_authority`")
 data class AccountAuthority(
