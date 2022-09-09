@@ -17,8 +17,6 @@ import javax.validation.constraints.Size
 import javax.validation.constraints.Email as EmailConstraint
 
 
-
-
 @Table("`phone`")
 data class PhoneEntity(
     @Id var id: UUID? = null,
@@ -55,6 +53,10 @@ interface AuthorityRecord : Persistable<String> {
     val role: String
     override fun getId() = role
     override fun isNew() = true
+
+    companion object {
+        const val ROLE_COLUMN = "role"
+    }
 }
 
 @Table("`user_authority`")
@@ -118,7 +120,6 @@ interface AccountRecord<AUTH : AuthorityRecord> {
         authorities = authorities?.map { it.role }?.toMutableSet()
     )
 }
-
 
 
 @Table("`user`")
