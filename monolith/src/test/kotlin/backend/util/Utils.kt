@@ -17,14 +17,7 @@ import java.time.format.DateTimeParseException
 import kotlin.reflect.KClass
 import kotlin.reflect.full.createInstance
 
-//fun User.unlockUser() {
-//    apply {
-//        if (id != null) {
-//            id = null
-//            version = null
-//        }
-//    }
-//}
+
 
 private val mapper = createObjectMapper()
 
