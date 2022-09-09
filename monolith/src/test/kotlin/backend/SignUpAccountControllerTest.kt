@@ -20,28 +20,6 @@ import org.springframework.test.web.reactive.server.WebTestClient
 import org.springframework.test.web.reactive.server.returnResult
 import kotlin.test.*
 
-/**
- *
-#language: fr
-#noinspection CucumberUndefinedStep
-Fonctionnalité: Inscription d'un compte utilisateur.
-
-Contexte:
-Etant donné une liste de login, email, password, firstName, lastName
-
-| login | email          | password | firstName | lastName |
-| admin | admin@acme.com | admin    | admin     | admin    |
-| user  | user@acme.com  | user     | user      | user     |
-| test1 | test1@acme.com | test1    | test1     | test1    |
-| test2 | test2@acme.com | test2    | test2     | test2    |
-| test3 | test3@acme.com | test3    | test3     | test3    |
-
-Scénario: Création d'un nouveau compte utilisateur.
-Etant donné l'utilisateur de la liste qui a pour login "user"
-Quand on envoie la requête d'inscription de "user"
-Alors le résultat est la création d'un nouveau compte non activé
- *
- */
 internal class SignUpAccountControllerTest {
 
     companion object {
@@ -58,11 +36,11 @@ internal class SignUpAccountControllerTest {
     }
 
     //En controlant l'implementation désiré
-//    private val accountRepository: AccountRepositoryInMemory by lazy { context.getBean() }
-//    private val accountAuthorityRepository: AccountAuthorityRepositoryInMemory by lazy { context.getBean() }
+    private val accountRepository: AccountRepository by lazy { context.getBean<AccountRepositoryInMemory>() }
+    private val accountAuthorityRepository: AccountAuthorityRepository by lazy { context.getBean<AccountAuthorityRepositoryInMemory>() }
     //En laissant le conteneur injecter la dépendance
-    private val accountRepository: AccountRepository by lazy { context.getBean() }
-    private val accountAuthorityRepository: AccountAuthorityRepository by lazy { context.getBean() }
+//    private val accountRepository: AccountRepository by lazy { context.getBean() }
+//    private val accountAuthorityRepository: AccountAuthorityRepository by lazy { context.getBean() }
 
     @BeforeAll
     fun `lance le server en profile test`() =

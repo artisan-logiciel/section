@@ -17,12 +17,11 @@ import kotlin.test.assertEquals
 
 internal class AuthorityRepositoryR2dbcTest {
     private lateinit var context: ConfigurableApplicationContext
+
     private val authorityRepository: AuthorityRepositoryR2dbc by lazy { context.getBean() }
 
     @BeforeAll
-    fun `lance le server en profile test`() =
-        runApplication<Server> { testLoader(app = this) }
-            .run { context = this }
+    fun `lance le server en profile test`() = runApplication<Server> { testLoader(app = this) }.run { context = this }
 
     @AfterAll
     fun `arrête le serveur`() = context.close()

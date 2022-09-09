@@ -12,6 +12,9 @@ import org.springframework.data.r2dbc.core.awaitOneOrNull
 import org.springframework.data.relational.core.query.Criteria
 import org.springframework.data.relational.core.query.Query
 
+
+
+
 interface AuthorityRepository {
     suspend fun findOne(role: String): String?
 }
@@ -44,7 +47,6 @@ interface AccountAuthorityRepository {
 
     suspend fun deleteAllByAccountId(id: UUID): Unit
 }
-
 
 @Repository
 class AuthorityRepositoryR2dbc(
