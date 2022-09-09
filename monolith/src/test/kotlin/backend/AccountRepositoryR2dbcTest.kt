@@ -19,7 +19,9 @@ import org.springframework.data.r2dbc.core.awaitOneOrNull
 import org.springframework.data.r2dbc.core.delete
 import org.springframework.data.r2dbc.core.select
 import org.springframework.data.relational.core.query.Criteria
+import org.springframework.data.relational.core.query.Criteria.where
 import org.springframework.data.relational.core.query.Query
+import org.springframework.data.relational.core.query.Query.query
 import reactor.kotlin.core.publisher.toMono
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -39,34 +41,41 @@ class AccountRepositoryR2dbc(
     }
 
     override suspend fun findOneByLogin(login: String): AccountCredentials? =
-        repository.select(AccountEntity::class.java)
-            .matching(Query.query(Criteria.where("login").`is`(login)))
+        repository.select<AccountEntity>()
+            .matching(query(where("login").`is`(login)))
             .awaitOneOrNull()?.toCredentialsModel()
 
 
     override suspend fun findOneByEmail(email: String): AccountCredentials? =
-        repository.select(AccountEntity::class.java)
-            .matching(Query.query(Criteria.where("email").`is`(email)))
+        repository.select<AccountEntity>()
+            .matching(query(where("email").`is`(email)))
             .awaitOneOrNull()?.toCredentialsModel()
 
     override suspend fun suppress(account: Account) {
-        repository.delete<AccountAuthorityEntity>()
-            .matching(
-                Query.query(
-                    Criteria.where("userId")
-                        .`is`(account.id!!)
-                )
-            ).toMono().awaitSingle()
-        repository.delete<AccountEntity>().toMono().awaitSingle()
-
+        repository.run {
+            delete<AccountAuthorityEntity>()
+                .matching(query(where("userId").`is`(account.id!!))).toMono().awaitSingle()
+            delete<AccountEntity>().toMono().awaitSingle()
+        }
     }
 
 
     override suspend fun signup(model: AccountCredentials) {
+        repository.run {
+            AccountEntity(model).run {
+                val id = insert(this).toMono().awaitSingleOrNull()?.id
+                if (id != null) authorities?.map {
+                    insert(AccountAuthorityEntity(userId = id, role = it.role)).awaitSingle()
+                }
+            }
 
+        }
     }
 
-    override suspend fun findActivationKeyByLogin(login: String): String? = null
+    override suspend fun findActivationKeyByLogin(login: String): String? {
+        return repository.select<AccountEntity>().matching(query(where("login").`is`(login)))
+            .awaitOneOrNull()?.activationKey
+    }
 
     override suspend fun findOneActivationKey(key: String): AccountCredentials? = null
 }

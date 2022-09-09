@@ -3,6 +3,7 @@
 package backend
 
 import backend.Constants.BASE_URL
+import backend.Constants.ROLE_USER
 import backend.Constants.USER
 import backend.Log.log
 import org.apache.commons.lang3.RandomStringUtils
@@ -38,8 +39,9 @@ class SignUpService(
         loginValidation(model)
         emailValidation(model)
         model.copy(
-            //TODO:hash password
-            activationKey = RandomUtils.generateActivationKey
+            //TODO: hash password
+            activationKey = RandomUtils.generateActivationKey,
+            authorities = setOf(ROLE_USER)
         ).run {
             accountRepository.signup(this)
             mailService.sendActivationEmail(this)
