@@ -9,7 +9,6 @@ import backend.Log.log
 import backend.data.Data.defaultAccount
 import backend.data.Data.defaultAccountEntity
 import backend.tdd.testLoader
-import kotlinx.coroutines.reactor.mono
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
@@ -98,11 +97,8 @@ internal class SignUpAccountControllerTest {
         assertEquals(countUserAuthBefore + 1, countAccountAuthority(dao))
         assertFalse(findOneByEmail(defaultAccount.email!!)!!.activated)
         //clean accounts and accountAuthorities after test
-        mono {
-            deleteAllAccountAuthority(dao)
-            deleteAccounts(dao)
-        }.block()
-
+        deleteAllAccountAuthority(dao)
+        deleteAccounts(dao)
 
         assertEquals(countUserAuthBefore, countAccountAuthority(dao))
         assertEquals(countUserBefore, countAccount(dao))
@@ -178,8 +174,8 @@ internal class SignUpAccountControllerTest {
         assertEquals(0, countAccount(dao))
         assertEquals(0, countAccountAuthority(dao))
         saveAccountAuthority(
-            saveAccount(defaultAccount.copy(activated = true))?.id!!,
-            ROLE_USER
+            saveAccount(defaultAccount.copy(activated = true),dao)?.id!!,
+            ROLE_USER,dao
         )
         assertEquals(1, countAccount(dao))
         assertEquals(1, countAccountAuthority(dao))
@@ -209,8 +205,8 @@ internal class SignUpAccountControllerTest {
         assertEquals(0, countAccount(dao))
         assertEquals(0, countAccountAuthority(dao))
         saveAccountAuthority(
-            saveAccount(defaultAccount.copy(activated = true))?.id!!,
-            ROLE_USER
+            saveAccount(defaultAccount.copy(activated = true),dao)?.id!!,
+            ROLE_USER,dao
         )
         assertTrue(findOneByEmail(defaultAccount.email!!)!!.activated)
         assertEquals(1, countAccount(dao))
@@ -306,7 +302,7 @@ internal class SignUpAccountControllerTest {
             assertEquals(defaultAccount.email!!.uppercase(), email)
         }
         //activate third
-        saveAccount(findOneByEmail(defaultAccount.email!!)!!.copy(activated = true))
+        saveAccount(findOneByEmail(defaultAccount.email!!)!!.copy(activated = true),dao)
 
 
         log.info(
@@ -337,9 +333,7 @@ internal class SignUpAccountControllerTest {
 //        assertTrue(findOneByEmail(defaultAccount.email!!)!!.activated)
 
         //netoyage des accounts et accountAuthorities à la fin du test
-//        mono {
         deleteAllAccountAuthority(dao)
-//        }.block()
         deleteAccounts(dao)
 
         assertEquals(0, countAccount(dao))

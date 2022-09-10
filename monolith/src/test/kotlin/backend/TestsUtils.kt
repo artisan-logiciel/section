@@ -19,11 +19,11 @@ fun deleteAccounts(repository: R2dbcEntityTemplate) {
     repository.delete(AccountEntity::class.java).toMono().block()
 }
 
-fun saveAccount(model: AccountCredentials): Account? {
+fun saveAccount(model: AccountCredentials, dao: R2dbcEntityTemplate): Account? {
     TODO("Not yet implemented")
 }
 
-fun saveAccountAuthority(id: UUID, roleUser: String) {
+fun saveAccountAuthority(id: UUID, roleUser: String, dao: R2dbcEntityTemplate) {
     TODO("Not yet implemented")
 }
 
