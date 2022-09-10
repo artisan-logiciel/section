@@ -51,12 +51,9 @@ internal class SignUpAccountControllerTest {
     fun `arrête le serveur`() = context.close()
 
     @AfterEach
-    fun tearDown() {
-        deleteAllAccountAuthority(dao)
-        deleteAccounts(dao)
-        log.info("tearDown count account: ${countAccount(dao)}")
-        log.info("tearDown count accountAuthority: ${countAccountAuthority(dao)}")
-    }
+    fun tearDown() = deleteAllAccounts(dao)
+
+
 
     @Test
     fun `vérifie que la requête contient bien des données cohérentes`() {
@@ -86,7 +83,7 @@ internal class SignUpAccountControllerTest {
     }
 
     @Test
-    fun `signup avec un account valide`(): Unit = runBlocking {
+    fun `signup avec un account valide`(){
         val countUserBefore = countAccount(dao)
         val countUserAuthBefore = countAccountAuthority(dao)
         assertEquals(0, countUserBefore)
@@ -108,7 +105,7 @@ internal class SignUpAccountControllerTest {
 
 
     @Test
-    fun `test register account avec login invalid`(): Unit = runBlocking {
+    fun `test register account avec login invalid`(){
         assertEquals(0, countAccount(dao))
         client
             .post()
@@ -124,7 +121,7 @@ internal class SignUpAccountControllerTest {
     }
 
 
-    @Test
+    @Test  @Ignore
     fun `test register account avec un email invalid`() {
         val countBefore= countAccount(dao)
         log.info("countBefore: $countBefore")
@@ -142,7 +139,7 @@ internal class SignUpAccountControllerTest {
         assertEquals(0, countBefore)
     }
 
-    @Test
+    @Test  @Ignore
     fun `test register account avec un password invalid`(){
         assertEquals(0, countAccount(dao))
         client.post()
@@ -157,9 +154,8 @@ internal class SignUpAccountControllerTest {
         assertEquals(0, countAccount(dao))
     }
 
-    @Test
-    @Ignore
-    fun `test register account avec un password null`() = runBlocking {
+    @Test  @Ignore
+    fun `test register account avec un password null`()  {
         assertEquals(0, countAccount(dao))
         client
             .post()
@@ -170,13 +166,15 @@ internal class SignUpAccountControllerTest {
             .expectStatus()
             .isBadRequest
             .returnResult<Unit>()
-            .run { responseBodyContent?.isNotEmpty()?.let { assertTrue(it) } }
+            .run { responseBodyContent?.isNotEmpty()?.let { assertTrue(it) }
+
+
+            }
         assertEquals(0, countAccount(dao))
     }
 
-    @Test
-    @Ignore
-    fun `test register account activé avec un email existant`(): Unit = runBlocking {
+    @Test  @Ignore
+    fun `test register account activé avec un email existant`(){
         assertEquals(0, countAccount(dao))
         assertEquals(0, countAccountAuthority(dao))
         saveAccountAuthority(
@@ -198,17 +196,16 @@ internal class SignUpAccountControllerTest {
             .returnResult<Unit>()
             .run { responseBodyContent?.isNotEmpty()?.let { assertTrue(it) } }
 
-        deleteAllAccountAuthority(dao)
-        deleteAccounts(dao)
-
-        assertEquals(0, countAccountAuthority(dao))
-        assertEquals(0, countAccount(dao))
+//        deleteAllAccountAuthority(dao)
+//        deleteAccounts(dao)
+//
+//        assertEquals(0, countAccountAuthority(dao))
+//        assertEquals(0, countAccount(dao))
     }
 
 
-    @Test
-    @Ignore
-    fun `test register account activé avec un login existant`(): Unit = runBlocking {
+    @Test  @Ignore
+    fun `test register account activé avec un login existant`() {
         assertEquals(0, countAccount(dao))
         assertEquals(0, countAccountAuthority(dao))
         saveAccountAuthority(
@@ -230,18 +227,17 @@ internal class SignUpAccountControllerTest {
             .returnResult<Unit>()
             .run { responseBodyContent?.isNotEmpty()?.let { assertTrue(it) } }
 
-        deleteAllAccountAuthority(dao)
-        deleteAccounts(dao)
-
-
-        assertEquals(0, countAccountAuthority(dao))
-        assertEquals(0, countAccount(dao))
+//        deleteAllAccountAuthority(dao)
+//        deleteAccounts(dao)
+//
+//
+//        assertEquals(0, countAccountAuthority(dao))
+//        assertEquals(0, countAccount(dao))
     }
 
 
-    @Test
-    @Ignore
-    fun `test register account avec un email dupliqué`(): Unit = runBlocking {
+    @Test @Ignore
+    fun `test register account avec un email dupliqué`() {
 
         assertEquals(0, countAccount(dao))
         assertEquals(0, countAccountAuthority(dao))

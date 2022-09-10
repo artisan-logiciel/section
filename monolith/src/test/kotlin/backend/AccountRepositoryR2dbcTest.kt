@@ -32,7 +32,7 @@ internal class AccountRepositoryR2dbcTest {
 
 
     @AfterEach
-    fun tearDown() = deleteAccounts(dao)
+    fun tearDown() = deleteAllAccounts(dao)
 
 
     @Test

@@ -9,10 +9,17 @@ import java.util.*
 import kotlin.test.assertEquals
 
 
-fun createAccounts(accounts: Set<AccountCredentials>, repository: R2dbcEntityTemplate) {
+@Suppress("unused")
+fun createDataAccounts(accounts: Set<AccountCredentials>, repository: R2dbcEntityTemplate) {
     assertEquals(0, repository.select<AccountEntity>().count().block())
     accounts.map { repository.insert(AccountEntity(it)).block() }
     assertEquals(accounts.size.toLong(), repository.select<AccountEntity>().count().block())
+}
+fun deleteAllAccounts(dao: R2dbcEntityTemplate) {
+    deleteAllAccountAuthority(dao)
+    deleteAccounts(dao)
+    assertEquals(0, countAccount(dao))
+    assertEquals(0, countAccountAuthority(dao))
 }
 
 fun deleteAccounts(repository: R2dbcEntityTemplate) {
