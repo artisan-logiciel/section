@@ -14,6 +14,7 @@ import org.springframework.beans.factory.getBean
 import org.springframework.boot.runApplication
 import org.springframework.context.ConfigurableApplicationContext
 import org.springframework.data.r2dbc.core.R2dbcEntityTemplate
+import java.time.Instant
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
@@ -106,10 +107,14 @@ internal class AccountRepositoryR2dbcTest {
         assertEquals(0, countAccount(dao))
         assertEquals(0, countAccountAuthority(dao))
         runBlocking {
-            accountRepository.signup(Data.defaultAccount)
+            accountRepository.signup(Data.defaultAccount.copy(activationKey = RandomUtils.generateActivationKey,
+                langKey = Constants.DEFAULT_LANGUAGE,
+                createdBy = Constants.SYSTEM_USER,
+                createdDate = Instant.now(),
+                lastModifiedBy = Constants.SYSTEM_USER,
+                lastModifiedDate = Instant.now(),
+                authorities = mutableSetOf(Constants.ROLE_USER)))
         }
-        //TODO: reprendre signin c'est lui genere activationKey ajoute les authorities
-        //RandomUtils.generateActivationKey
         assertEquals(1, countAccount(dao))
         assertEquals(1, countAccountAuthority(dao))
     }
@@ -138,16 +143,16 @@ internal class AccountRepositoryR2dbcTest {
         runBlocking {
             val result = findOneByLogin(Data.defaultAccount.login!!, dao)
             log.info("result: $result")
-//            assertNotNull(result)
-//            assertNotNull(result.activationKey)
-//            accountRepository.findOneActivationKey(Data.defaultAccount.activationKey!!).run {
+            assertNotNull(result)
+            assertNotNull(result.activationKey)
+            accountRepository.findOneActivationKey(result.activationKey!!).run {
 //                log.info(this)
-//                assertNotNull(this)
+                assertNotNull(this)
 //                assertEquals(
 //                    result.id,
 //                    accountRepository.findOneActivationKey(Data.defaultAccount.login!!)?.id
 //                )
-//            }
+            }
 
         }
     }

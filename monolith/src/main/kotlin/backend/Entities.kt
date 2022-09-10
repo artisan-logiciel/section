@@ -241,6 +241,7 @@ data class AccountEntity @JvmOverloads constructor(
         imageUrl = model.imageUrl
         authorities = model.authorities?.map { AuthorityEntity(it) }?.toMutableSet()
         password = model.password
+        activationKey=model.activationKey
     }
 
 
