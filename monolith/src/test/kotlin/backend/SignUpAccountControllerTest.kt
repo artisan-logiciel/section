@@ -336,12 +336,7 @@ internal class SignUpAccountControllerTest {
 //        }
 //        assertTrue(findOneByEmail(defaultAccount.email!!)!!.activated)
 
-        //netoyage des accounts et accountAuthorities à la fin du test
-        deleteAllAccountAuthority(dao)
-        deleteAccounts(dao)
 
-        assertEquals(0, countAccount(dao))
-        assertEquals(0, countAccountAuthority(dao))
 
         /*
             // First user
