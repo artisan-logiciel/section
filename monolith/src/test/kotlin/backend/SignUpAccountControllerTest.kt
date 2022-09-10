@@ -139,7 +139,7 @@ internal class SignUpAccountControllerTest {
         assertEquals(0, countBefore)
     }
 
-    @Test  @Ignore
+    @Test
     fun `test register account avec un password invalid`(){
         assertEquals(0, countAccount(dao))
         client.post()
@@ -154,7 +154,7 @@ internal class SignUpAccountControllerTest {
         assertEquals(0, countAccount(dao))
     }
 
-    @Test  @Ignore
+    @Test
     fun `test register account avec un password null`()  {
         assertEquals(0, countAccount(dao))
         client
@@ -173,7 +173,7 @@ internal class SignUpAccountControllerTest {
         assertEquals(0, countAccount(dao))
     }
 
-    @Test  @Ignore
+    @Test
     fun `test register account activé avec un email existant`(){
         assertEquals(0, countAccount(dao))
         assertEquals(0, countAccountAuthority(dao))
@@ -204,7 +204,7 @@ internal class SignUpAccountControllerTest {
     }
 
 
-    @Test  @Ignore
+    @Test
     fun `test register account activé avec un login existant`() {
         assertEquals(0, countAccount(dao))
         assertEquals(0, countAccountAuthority(dao))
