@@ -83,13 +83,12 @@ internal class SignUpAccountControllerTest {
             }
     }
 
-//    @Ignore
     @Test
     fun `signup avec un account valide`(): Unit = runBlocking {
         val countUserBefore = countAccount(dao)
         val countUserAuthBefore = countAccountAuthority(dao)
-//        assertEquals(0, countUserBefore)
-//        assertEquals(0, countUserAuthBefore)
+        assertEquals(0, countUserBefore)
+        assertEquals(0, countUserAuthBefore)
         client
             .post()
             .uri(SIGNUP_URI)
@@ -107,7 +106,6 @@ internal class SignUpAccountControllerTest {
 
 
     @Test
-    @Ignore
     fun `test register account avec login invalid`(): Unit = runBlocking {
         assertEquals(0, countAccount(dao))
         client
@@ -120,7 +118,7 @@ internal class SignUpAccountControllerTest {
             .isBadRequest
             .returnResult<Unit>()
             .run { responseBodyContent?.isNotEmpty()?.let { assertTrue(it) } }
-        assertEquals(countAccount(dao), 0)
+        assertEquals(0,countAccount(dao))
     }
 
 

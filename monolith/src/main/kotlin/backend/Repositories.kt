@@ -51,7 +51,7 @@ interface AccountAuthorityRepository {
 
 @Repository
 class AccountAuthorityRepositoryR2dbc(
-    private val dao: R2dbcEntityTemplate,
+    private val dao: R2dbcEntityTemplate
 ) : AccountAuthorityRepository {
     override suspend fun save(id: UUID, authority: String) {
         dao.insert(AccountAuthorityEntity(userId = id, role = authority)).awaitSingle()
@@ -77,8 +77,7 @@ class AccountAuthorityRepositoryR2dbc(
 
 @Repository
 class AccountRepositoryR2dbc(
-    private val dao: R2dbcEntityTemplate,
-//    private val authorityRepository: AuthorityRepository
+    private val dao: R2dbcEntityTemplate
 ) : AccountRepository {
     override suspend fun save(model: AccountCredentials): Account? =
         try {
