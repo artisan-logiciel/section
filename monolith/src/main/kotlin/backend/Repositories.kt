@@ -4,15 +4,14 @@ package backend
 
 
 import backend.AuthorityRecord.Companion.ROLE_COLUMN
-import backend.Constants.ROLE_USER
 import kotlinx.coroutines.reactor.awaitSingle
 import kotlinx.coroutines.reactor.awaitSingleOrNull
 import org.springframework.data.r2dbc.core.*
-import org.springframework.stereotype.Repository
-import java.util.*
 import org.springframework.data.relational.core.query.Criteria
 import org.springframework.data.relational.core.query.Query
+import org.springframework.stereotype.Repository
 import reactor.kotlin.core.publisher.toMono
+import java.util.*
 
 
 interface AuthorityRepository {
