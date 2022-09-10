@@ -1,20 +1,30 @@
 package backend
 
+import backend.Log.log
 import org.springframework.data.r2dbc.core.R2dbcEntityTemplate
 import org.springframework.data.r2dbc.core.select
 import org.springframework.data.relational.core.query.Criteria.where
 import org.springframework.data.relational.core.query.Query.query
-import reactor.kotlin.core.publisher.toMono
 import java.util.*
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 
-@Suppress("unused")
-fun createDataAccounts(accounts: Set<AccountCredentials>, repository: R2dbcEntityTemplate) {
-    assertEquals(0, repository.select<AccountEntity>().count().block())
-    accounts.map { repository.insert(AccountEntity(it)).block() }
-    assertEquals(accounts.size.toLong(), repository.select<AccountEntity>().count().block())
+fun createDataAccounts(accounts: Set<AccountCredentials>, dao: R2dbcEntityTemplate) {
+    assertEquals(0, countAccount(dao))
+    accounts.map { acc ->
+        val id: UUID? = dao.insert(AccountEntity(acc)).block()?.id
+        if (id != null) acc.authorities?.map {
+            dao.insert(AccountAuthorityEntity(userId = id, role = it))
+        }
+    }
+    assertEquals(accounts.size, countAccount(dao))
+//    assertTrue(countAccountAuthority(dao) > 0)
+    log.info("accounts count: ${countAccount(dao)}")
+    log.info("accountAuths count: ${countAccountAuthority(dao)}")
+
 }
+
 fun deleteAllAccounts(dao: R2dbcEntityTemplate) {
     deleteAllAccountAuthority(dao)
     deleteAccounts(dao)

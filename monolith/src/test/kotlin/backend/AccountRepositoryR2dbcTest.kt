@@ -13,7 +13,6 @@ import org.springframework.beans.factory.getBean
 import org.springframework.boot.runApplication
 import org.springframework.context.ConfigurableApplicationContext
 import org.springframework.data.r2dbc.core.R2dbcEntityTemplate
-import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -25,7 +24,9 @@ internal class AccountRepositoryR2dbcTest {
     private val accountRepository: AccountRepository by lazy { context.getBean<AccountRepositoryR2dbc>() }
 
     @BeforeAll
-    fun `lance le server en profile test`() = runApplication<Server> { testLoader(this) }.run { context = this }
+    fun `lance le server en profile test`() = runApplication<Server> {
+        testLoader(this)
+    }.run { context = this }
 
     @AfterAll
     fun `arrête le serveur`() = context.close()
@@ -47,11 +48,24 @@ internal class AccountRepositoryR2dbcTest {
 
     @Test
     fun count() {
-
+        runBlocking {
+            assertEquals(0, accountRepository.count())
+            assertEquals(0, countAccount(dao))
+            createDataAccounts(Data.accounts, dao)
+            assertEquals(Data.accounts.size, countAccount(dao))
+            assertEquals(Data.accounts.size.toLong(), accountRepository.count())
+        }
     }
 
     @Test
     fun delete() {
+        runBlocking {
+            assertEquals(0, countAccount(dao))
+            createDataAccounts(Data.accounts, dao)
+            assertEquals(Data.accounts.size, countAccount(dao))
+            accountRepository.delete(Data.defaultAccount.toAccount())
+            assertEquals(Data.accounts.size - 1, countAccount(dao))
+        }
     }
 
     @Test

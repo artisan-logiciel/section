@@ -89,7 +89,11 @@ class AccountRepositoryR2dbc(
     override suspend fun count(): Long = dao.select<AccountEntity>().count().awaitSingle()
 
     override suspend fun delete(account: Account) {
-        dao.delete(account).awaitSingle()
+        if (account.login != null || account.email != null && account.id == null)
+            (if (account.login != null) findOneByLogin(account.login)
+            else if (account.email != null) findOneByEmail(account.email)
+            else null).run { if (this != null) dao.delete(AccountEntity(this)).awaitSingle() }
+        else dao.delete(AccountEntity(AccountCredentials(account))).awaitSingle()
     }
 
     override suspend fun findOneByLogin(login: String): AccountCredentials? =
