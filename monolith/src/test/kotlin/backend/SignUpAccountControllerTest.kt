@@ -50,7 +50,7 @@ internal class SignUpAccountControllerTest {
     fun `arrête le serveur`() = context.close()
 
 
-    @Test
+    @Test @Ignore
     fun `vérifie que la requête contient bien des données cohérentes`() {
         client
             .post()
@@ -77,7 +77,7 @@ internal class SignUpAccountControllerTest {
             }
     }
 
-    @Test
+    @Test @Ignore
     fun `signup avec un account valide`(): Unit = runBlocking {
         val countUserBefore = countAccount(dao)
         val countUserAuthBefore = countAccountAuthority(dao)
@@ -105,7 +105,7 @@ internal class SignUpAccountControllerTest {
     }
 
 
-    @Test
+    @Test @Ignore
     fun `test register account avec login invalid`(): Unit = runBlocking {
         assertEquals(0, countAccount(dao))
         client
@@ -122,7 +122,7 @@ internal class SignUpAccountControllerTest {
     }
 
 
-    @Test
+    @Test @Ignore
     fun `test register account avec un email invalid`(): Unit = runBlocking {
         assertEquals(0, countAccount(dao))
         client
@@ -138,7 +138,7 @@ internal class SignUpAccountControllerTest {
         assertEquals(0, countAccount(dao))
     }
 
-    @Test
+    @Test @Ignore
     fun `test register account avec un password invalid`(): Unit = runBlocking {
         assertEquals(0, countAccount(dao))
         client.post()
@@ -153,7 +153,7 @@ internal class SignUpAccountControllerTest {
         assertEquals(0, countAccount(dao))
     }
 
-    @Test
+    @Test @Ignore
     fun `test register account avec un password null`() = runBlocking {
         assertEquals(0, countAccount(dao))
         client
@@ -169,7 +169,7 @@ internal class SignUpAccountControllerTest {
         assertEquals(0, countAccount(dao))
     }
 
-    @Test
+    @Test @Ignore
     fun `test register account activé avec un email existant`(): Unit = runBlocking {
         assertEquals(0, countAccount(dao))
         assertEquals(0, countAccountAuthority(dao))
@@ -200,7 +200,7 @@ internal class SignUpAccountControllerTest {
     }
 
 
-    @Test
+    @Test @Ignore
     fun `test register account activé avec un login existant`(): Unit = runBlocking {
         assertEquals(0, countAccount(dao))
         assertEquals(0, countAccountAuthority(dao))
@@ -232,7 +232,7 @@ internal class SignUpAccountControllerTest {
     }
 
 
-    @Test
+    @Test @Ignore
     fun `test register account avec un email dupliqué`(): Unit = runBlocking {
 
         assertEquals(0, countAccount(dao))
@@ -435,7 +435,7 @@ internal class SignUpAccountControllerTest {
 
 
 //    /*
-//        @Test//test en renseignant l'authorité admin est ignoré
+//        @Test @Ignore//test en renseignant l'authorité admin est ignoré
 //        void testRegisterAdminIsIgnored() throws Exception {
 //            ManagedUserVM validUser = new ManagedUserVM();
 //            validUser.setLogin("badguy");
