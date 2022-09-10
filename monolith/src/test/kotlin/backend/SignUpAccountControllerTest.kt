@@ -9,7 +9,6 @@ import backend.Log.log
 import backend.data.Data.defaultAccount
 import backend.data.Data.defaultAccountEntity
 import backend.tdd.testLoader
-import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeAll
@@ -54,7 +53,6 @@ internal class SignUpAccountControllerTest {
     fun tearDown() = deleteAllAccounts(dao)
 
 
-
     @Test
     fun `vérifie que la requête contient bien des données cohérentes`() {
         client
@@ -83,7 +81,7 @@ internal class SignUpAccountControllerTest {
     }
 
     @Test
-    fun `signup avec un account valide`(){
+    fun `signup avec un account valide`() {
         val countUserBefore = countAccount(dao)
         val countUserAuthBefore = countAccountAuthority(dao)
         assertEquals(0, countUserBefore)
@@ -105,7 +103,7 @@ internal class SignUpAccountControllerTest {
 
 
     @Test
-    fun `test register account avec login invalid`(){
+    fun `test register account avec login invalid`() {
         assertEquals(0, countAccount(dao))
         client
             .post()
@@ -117,15 +115,15 @@ internal class SignUpAccountControllerTest {
             .isBadRequest
             .returnResult<Unit>()
             .run { responseBodyContent?.isNotEmpty()?.let { assertTrue(it) } }
-        assertEquals(0,countAccount(dao))
+        assertEquals(0, countAccount(dao))
     }
 
 
     @Test
     fun `test register account avec un email invalid`() {
-        val countBefore= countAccount(dao)
+        val countBefore = countAccount(dao)
         log.info("countBefore: $countBefore")
-        assertEquals(0,countBefore)
+        assertEquals(0, countBefore)
         client
             .post()
             .uri(SIGNUP_URI)
@@ -140,7 +138,7 @@ internal class SignUpAccountControllerTest {
     }
 
     @Test
-    fun `test register account avec un password invalid`(){
+    fun `test register account avec un password invalid`() {
         assertEquals(0, countAccount(dao))
         client.post()
             .uri(SIGNUP_URI)
@@ -155,7 +153,7 @@ internal class SignUpAccountControllerTest {
     }
 
     @Test
-    fun `test register account avec un password null`()  {
+    fun `test register account avec un password null`() {
         assertEquals(0, countAccount(dao))
         client
             .post()
@@ -166,7 +164,8 @@ internal class SignUpAccountControllerTest {
             .expectStatus()
             .isBadRequest
             .returnResult<Unit>()
-            .run { responseBodyContent?.isNotEmpty()?.let { assertTrue(it) }
+            .run {
+                responseBodyContent?.isNotEmpty()?.let { assertTrue(it) }
 
 
             }
@@ -174,7 +173,7 @@ internal class SignUpAccountControllerTest {
     }
 
     @Test
-    fun `test register account activé avec un email existant`(){
+    fun `test register account activé avec un email existant`() {
         assertEquals(0, countAccount(dao))
         assertEquals(0, countAccountAuthority(dao))
         saveAccountAuthority(
@@ -236,7 +235,8 @@ internal class SignUpAccountControllerTest {
     }
 
 
-    @Test @Ignore
+    @Test
+    @Ignore
     fun `test register account avec un email dupliqué`() {
 
         assertEquals(0, countAccount(dao))
@@ -335,7 +335,6 @@ internal class SignUpAccountControllerTest {
 ////            assertEquals(defaultAccount.email!!.lowercase(), email!!.lowercase())
 //        }
 //        assertTrue(findOneByEmail(defaultAccount.email!!)!!.activated)
-
 
 
         /*

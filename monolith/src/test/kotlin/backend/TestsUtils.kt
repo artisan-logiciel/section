@@ -12,14 +12,14 @@ import kotlin.test.assertTrue
 fun createDataAccounts(accounts: Set<AccountCredentials>, dao: R2dbcEntityTemplate) {
     assertEquals(0, countAccount(dao))
     accounts.map { acc ->
-        val id: UUID? = dao.insert(AccountEntity(acc)).block()?.id
-        if (id != null)
-            acc.authorities!!.map {
-                dao.insert(AccountAuthorityEntity(userId = id, role = it)).block()
+        dao.insert(AccountEntity(acc)).block()?.id.run {
+            if (this != null) acc.authorities!!.map {
+                dao.insert(AccountAuthorityEntity(userId = this, role = it)).block()
             }
+        }
     }
     assertEquals(accounts.size, countAccount(dao))
-    assertTrue(accounts.size<= countAccountAuthority(dao))
+    assertTrue(accounts.size <= countAccountAuthority(dao))
 }
 
 fun deleteAllAccounts(dao: R2dbcEntityTemplate) {

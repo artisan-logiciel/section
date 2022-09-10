@@ -95,9 +95,8 @@ internal class AccountRepositoryR2dbcTest {
         assertEquals(Data.accounts.size, countAccount(dao))
         assertEquals(Data.accounts.size + 1, countAccountAuthority(dao))
         runBlocking {
-            log.info(findOneByLogin(Data.defaultAccount.login!!,dao)!!.toAccount())
             accountRepository.suppress(findOneByLogin(Data.defaultAccount.login!!,dao)!!.toAccount())
-        }//.toMono().block()
+        }
         assertEquals(Data.accounts.size - 1, countAccount(dao))
         assertEquals(Data.accounts.size, countAccountAuthority(dao))
     }
