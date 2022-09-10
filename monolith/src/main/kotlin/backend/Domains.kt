@@ -98,6 +98,7 @@ data class AccountCredentials(
         id = id,
         login = login,
         firstName = firstName,
+        lastName=lastName,
         email = email,
         activated = activated,
         langKey = langKey,

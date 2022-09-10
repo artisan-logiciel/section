@@ -113,9 +113,9 @@ class AccountRepositoryR2dbc(
 
     override suspend fun suppress(account: Account) {
         dao.run {
-            delete<AccountAuthorityEntity>().matching(query(where("userId").`is`(account.id!!)))
-                .toMono().awaitSingle()
-            delete<AccountEntity>().toMono().awaitSingle()
+            delete<AccountAuthorityEntity>().matching(query(where("user_id").`is`(account.id!!)))
+                .allAndAwait()
+            delete(AccountEntity(AccountCredentials(account))).awaitSingle()
         }
     }
 

@@ -1,6 +1,5 @@
 package backend
 
-import backend.Log.log
 import org.springframework.data.r2dbc.core.R2dbcEntityTemplate
 import org.springframework.data.r2dbc.core.select
 import org.springframework.data.relational.core.query.Criteria.where
@@ -14,15 +13,13 @@ fun createDataAccounts(accounts: Set<AccountCredentials>, dao: R2dbcEntityTempla
     assertEquals(0, countAccount(dao))
     accounts.map { acc ->
         val id: UUID? = dao.insert(AccountEntity(acc)).block()?.id
-        if (id != null) acc.authorities?.map {
-            dao.insert(AccountAuthorityEntity(userId = id, role = it))
-        }
+        if (id != null)
+            acc.authorities!!.map {
+                dao.insert(AccountAuthorityEntity(userId = id, role = it)).block()
+            }
     }
     assertEquals(accounts.size, countAccount(dao))
-//    assertTrue(countAccountAuthority(dao) > 0)
-    log.info("accounts count: ${countAccount(dao)}")
-    log.info("accountAuths count: ${countAccountAuthority(dao)}")
-
+    assertTrue(accounts.size<= countAccountAuthority(dao))
 }
 
 fun deleteAllAccounts(dao: R2dbcEntityTemplate) {
