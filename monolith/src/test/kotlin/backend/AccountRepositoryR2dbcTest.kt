@@ -14,9 +14,9 @@ import org.springframework.beans.factory.getBean
 import org.springframework.boot.runApplication
 import org.springframework.context.ConfigurableApplicationContext
 import org.springframework.data.r2dbc.core.R2dbcEntityTemplate
-import reactor.kotlin.core.publisher.toMono
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertNotNull
 
 
 internal class AccountRepositoryR2dbcTest {
@@ -39,7 +39,7 @@ internal class AccountRepositoryR2dbcTest {
 
 
     @Test
-    fun save() {
+    fun test_save() {
         mono {
             val countBefore = countAccount(dao)
             assertEquals(0, countBefore)
@@ -49,7 +49,7 @@ internal class AccountRepositoryR2dbcTest {
     }
 
     @Test
-    fun count() = runBlocking {
+    fun test_count() = runBlocking {
         assertEquals(0, accountRepository.count())
         assertEquals(0, countAccount(dao))
         createDataAccounts(Data.accounts, dao)
@@ -58,7 +58,7 @@ internal class AccountRepositoryR2dbcTest {
     }
 
     @Test
-    fun delete() = runBlocking {
+    fun test_delete() = runBlocking {
         assertEquals(0, countAccount(dao))
         createDataAccounts(Data.accounts, dao)
         assertEquals(Data.accounts.size, countAccount(dao))
@@ -67,7 +67,7 @@ internal class AccountRepositoryR2dbcTest {
     }
 
     @Test
-    fun findOneByEmail() = runBlocking {
+    fun test_findOneByEmail() = runBlocking {
         assertEquals(0, countAccount(dao))
         createDataAccounts(Data.accounts, dao)
         assertEquals(Data.accounts.size, countAccount(dao))
@@ -78,7 +78,7 @@ internal class AccountRepositoryR2dbcTest {
     }
 
     @Test
-    fun findOneByLogin() = runBlocking {
+    fun test_findOneByLogin() = runBlocking {
         assertEquals(0, countAccount(dao))
         createDataAccounts(Data.accounts, dao)
         assertEquals(Data.accounts.size, countAccount(dao))
@@ -89,27 +89,59 @@ internal class AccountRepositoryR2dbcTest {
     }
 
     @Test
-    fun suppress() {
+    fun test_suppress() {
         assertEquals(0, countAccount(dao))
         createDataAccounts(Data.accounts, dao)
         assertEquals(Data.accounts.size, countAccount(dao))
         assertEquals(Data.accounts.size + 1, countAccountAuthority(dao))
         runBlocking {
-            accountRepository.suppress(findOneByLogin(Data.defaultAccount.login!!,dao)!!.toAccount())
+            accountRepository.suppress(findOneByLogin(Data.defaultAccount.login!!, dao)!!.toAccount())
         }
         assertEquals(Data.accounts.size - 1, countAccount(dao))
         assertEquals(Data.accounts.size, countAccountAuthority(dao))
     }
 
     @Test
-    fun signup() {
+    fun test_signup() {
+        assertEquals(0, countAccount(dao))
+        assertEquals(0, countAccountAuthority(dao))
+        runBlocking {
+            accountRepository.signup(Data.defaultAccount)
+        }
+        assertEquals(1, countAccount(dao))
+        assertEquals(1, countAccountAuthority(dao))
     }
 
     @Test
-    fun findActivationKeyByLogin() {
+    fun test_findActivationKeyByLogin() {
+        assertEquals(0, countAccount(dao))
+        createDataAccounts(Data.accounts, dao)
+        assertEquals(Data.accounts.size, countAccount(dao))
+        assertEquals(Data.accounts.size + 1, countAccountAuthority(dao))
+        runBlocking {
+            val result = findOneByEmail(Data.defaultAccount.email!!, dao)
+            assertEquals(
+                result!!.activationKey,
+                accountRepository.findActivationKeyByLogin(Data.defaultAccount.login!!)
+            )
+        }
     }
 
     @Test
-    fun findOneActivationKey() {
+    fun test_findOneActivationKey() {
+        assertEquals(0, countAccount(dao))
+        createDataAccounts(Data.accounts, dao)
+        assertEquals(Data.accounts.size, countAccount(dao))
+        assertEquals(Data.accounts.size + 1, countAccountAuthority(dao))
+        runBlocking {
+            val result = findOneByLogin(Data.defaultAccount.login!!, dao)
+            assertNotNull(result)
+            assertNotNull(result.id)
+//            assertEquals(
+//                result.id,
+//                accountRepository.findOneActivationKey(Data.defaultAccount.login!!)?.id
+//            )
+            log.info(accountRepository.findOneActivationKey(Data.defaultAccount.login!!))
+        }
     }
 }
