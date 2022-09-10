@@ -6,6 +6,7 @@ import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
 import org.springframework.boot.runApplication
 import org.springframework.context.ConfigurableApplicationContext
+import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.test.assertTrue
 
@@ -20,7 +21,7 @@ internal class CanaryFunctionalTest {
     @AfterAll
     fun `arrete le serveur`() = context.close()
 
-    @Test
+    @Test @Ignore
     fun `canary functional test`() = assertTrue(context.beanDefinitionCount > 0)
 
 }

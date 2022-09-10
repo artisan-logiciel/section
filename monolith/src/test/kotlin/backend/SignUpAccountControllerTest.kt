@@ -11,6 +11,7 @@ import backend.data.Data.defaultAccountEntity
 import backend.tdd.testLoader
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.AfterAll
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeAll
 import org.springframework.beans.factory.getBean
 import org.springframework.boot.runApplication
@@ -49,9 +50,13 @@ internal class SignUpAccountControllerTest {
     @AfterAll
     fun `arrête le serveur`() = context.close()
 
+    @AfterEach
+    fun tearDown() {
+        deleteAllAccountAuthority(dao)
+        deleteAccounts(dao)
+    }
 
     @Test
-    @Ignore
     fun `vérifie que la requête contient bien des données cohérentes`() {
         client
             .post()
@@ -79,7 +84,6 @@ internal class SignUpAccountControllerTest {
     }
 
     @Test
-    @Ignore
     fun `signup avec un account valide`(): Unit = runBlocking {
         val countUserBefore = countAccount(dao)
         val countUserAuthBefore = countAccountAuthority(dao)
@@ -98,12 +102,12 @@ internal class SignUpAccountControllerTest {
         assertEquals(countUserBefore + 1, countAccount(dao))
         assertEquals(countUserAuthBefore + 1, countAccountAuthority(dao))
         assertFalse(findOneByEmail(defaultAccount.email!!, dao)!!.activated)
-        //clean accounts and accountAuthorities after test
-        deleteAllAccountAuthority(dao)
-        deleteAccounts(dao)
-
-        assertEquals(countUserAuthBefore, countAccountAuthority(dao))
-        assertEquals(countUserBefore, countAccount(dao))
+//        //clean accounts and accountAuthorities after test
+//        deleteAllAccountAuthority(dao)
+//        deleteAccounts(dao)
+//
+//        assertEquals(countUserAuthBefore, countAccountAuthority(dao))
+//        assertEquals(countUserBefore, countAccount(dao))
     }
 
 
