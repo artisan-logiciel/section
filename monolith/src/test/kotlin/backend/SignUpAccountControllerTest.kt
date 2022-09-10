@@ -121,7 +121,7 @@ internal class SignUpAccountControllerTest {
     }
 
 
-    @Test  @Ignore
+    @Test
     fun `test register account avec un email invalid`() {
         val countBefore= countAccount(dao)
         log.info("countBefore: $countBefore")
