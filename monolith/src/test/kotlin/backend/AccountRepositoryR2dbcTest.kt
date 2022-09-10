@@ -13,6 +13,7 @@ import org.springframework.beans.factory.getBean
 import org.springframework.boot.runApplication
 import org.springframework.context.ConfigurableApplicationContext
 import org.springframework.data.r2dbc.core.R2dbcEntityTemplate
+import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.test.assertEquals
 

@@ -16,7 +16,11 @@ fun createAccounts(accounts: Set<AccountCredentials>, repository: R2dbcEntityTem
 }
 
 fun deleteAccounts(repository: R2dbcEntityTemplate) {
-    repository.delete(AccountEntity::class.java).toMono().block()
+    repository.delete(AccountEntity::class.java).all().block()
+}
+
+fun deleteAllAccountAuthority(dao: R2dbcEntityTemplate) {
+    dao.delete(AccountAuthorityEntity::class.java).all().block()
 }
 
 fun saveAccount(model: AccountCredentials, dao: R2dbcEntityTemplate): Account? =
@@ -25,17 +29,13 @@ fun saveAccount(model: AccountCredentials, dao: R2dbcEntityTemplate): Account? =
 fun saveAccountAuthority(id: UUID, role: String, dao: R2dbcEntityTemplate): AccountAuthorityEntity? =
     dao.insert(AccountAuthorityEntity(userId = id, role = role)).block()
 
+
 fun countAccount(dao: R2dbcEntityTemplate): Int =
     dao.select(AccountEntity::class.java).count().block()?.toInt()!!
 
 
 fun countAccountAuthority(dao: R2dbcEntityTemplate): Int =
     dao.select(AccountAuthorityEntity::class.java).count().block()?.toInt()!!
-
-
-fun deleteAllAccountAuthority(dao: R2dbcEntityTemplate) {
-    dao.delete(AccountAuthorityEntity::class.java).toMono().block()
-}
 
 
 fun findOneByLogin(login: String, dao: R2dbcEntityTemplate): AccountCredentials? =

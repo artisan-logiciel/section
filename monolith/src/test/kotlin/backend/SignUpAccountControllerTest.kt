@@ -54,6 +54,8 @@ internal class SignUpAccountControllerTest {
     fun tearDown() {
         deleteAllAccountAuthority(dao)
         deleteAccounts(dao)
+        log.info("tearDown count account: ${countAccount(dao)}")
+        log.info("tearDown count accountAuthority: ${countAccountAuthority(dao)}")
     }
 
     @Test
@@ -123,9 +125,10 @@ internal class SignUpAccountControllerTest {
 
 
     @Test
-    @Ignore
-    fun `test register account avec un email invalid`(): Unit = runBlocking {
-        assertEquals(0, countAccount(dao))
+    fun `test register account avec un email invalid`() {
+        val countBefore= countAccount(dao)
+        log.info("countBefore: $countBefore")
+        assertEquals(0,countBefore)
         client
             .post()
             .uri(SIGNUP_URI)
@@ -136,12 +139,11 @@ internal class SignUpAccountControllerTest {
             .isBadRequest
             .returnResult<Unit>()
             .run { responseBodyContent?.isNotEmpty()?.let { assertTrue(it) } }
-        assertEquals(0, countAccount(dao))
+        assertEquals(0, countBefore)
     }
 
     @Test
-    @Ignore
-    fun `test register account avec un password invalid`(): Unit = runBlocking {
+    fun `test register account avec un password invalid`(){
         assertEquals(0, countAccount(dao))
         client.post()
             .uri(SIGNUP_URI)

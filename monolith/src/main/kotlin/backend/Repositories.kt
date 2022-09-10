@@ -81,7 +81,7 @@ class AccountRepositoryR2dbc(
 ) : AccountRepository {
     override suspend fun save(model: AccountCredentials): Account? =
         try {
-            dao.insert(AccountEntity(model)).awaitSingleOrNull()?.toModel()
+            dao.insert(AccountEntity(model)).awaitSingle()?.toModel()
         } catch (_: DataAccessException) {
             null
         }
@@ -89,7 +89,7 @@ class AccountRepositoryR2dbc(
     override suspend fun count(): Long = dao.select<AccountEntity>().count().awaitSingle()
 
     override suspend fun delete(account: Account) {
-        dao.delete(account).awaitSingleOrNull()
+        dao.delete(account).awaitSingle()
     }
 
     override suspend fun findOneByLogin(login: String): AccountCredentials? =
