@@ -50,7 +50,8 @@ internal class SignUpAccountControllerTest {
     fun `arrête le serveur`() = context.close()
 
 
-    @Test @Ignore
+    @Test
+    @Ignore
     fun `vérifie que la requête contient bien des données cohérentes`() {
         client
             .post()
@@ -77,7 +78,8 @@ internal class SignUpAccountControllerTest {
             }
     }
 
-    @Test @Ignore
+    @Test
+    @Ignore
     fun `signup avec un account valide`(): Unit = runBlocking {
         val countUserBefore = countAccount(dao)
         val countUserAuthBefore = countAccountAuthority(dao)
@@ -95,7 +97,7 @@ internal class SignUpAccountControllerTest {
             .run { responseBodyContent?.isEmpty()?.let { assertTrue(it) } }
         assertEquals(countUserBefore + 1, countAccount(dao))
         assertEquals(countUserAuthBefore + 1, countAccountAuthority(dao))
-        assertFalse(findOneByEmail(defaultAccount.email!!,dao)!!.activated)
+        assertFalse(findOneByEmail(defaultAccount.email!!, dao)!!.activated)
         //clean accounts and accountAuthorities after test
         deleteAllAccountAuthority(dao)
         deleteAccounts(dao)
@@ -105,7 +107,8 @@ internal class SignUpAccountControllerTest {
     }
 
 
-    @Test @Ignore
+    @Test
+    @Ignore
     fun `test register account avec login invalid`(): Unit = runBlocking {
         assertEquals(0, countAccount(dao))
         client
@@ -122,7 +125,8 @@ internal class SignUpAccountControllerTest {
     }
 
 
-    @Test @Ignore
+    @Test
+    @Ignore
     fun `test register account avec un email invalid`(): Unit = runBlocking {
         assertEquals(0, countAccount(dao))
         client
@@ -138,7 +142,8 @@ internal class SignUpAccountControllerTest {
         assertEquals(0, countAccount(dao))
     }
 
-    @Test @Ignore
+    @Test
+    @Ignore
     fun `test register account avec un password invalid`(): Unit = runBlocking {
         assertEquals(0, countAccount(dao))
         client.post()
@@ -153,7 +158,8 @@ internal class SignUpAccountControllerTest {
         assertEquals(0, countAccount(dao))
     }
 
-    @Test @Ignore
+    @Test
+    @Ignore
     fun `test register account avec un password null`() = runBlocking {
         assertEquals(0, countAccount(dao))
         client
@@ -169,17 +175,18 @@ internal class SignUpAccountControllerTest {
         assertEquals(0, countAccount(dao))
     }
 
-    @Test @Ignore
+    @Test
+    @Ignore
     fun `test register account activé avec un email existant`(): Unit = runBlocking {
         assertEquals(0, countAccount(dao))
         assertEquals(0, countAccountAuthority(dao))
         saveAccountAuthority(
-            saveAccount(defaultAccount.copy(activated = true),dao)?.id!!,
-            ROLE_USER,dao
+            saveAccount(defaultAccount.copy(activated = true), dao)?.id!!,
+            ROLE_USER, dao
         )
         assertEquals(1, countAccount(dao))
         assertEquals(1, countAccountAuthority(dao))
-        assertTrue(findOneByEmail(defaultAccount.email!!,dao)!!.activated)
+        assertTrue(findOneByEmail(defaultAccount.email!!, dao)!!.activated)
 
         client
             .post()
@@ -200,15 +207,16 @@ internal class SignUpAccountControllerTest {
     }
 
 
-    @Test @Ignore
+    @Test
+    @Ignore
     fun `test register account activé avec un login existant`(): Unit = runBlocking {
         assertEquals(0, countAccount(dao))
         assertEquals(0, countAccountAuthority(dao))
         saveAccountAuthority(
-            saveAccount(defaultAccount.copy(activated = true),dao)?.id!!,
-            ROLE_USER,dao
+            saveAccount(defaultAccount.copy(activated = true), dao)?.id!!,
+            ROLE_USER, dao
         )
-        assertTrue(findOneByEmail(defaultAccount.email!!,dao)!!.activated)
+        assertTrue(findOneByEmail(defaultAccount.email!!, dao)!!.activated)
         assertEquals(1, countAccount(dao))
         assertEquals(1, countAccountAuthority(dao))
 
@@ -232,7 +240,8 @@ internal class SignUpAccountControllerTest {
     }
 
 
-    @Test @Ignore
+    @Test
+    @Ignore
     fun `test register account avec un email dupliqué`(): Unit = runBlocking {
 
         assertEquals(0, countAccount(dao))
@@ -251,7 +260,7 @@ internal class SignUpAccountControllerTest {
             .run { responseBodyContent?.isEmpty()?.let { assertTrue(it) } }
         assertEquals(1, countAccount(dao))
         assertEquals(1, countAccountAuthority(dao))
-        assertFalse(findOneByEmail(defaultAccount.email!!,dao)!!.activated)
+        assertFalse(findOneByEmail(defaultAccount.email!!, dao)!!.activated)
 
         // Duplicate email, different login
         // Register second (non activated) user
@@ -268,12 +277,12 @@ internal class SignUpAccountControllerTest {
             .run { responseBodyContent?.isEmpty()?.let { assertTrue(it) } }
         assertEquals(1, countAccount(dao))
         assertEquals(1, countAccountAuthority(dao))
-        assertNull(findOneByLogin(defaultAccount.login!!,dao))
-        findOneByLogin(secondLogin,dao).run {
+        assertNull(findOneByLogin(defaultAccount.login!!, dao))
+        findOneByLogin(secondLogin, dao).run {
             assertNotNull(this)
             assertEquals(defaultAccount.email!!, email)
         }
-        assertFalse(findOneByEmail(defaultAccount.email!!,dao)!!.activated)
+        assertFalse(findOneByEmail(defaultAccount.email!!, dao)!!.activated)
 
 
         // Duplicate email - with uppercase email address
@@ -296,18 +305,18 @@ internal class SignUpAccountControllerTest {
             .run { responseBodyContent?.isEmpty()?.let { assertTrue(it) } }
         assertEquals(1, countAccount(dao))
         assertEquals(1, countAccountAuthority(dao))
-        assertNull(findOneByLogin(secondLogin,dao))
-        findOneByLogin(thirdLogin,dao).run {
+        assertNull(findOneByLogin(secondLogin, dao))
+        findOneByLogin(thirdLogin, dao).run {
             assertNotNull(this)
             assertEquals(defaultAccount.email!!.uppercase(), email)
         }
         //activate third
-        saveAccount(findOneByEmail(defaultAccount.email!!,dao)!!.copy(activated = true),dao)
+        saveAccount(findOneByEmail(defaultAccount.email!!, dao)!!.copy(activated = true), dao)
 
 
         log.info(
             "findOneByEmail(defaultAccount.email!!): ${
-                findOneByEmail(defaultAccount.email!!,dao)
+                findOneByEmail(defaultAccount.email!!, dao)
             }"
         )
 //        assertTrue(findOneByEmail(defaultAccount.email!!)!!.activated)
