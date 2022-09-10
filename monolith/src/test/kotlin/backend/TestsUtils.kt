@@ -1,7 +1,6 @@
 package backend
 
 import org.springframework.data.r2dbc.core.R2dbcEntityTemplate
-import org.springframework.data.r2dbc.core.awaitOneOrNull
 import org.springframework.data.r2dbc.core.select
 import org.springframework.data.relational.core.query.Criteria.where
 import org.springframework.data.relational.core.query.Query.query
@@ -39,14 +38,11 @@ fun deleteAllAccountAuthority(dao: R2dbcEntityTemplate) {
 }
 
 
-fun findOneByLogin(login: String, dao: R2dbcEntityTemplate): AccountCredentials? {
-    return dao.select<AccountEntity>()
+fun findOneByLogin(login: String, dao: R2dbcEntityTemplate): AccountCredentials? =
+    dao.select<AccountEntity>()
         .matching(query(where("login").`is`(login)))
         .one().block()?.toCredentialsModel()
-}
 
-suspend fun findOneByEmail(email: String, dao: R2dbcEntityTemplate): AccountCredentials? {
-    return dao.select<AccountEntity>()
-        .matching(query(where("email").`is`(email)))
-        .awaitOneOrNull()?.toCredentialsModel()
-}
+fun findOneByEmail(email: String, dao: R2dbcEntityTemplate): AccountCredentials? = dao.select<AccountEntity>()
+    .matching(query(where("email").`is`(email)))
+    .one().block()?.toCredentialsModel()

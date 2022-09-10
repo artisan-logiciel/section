@@ -4,6 +4,7 @@ package backend
 
 import backend.data.Data
 import backend.tdd.testLoader
+import kotlinx.coroutines.reactor.mono
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.AfterEach
@@ -34,10 +35,13 @@ internal class AccountRepositoryR2dbcTest {
 
 
     @Test
-    fun save() = runBlocking {
-        assertEquals(0, countAccount(dao))
-        accountRepository.save(Data.defaultAccount)
-        assertEquals(1, countAccount(dao))
+    fun save() {
+        mono {
+            val countBefore = countAccount(dao)
+            assertEquals(0, countBefore)
+            accountRepository.save(Data.defaultAccount)
+            assertEquals(countBefore + 1, countAccount(dao))
+        }
     }
 
     @Test

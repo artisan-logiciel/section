@@ -6,9 +6,10 @@ package backend
 import backend.AuthorityRecord.Companion.ROLE_COLUMN
 import kotlinx.coroutines.reactor.awaitSingle
 import kotlinx.coroutines.reactor.awaitSingleOrNull
+import org.springframework.dao.DataAccessException
 import org.springframework.data.r2dbc.core.*
-import org.springframework.data.relational.core.query.Criteria
-import org.springframework.data.relational.core.query.Query
+import org.springframework.data.relational.core.query.Criteria.where
+import org.springframework.data.relational.core.query.Query.query
 import org.springframework.stereotype.Repository
 import reactor.kotlin.core.publisher.toMono
 import java.util.*
@@ -68,7 +69,7 @@ class AccountAuthorityRepositoryR2dbc(
     }
 
     override suspend fun deleteAllByAccountId(id: UUID) {
-        dao.delete<AccountAuthorityEntity>().matching(Query.query(Criteria.where("userId").`is`(id))).allAndAwait()
+        dao.delete<AccountAuthorityEntity>().matching(query(where("userId").`is`(id))).allAndAwait()
     }
 
 }
@@ -80,7 +81,11 @@ class AccountRepositoryR2dbc(
 //    private val authorityRepository: AuthorityRepository
 ) : AccountRepository {
     override suspend fun save(model: AccountCredentials): Account? =
-        dao.insert(AccountEntity(model)).awaitSingleOrNull()?.toModel()
+        try {
+            dao.insert(AccountEntity(model)).awaitSingleOrNull()?.toModel()
+        } catch (_: DataAccessException) {
+            null
+        }
 
     override suspend fun count(): Long = dao.select<AccountEntity>().count().awaitSingle()
 
@@ -89,15 +94,18 @@ class AccountRepositoryR2dbc(
     }
 
     override suspend fun findOneByLogin(login: String): AccountCredentials? =
-        dao.select<AccountEntity>().matching(Query.query(Criteria.where("login").`is`(login))).awaitOneOrNull()?.toCredentialsModel()
+        dao.select<AccountEntity>().matching(query(where("login").`is`(login)))
+            .awaitOneOrNull()?.toCredentialsModel()
 
 
     override suspend fun findOneByEmail(email: String): AccountCredentials? =
-        dao.select<AccountEntity>().matching(Query.query(Criteria.where("email").`is`(email))).awaitOneOrNull()?.toCredentialsModel()
+        dao.select<AccountEntity>().matching(query(where("email").`is`(email)))
+            .awaitOneOrNull()?.toCredentialsModel()
 
     override suspend fun suppress(account: Account) {
         dao.run {
-            delete<AccountAuthorityEntity>().matching(Query.query(Criteria.where("userId").`is`(account.id!!))).toMono().awaitSingle()
+            delete<AccountAuthorityEntity>().matching(query(where("userId").`is`(account.id!!)))
+                .toMono().awaitSingle()
             delete<AccountEntity>().toMono().awaitSingle()
         }
     }
@@ -116,20 +124,21 @@ class AccountRepositoryR2dbc(
     }
 
     override suspend fun findActivationKeyByLogin(login: String): String? =
-        dao.select<AccountEntity>().matching(Query.query(Criteria.where("login").`is`(login))).awaitOneOrNull()?.activationKey
+        dao.select<AccountEntity>().matching(query(where("login").`is`(login))).awaitOneOrNull()?.activationKey
 
 
     override suspend fun findOneActivationKey(key: String): AccountCredentials? =
-        dao.select<AccountEntity>().matching(Query.query(Criteria.where("activationKey").`is`(key))).awaitOneOrNull()
+        dao.select<AccountEntity>().matching(query(where("activationKey").`is`(key))).awaitOneOrNull()
             ?.toCredentialsModel()
 }
+
 @Repository
 class AuthorityRepositoryR2dbc(
-   private val repository: R2dbcEntityTemplate
+    private val repository: R2dbcEntityTemplate
 ) : AuthorityRepository {
     override suspend fun findOne(role: String): String? =
         repository.select(AuthorityEntity::class.java)
-            .matching(Query.query(Criteria.where(ROLE_COLUMN).`is`(role)))
+            .matching(query(where(ROLE_COLUMN).`is`(role)))
             .awaitOneOrNull()?.role
 }
 
