@@ -109,7 +109,7 @@ internal class SignUpAccountControllerTest {
             .post()
             .uri(SIGNUP_URI)
             .contentType(MediaType.APPLICATION_JSON)
-            .bodyValue(defaultAccountEntity.copy(login = "funky-log(n"))
+            .bodyValue(defaultAccount.copy(login = "funky-log(n"))
             .exchange()
             .expectStatus()
             .isBadRequest

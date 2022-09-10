@@ -137,7 +137,7 @@ class AccountRepositoryR2dbc(
 
 
     override suspend fun findOneActivationKey(key: String): AccountCredentials? =
-        dao.select<AccountEntity>().matching(query(where("activation_key").`is`(key))).awaitOneOrNull()
+        dao.select<AccountEntity>().matching(query(where("activationKey").`is`(key))).awaitOneOrNull()
             ?.toCredentialsModel()
 }
 
