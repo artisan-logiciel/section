@@ -4,6 +4,7 @@
 
 package backend
 
+import backend.Log.log
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeAll
@@ -12,24 +13,28 @@ import org.springframework.boot.runApplication
 import org.springframework.context.ConfigurableApplicationContext
 import org.springframework.data.r2dbc.core.R2dbcEntityTemplate
 import org.springframework.test.web.reactive.server.WebTestClient
+import org.springframework.test.web.reactive.server.returnResult
+import java.net.URI
+import kotlin.test.Test
+import kotlin.test.assertEquals
 
 
 internal class ActivateAccountControllerTest {
 
     companion object {
-        private const val SIGNUP_URI = "api/activate"
-        private const val BASE_URL = "http://localhost:8080"
-        private val client: WebTestClient by lazy {
-            WebTestClient
-                .bindToServer()
-                .baseUrl(BASE_URL)
-                .build()
-        }
-        private lateinit var context: ConfigurableApplicationContext
-        private val dao: R2dbcEntityTemplate by lazy { context.getBean() }
-        private val accountRepository: AccountRepository by lazy { context.getBean() }
-        private val accountAuthorityRepository: AccountAuthorityRepository by lazy { context.getBean() }
+        private const val SIGNUP_URI = "api/activate?key="
+        private const val BASE_URL = "http://localhost:8080/"
+
     }
+
+    private val client: WebTestClient by lazy {
+        WebTestClient
+            .bindToServer()
+            .baseUrl(BASE_URL)
+            .build()
+    }
+    private lateinit var context: ConfigurableApplicationContext
+    private val dao: R2dbcEntityTemplate by lazy { context.getBean() }
 
     @BeforeAll
     fun `lance le server en profile test`() =
@@ -38,36 +43,25 @@ internal class ActivateAccountControllerTest {
 
     @AfterAll
     fun `arrête le serveur`() = context.close()
+
     @AfterEach
     fun tearDown() = deleteAllAccounts(dao)
 
-//    @Test//TODO: revisiter avec coherence de la requete
-//    fun `vérifie que la requete contient bien des données cohérentes`() {
-//        client
-//            .post()
-//            .uri("/api/foo")
-//            .contentType(MediaType.APPLICATION_JSON)
-//            .bodyValue(defaultAccount)
-//            .exchange()
-//            .returnResult<Unit>().run {
-//                assertTrue(requestBodyContent!!.isNotEmpty())
-//                requestBodyContent
-//                    ?.map { it.toInt().toChar().toString() }
-//                    ?.reduce { acc: String, s: String -> acc + s }.apply requestContent@{
-//                        //test request contains passed values
-//                        defaultAccount.run {
-//                            setOf(
-//                                "\"login\":\"${login}\"",
-//                                "\"password\":\"${password}\"",
-//                                "\"firstName\":\"${firstName}\"",
-//                                "\"lastName\":\"${lastName}\"",
-//                                "\"email\":\"${email}\"",
-//                                "\"imageUrl\":\"${imageUrl}\""
-//                            ).map { assertTrue(this@requestContent?.contains(it) ?: false) }
-//                        }
-//                    }
-//            }
-//    }
+    @Test
+    fun `vérifie que la requete contient bien des données cohérentes`() {
+        RandomUtils.generateActivationKey.run {
+            client
+                .get()
+                .uri("/api/activate?key={activationKey}", this)
+                .exchange()
+                .expectStatus()
+                .is5xxServerError
+                .returnResult<Unit>().url.let {
+                    assertEquals(URI("$BASE_URL$SIGNUP_URI?key=$this"), it)
+                }
+
+        }
+    }
 
 //    /*
 //        @Test

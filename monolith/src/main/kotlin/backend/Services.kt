@@ -92,7 +92,9 @@ class SignUpService(
                 when {
                     this == null -> return false
                     else -> {
-                        save(copy(activated = true, activationKey = null))
+                        save(copy(activated = true, activationKey = null)).apply {
+                            if (id != null) log.info("activation: $login")
+                        }
                         return true
                     }
                 }
