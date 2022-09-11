@@ -1,15 +1,5 @@
 package backend
 
-import org.springframework.boot.SpringApplication
-import org.springframework.data.r2dbc.core.R2dbcEntityTemplate
-import org.springframework.data.r2dbc.core.select
-import org.springframework.data.relational.core.query.Criteria.where
-import org.springframework.data.relational.core.query.Query.query
-import java.time.Instant
-import java.util.*
-import kotlin.test.assertEquals
-import kotlin.test.assertTrue
-
 import com.fasterxml.jackson.annotation.JsonInclude.Include.NON_EMPTY
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.SerializationFeature.WRITE_DURATIONS_AS_TIMESTAMPS
@@ -17,13 +7,23 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import org.assertj.core.api.Assertions.assertThat
 import org.hamcrest.Description
 import org.hamcrest.TypeSafeDiagnosingMatcher
+import org.springframework.boot.SpringApplication
+import org.springframework.data.r2dbc.core.R2dbcEntityTemplate
+import org.springframework.data.r2dbc.core.select
+import org.springframework.data.relational.core.query.Criteria.where
+import org.springframework.data.relational.core.query.Query.query
 import java.io.IOException
 import java.lang.Byte.parseByte
+import java.time.Instant
 import java.time.ZonedDateTime
 import java.time.ZonedDateTime.parse
 import java.time.format.DateTimeParseException
+import java.util.*
 import kotlin.reflect.KClass
 import kotlin.reflect.full.createInstance
+import kotlin.test.assertEquals
+import kotlin.test.assertTrue
+
 fun testLoader(app: SpringApplication) = with(app) {
     setDefaultProperties(
         hashMapOf<String, Any>().apply {
@@ -96,9 +96,6 @@ fun findOneByLogin(login: String, dao: R2dbcEntityTemplate): AccountCredentials?
 fun findOneByEmail(email: String, dao: R2dbcEntityTemplate): AccountCredentials? = dao.select<AccountEntity>()
     .matching(query(where("email").`is`(email)))
     .one().block()?.toCredentialsModel()
-
-
-
 
 
 private val mapper = createObjectMapper()

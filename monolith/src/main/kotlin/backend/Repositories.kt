@@ -59,8 +59,14 @@ class AccountAuthorityRepositoryR2dbc(
     }
 
     override suspend fun delete(id: UUID, authority: String) {
-        dao.delete(AccountAuthorityEntity(userId = id, role = authority))
-            .awaitSingle()
+        dao.selectOne(
+            query(where("userId").`is`(id).and(where("role").`is`(authority))),
+            AccountAuthorityEntity::class.java
+        ).awaitSingleOrNull().run {
+            if (this != null && this.id != null)
+                dao.delete(this)
+                    .awaitSingle()
+        }
     }
 
     override suspend fun count(): Long = dao.select<AccountAuthorityEntity>().count()
