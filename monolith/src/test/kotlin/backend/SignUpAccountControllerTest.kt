@@ -4,6 +4,7 @@
 
 package backend
 
+import backend.Constants.ROLE_ADMIN
 import backend.Constants.ROLE_USER
 import backend.Data.defaultAccount
 import org.junit.jupiter.api.AfterAll
@@ -79,7 +80,7 @@ internal class SignUpAccountControllerTest {
     }
 
     @Test
-    fun `signup avec un account valide`() {
+    fun `test signup avec un account valide`() {
         val countUserBefore = countAccount(dao)
         val countUserAuthBefore = countAccountAuthority(dao)
         assertEquals(0, countUserBefore)
@@ -101,7 +102,7 @@ internal class SignUpAccountControllerTest {
 
 
     @Test
-    fun `test register account avec login invalid`() {
+    fun `test signup account avec login invalid`() {
         assertEquals(0, countAccount(dao))
         client
             .post()
@@ -118,7 +119,7 @@ internal class SignUpAccountControllerTest {
 
 
     @Test
-    fun `test register account avec un email invalid`() {
+    fun `test signup account avec un email invalid`() {
         val countBefore = countAccount(dao)
         assertEquals(0, countBefore)
         client
@@ -136,7 +137,7 @@ internal class SignUpAccountControllerTest {
     }
 
     @Test
-    fun `test register account avec un password invalid`() {
+    fun `test signup account avec un password invalid`() {
         assertEquals(0, countAccount(dao))
         client.post()
             .uri(SIGNUP_URI)
@@ -152,7 +153,7 @@ internal class SignUpAccountControllerTest {
     }
 
     @Test
-    fun `test register account avec un password null`() {
+    fun `test signup account avec un password null`() {
         assertEquals(0, countAccount(dao))
         client
             .post()
@@ -169,9 +170,10 @@ internal class SignUpAccountControllerTest {
     }
 
     @Test
-    fun `test register account activé avec un email existant`() {
+    fun `test signup account activé avec un email existant`() {
         assertEquals(0, countAccount(dao))
         assertEquals(0, countAccountAuthority(dao))
+        //TODO: remplacer par createAccounts()
         saveAccountAuthority(
             saveAccount(defaultAccount.copy(activated = true), dao)?.id!!,
             ROLE_USER, dao
@@ -194,9 +196,10 @@ internal class SignUpAccountControllerTest {
 
 
     @Test
-    fun `test register account activé avec un login existant`() {
+    fun `test signup account activé avec un login existant`() {
         assertEquals(0, countAccount(dao))
         assertEquals(0, countAccountAuthority(dao))
+        //TODO: remplacer par createAccounts()
         saveAccountAuthority(
             saveAccount(defaultAccount.copy(activated = true), dao)?.id!!,
             ROLE_USER, dao
@@ -219,7 +222,7 @@ internal class SignUpAccountControllerTest {
 
 
     @Test
-    fun `test register account avec un email dupliqué`() {
+    fun `test signup account avec un email dupliqué`() {
 
         assertEquals(0, countAccount(dao))
         assertEquals(0, countAccountAuthority(dao))
@@ -327,38 +330,40 @@ internal class SignUpAccountControllerTest {
         )
     }
 
-
-//    /*
-//        @Test @Ignore//test en renseignant l'authorité admin est ignoré
-//        void testRegisterAdminIsIgnored() throws Exception {
-//            ManagedUserVM validUser = new ManagedUserVM();
-//            validUser.setLogin("badguy");
-//            validUser.setPassword("password");
-//            validUser.setFirstName("Bad");
-//            validUser.setLastName("Guy");
-//            validUser.setEmail("badguy@example.com");
-//            validUser.setActivated(true);
-//            validUser.setImageUrl("http://placehold.it/50x50");
-//            validUser.setLangKey(Constants.DEFAULT_LANGUAGE);
-//            validUser.setAuthorities(Collections.singleton(AuthoritiesConstants.ADMIN));
-//
-//            accountWebTestClient
-//                .post()
-//                .uri("/api/register")
-//                .contentType(MediaType.APPLICATION_JSON)
-//                .bodyValue(TestUtil.convertObjectToJsonBytes(validUser))
-//                .exchange()
-//                .expectStatus()
-//                .isCreated();
-//
-//            Optional<User> userDup = userRepository.findOneWithAuthoritiesByLogin("badguy").blockOptional();
-//            assertThat(userDup).isPresent();
-//            assertThat(userDup.get().getAuthorities())
-//                .hasSize(1)
-//                .containsExactly(authorityRepository.findById(AuthoritiesConstants.USER).block());
-//        }
-//    */
-//
-
+    @Test
+    fun `test signup account en renseignant l'authorité admin qui sera ignoré et activé qui sera mis à false`() {
+        val countUserBefore = countAccount(dao)
+        val countUserAuthBefore = countAccountAuthority(dao)
+        assertEquals(0, countUserBefore)
+        assertEquals(0, countUserAuthBefore)
+        client
+            .post()
+            .uri(SIGNUP_URI)
+            .contentType(MediaType.APPLICATION_JSON)
+            .bodyValue(
+                AccountCredentials(
+                    login = "badguy",
+                    password = "password",
+                    firstName = "Bad",
+                    lastName = "Guy",
+                    email = "badguy@example.com",
+                    activated = true,
+                    imageUrl = "http://placehold.it/50x50",
+                    langKey = Constants.DEFAULT_LANGUAGE,
+                    authorities = setOf(ROLE_ADMIN),
+                )
+            )
+            .exchange()
+            .expectStatus()
+            .isCreated
+            .returnResult<Unit>()
+            .responseBodyContent!!.isEmpty().run { assertTrue(this) }
+        assertEquals(countUserBefore + 1, countAccount(dao))
+        assertEquals(countUserAuthBefore + 1, countAccountAuthority(dao))
+        assertFalse(findOneByLogin("badguy", dao)!!.activated)
+        assertTrue(findAllAccountAuthority(dao).none {
+            it.role.equals(ROLE_ADMIN, ignoreCase = true)
+        })
+    }
 }
 

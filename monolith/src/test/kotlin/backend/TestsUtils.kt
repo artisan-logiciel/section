@@ -108,6 +108,8 @@ fun findOneByEmail(email: String, dao: R2dbcEntityTemplate): AccountCredentials?
     .matching(query(where("email").`is`(email).ignoreCase(true)))
     .one().block()?.toCredentialsModel()
 
+fun findAllAccountAuthority(dao: R2dbcEntityTemplate): Set<AccountAuthorityEntity> =
+    dao.select(AccountAuthorityEntity::class.java).all().toIterable().toHashSet()
 
 private fun createObjectMapper() =
     ObjectMapper().apply {

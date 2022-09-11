@@ -53,6 +53,7 @@ class SignUpService(
             createdDate = createdDate,
             lastModifiedBy = Constants.SYSTEM_USER,
             lastModifiedDate = createdDate,
+            activated = false
         ).run {
             accountRepository.signup(this)
             mailService.sendActivationEmail(this)
