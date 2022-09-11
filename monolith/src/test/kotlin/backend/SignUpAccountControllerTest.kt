@@ -5,9 +5,7 @@
 package backend
 
 import backend.Constants.ROLE_USER
-import backend.Log.log
 import backend.data.Data.defaultAccount
-import backend.data.Data.defaultAccountEntity
 import backend.tdd.testLoader
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.AfterEach
