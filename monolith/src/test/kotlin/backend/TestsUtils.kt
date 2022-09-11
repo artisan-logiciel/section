@@ -58,13 +58,31 @@ fun createDataAccounts(accounts: Set<AccountCredentials>, dao: R2dbcEntityTempla
     assertTrue(accounts.size <= countAccountAuthority(dao))
 }
 
-fun activateAccount(account: AccountCredentials, dao: R2dbcEntityTemplate) {
-    saveAccount(account.copy(activated = true, activationKey = null), dao)
-}
 
 fun createActivatedDataAccounts(accounts: Set<AccountCredentials>, dao: R2dbcEntityTemplate) {
-    createDataAccounts(accounts, dao)
-    accounts.map { activateAccount(it, dao) }
+    assertEquals(0, countAccount(dao))
+    assertEquals(0, countAccountAuthority(dao))
+    accounts.map { acc ->
+        AccountEntity(acc.copy(
+            activated=true,
+            langKey = Constants.DEFAULT_LANGUAGE,
+            createdBy = Constants.SYSTEM_USER,
+            createdDate = Instant.now(),
+            lastModifiedBy = Constants.SYSTEM_USER,
+            lastModifiedDate = Instant.now(),
+            authorities = mutableSetOf(Constants.ROLE_USER).apply {
+                if (acc.login == Data.ADMIN_LOGIN) add(Constants.ROLE_ADMIN)
+            }
+        )).run {
+            dao.insert(this).block()!!.id!!.let { uuid ->
+                authorities!!.map { authority ->
+                    dao.insert(AccountAuthorityEntity(userId = uuid, role = authority.role)).block()
+                }
+            }
+        }
+    }
+    assertEquals(accounts.size, countAccount(dao))
+    assertTrue(accounts.size <= countAccountAuthority(dao))
 }
 
 fun deleteAllAccounts(dao: R2dbcEntityTemplate) {

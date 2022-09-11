@@ -174,13 +174,8 @@ internal class SignUpAccountControllerTest {
     fun `test signup account activé avec un email existant`() {
         assertEquals(0, countAccount(dao))
         assertEquals(0, countAccountAuthority(dao))
-        //TODO: remplacer par createAccounts()
         //activation de l'account
-        saveAccountAuthority(
-            saveAccount(Data.defaultAccount.copy(activated = true), dao)?.id!!,
-            Constants.ROLE_USER, dao
-        )
-//        createActivatedDataAccounts(setOf(Data.defaultAccount), dao)
+        createActivatedDataAccounts(setOf(Data.defaultAccount), dao)
         assertEquals(1, countAccount(dao))
         assertEquals(1, countAccountAuthority(dao))
         findOneByEmail(Data.defaultAccount.email!!, dao).run {
@@ -206,13 +201,8 @@ internal class SignUpAccountControllerTest {
     fun `test signup account activé avec un login existant`() {
         assertEquals(0, countAccount(dao))
         assertEquals(0, countAccountAuthority(dao))
-        //TODO: remplacer par createAccounts()
         //activation de l'account
-        saveAccountAuthority(
-            saveAccount(Data.defaultAccount.copy(activated = true, activationKey = null), dao)?.id!!,
-            Constants.ROLE_USER, dao
-        )
-//        createActivatedDataAccounts(setOf(Data.defaultAccount), dao)
+        createActivatedDataAccounts(setOf(Data.defaultAccount), dao)
         findOneByEmail(Data.defaultAccount.email!!, dao).run {
             assertNotNull(this)
             assertTrue(activated)
@@ -302,7 +292,6 @@ internal class SignUpAccountControllerTest {
             assertFalse(activated)
             //activation du troisieme user
             saveAccount(copy(activated = true, activationKey = null), dao)
-//            activateAccount(this,dao)
         }
         //validation que le troisieme est actif et activationKey est null
         findOneByLogin(thirdLogin, dao).run {
