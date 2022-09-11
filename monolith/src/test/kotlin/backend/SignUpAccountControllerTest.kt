@@ -222,8 +222,8 @@ internal class SignUpAccountControllerTest {
 
         assertEquals(0, countAccount(dao))
         assertEquals(0, countAccountAuthority(dao))
-        // First user
-        // Register first user
+        // premier user
+        // sign up premier user
         client
             .post()
             .uri(SIGNUP_URI)
@@ -238,8 +238,8 @@ internal class SignUpAccountControllerTest {
         assertEquals(1, countAccountAuthority(dao))
         assertFalse(findOneByEmail(defaultAccount.email!!, dao)!!.activated)
 
-        // Duplicate email, different login
-        // Register second (non activated) user
+        // email dupliqué, login different
+        // sign up un second user (non activé)
         val secondLogin = "foo"
         client
             .post()
@@ -260,8 +260,8 @@ internal class SignUpAccountControllerTest {
             assertFalse(activated)
         }
 
-        // Duplicate email - with uppercase email address, different login
-        // Register third (not activated) user
+        // email dupliqué - avec un email en majuscule, login différent
+        // sign up un troisieme user (non activé)
         val thirdLogin = "bar"
         client
             .post()
@@ -285,129 +285,38 @@ internal class SignUpAccountControllerTest {
             assertNotNull(this)
             assertEquals(defaultAccount.email!!, email!!.lowercase())
             assertFalse(activated)
-            //activate third
+            //activation du troisieme user
             saveAccount(copy(activated = true, activationKey = null), dao)
         }
-        //validate third is active and activationKey is null
+        //validation que le troisieme est actif et activationKey est null
         findOneByLogin(thirdLogin, dao).run {
             assertNotNull(this)
             assertTrue(activated)
             assertNull(activationKey)
         }
-//
-//        // Register 4th (already activated) user
-//        client
-//            .post()
-//            .uri(SIGNUP_URI)
-//            .contentType(MediaType.APPLICATION_JSON)
-//            .bodyValue(defaultAccount.copy(login = secondLogin))
-//            .exchange()
-//            .expectStatus()
-//            .isBadRequest
-//            .returnResult<Unit>()
-//            .run { responseBodyContent?.isEmpty()?.let { assertTrue(it) } }
-//        assertEquals(1, countAccount(dao))
-//        assertEquals(1, countAccountAuthority(dao))
-//        assertNull(findOneByLogin(secondLogin))
-//        findOneByLogin(thirdLogin).run {
-//            assertNotNull(this)
-////            assertEquals(defaultAccount.email!!.lowercase(), email!!.lowercase())
-//        }
-//        assertTrue(findOneByEmail(defaultAccount.email!!)!!.activated)
-
-
-        /*
-            // First user
-            ManagedUserVM firstUser = new ManagedUserVM();
-            firstUser.setLogin("test-register-duplicate-email");
-            firstUser.setPassword("password");
-            firstUser.setFirstName("Alice");
-            firstUser.setLastName("Test");
-            firstUser.setEmail("test-register-duplicate-email@example.com");
-            firstUser.setImageUrl("http://placehold.it/50x50");
-            firstUser.setLangKey(Constants.DEFAULT_LANGUAGE);
-            firstUser.setAuthorities(Collections.singleton(AuthoritiesConstants.USER));
-
-            // Register first user
-            accountWebTestClient
-                .post()
-                .uri("/api/register")
-                .contentType(MediaType.APPLICATION_JSON)
-                .bodyValue(TestUtil.convertObjectToJsonBytes(firstUser))
-                .exchange()
-                .expectStatus()
-                .isCreated();
-
-            Optional<User> testUser1 = userRepository.findOneByLogin("test-register-duplicate-email").blockOptional();
-            assertThat(testUser1).isPresent();
-
-            // Duplicate email, different login
-            ManagedUserVM secondUser = new ManagedUserVM();
-            secondUser.setLogin("test-register-duplicate-email-2");
-            secondUser.setPassword(firstUser.getPassword());
-            secondUser.setFirstName(firstUser.getFirstName());
-            secondUser.setLastName(firstUser.getLastName());
-            secondUser.setEmail(firstUser.getEmail());
-            secondUser.setImageUrl(firstUser.getImageUrl());
-            secondUser.setLangKey(firstUser.getLangKey());
-            secondUser.setAuthorities(new HashSet<>(firstUser.getAuthorities()));
-
-            // Register second (non activated) user
-            accountWebTestClient
-                .post()
-                .uri("/api/register")
-                .contentType(MediaType.APPLICATION_JSON)
-                .bodyValue(TestUtil.convertObjectToJsonBytes(secondUser))
-                .exchange()
-                .expectStatus()
-                .isCreated();
-
-            Optional<User> testUser2 = userRepository.findOneByLogin("test-register-duplicate-email").blockOptional();
-            assertThat(testUser2).isEmpty();
-
-            Optional<User> testUser3 = userRepository.findOneByLogin("test-register-duplicate-email-2").blockOptional();
-            assertThat(testUser3).isPresent();
-
-            // Duplicate email - with uppercase email address
-            ManagedUserVM userWithUpperCaseEmail = new ManagedUserVM();
-            userWithUpperCaseEmail.setId(firstUser.getId());
-            userWithUpperCaseEmail.setLogin("test-register-duplicate-email-3");
-            userWithUpperCaseEmail.setPassword(firstUser.getPassword());
-            userWithUpperCaseEmail.setFirstName(firstUser.getFirstName());
-            userWithUpperCaseEmail.setLastName(firstUser.getLastName());
-            userWithUpperCaseEmail.setEmail("TEST-register-duplicate-email@example.com");
-            userWithUpperCaseEmail.setImageUrl(firstUser.getImageUrl());
-            userWithUpperCaseEmail.setLangKey(firstUser.getLangKey());
-            userWithUpperCaseEmail.setAuthorities(new HashSet<>(firstUser.getAuthorities()));
-
-            // Register third (not activated) user
-            accountWebTestClient
-                .post()
-                .uri("/api/register")
-                .contentType(MediaType.APPLICATION_JSON)
-                .bodyValue(TestUtil.convertObjectToJsonBytes(userWithUpperCaseEmail))
-                .exchange()
-                .expectStatus()
-                .isCreated();
-
-            Optional<User> testUser4 = userRepository.findOneByLogin("test-register-duplicate-email-3").blockOptional();
-            assertThat(testUser4).isPresent();
-            assertThat(testUser4.get().getEmail()).isEqualTo("test-register-duplicate-email@example.com");
-
-            testUser4.get().setActivated(true);
-            userService.updateUser((new AdminUserDTO(testUser4.get()))).block();
-
-            // Register 4th (already activated) user
-            accountWebTestClient
-                .post()
-                .uri("/api/register")
-                .contentType(MediaType.APPLICATION_JSON)
-                .bodyValue(TestUtil.convertObjectToJsonBytes(secondUser))
-                .exchange()
-                .expectStatus()
-                .is4xxClientError();
-
-     */
+        val fourthLogin = "baz"
+        // sign up un quatrieme user avec login different et meme email
+        // le user existant au meme mail est deja activé
+        client
+            .post()
+            .uri(SIGNUP_URI)
+            .contentType(MediaType.APPLICATION_JSON)
+            .bodyValue(defaultAccount.copy(login = fourthLogin))
+            .exchange()
+            .expectStatus()
+            .isBadRequest
+            .returnResult<Unit>()
+            .run { responseBodyContent?.isEmpty()?.let { assertTrue(it) } }
+        assertEquals(1, countAccount(dao))
+        assertEquals(1, countAccountAuthority(dao))
+        assertNull(findOneByLogin(fourthLogin, dao))
+        findOneByLogin(thirdLogin, dao).run {
+            assertNotNull(this)
+            assertTrue(activated)
+            assertNull(activationKey)
+            assertTrue(defaultAccount.email!!.equals(email!!, ignoreCase = true))
+        }
+        assertTrue(findOneByEmail(defaultAccount.email!!, dao)!!.activated)
     }
 
 
