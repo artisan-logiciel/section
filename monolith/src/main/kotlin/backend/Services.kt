@@ -232,30 +232,30 @@ class AccountService(
 ) {
     @Transactional
     suspend fun register(
-        accountCredentials: AccountCredentials
+        account: AccountCredentials
     ) {
-        InvalidPasswordException().run { if (isPasswordLengthInvalid(accountCredentials.password)) throw this }
+        InvalidPasswordException().run { if (isPasswordLengthInvalid(account.password)) throw this }
 
-        accountRepository.findOneByLogin(accountCredentials.login!!)?.run {
+        accountRepository.findOneByLogin(account.login!!)?.run {
             when {
                 !activated -> accountRepository.delete(account = this.toAccount())
                 else -> throw UsernameAlreadyUsedException()
             }
         }
-        accountRepository.findOneByEmail(accountCredentials.email!!)?.run {
+        accountRepository.findOneByEmail(account.email!!)?.run {
             when {
                 !activated -> accountRepository.delete(account = this.toAccount())
                 else -> throw EmailAlreadyUsedException()
             }
         }
-        accountCredentials.copy(
+        account.copy(
             //TODO:                password = password,//encrypt
             activationKey = RandomUtils.generateActivationKey
         ).run {
             accountRepository.save(this)
             when {
                 accountRepository
-                    .findActivationKeyByLogin(login = accountCredentials.login)
+                    .findActivationKeyByLogin(login = account.login)
                     ?.isNotEmpty() == true -> mailService.sendActivationEmail(
                     AccountCredentials(
                         password = password,
