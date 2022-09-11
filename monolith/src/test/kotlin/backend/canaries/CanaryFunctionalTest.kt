@@ -3,7 +3,7 @@
 package backend.canaries
 
 import backend.Server
-import backend.tdd.testLoader
+import backend.testLoader
 import org.springframework.boot.runApplication
 import org.springframework.context.ConfigurableApplicationContext
 import kotlin.test.assertTrue

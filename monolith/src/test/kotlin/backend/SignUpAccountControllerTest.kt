@@ -5,8 +5,7 @@
 package backend
 
 import backend.Constants.ROLE_USER
-import backend.data.Data.defaultAccount
-import backend.tdd.testLoader
+import backend.Data.defaultAccount
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeAll
