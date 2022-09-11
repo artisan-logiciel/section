@@ -20,30 +20,34 @@ fun main(args: Array<String>) = runApplication<Server>(*args) {
 
 internal fun checkProfileLog(context: ApplicationContext) =
     context.environment.activeProfiles.run {
-        if (contains(element = Constants.SPRING_PROFILE_DEVELOPMENT) &&
-            contains(element = Constants.SPRING_PROFILE_PRODUCTION)
-        ) log.error(
-            context.getBean<MessageSource>().getMessage(
-                Constants.STARTUP_LOG_MSG_KEY,
-                arrayOf(
-                    Constants.SPRING_PROFILE_DEVELOPMENT,
-                    Constants.SPRING_PROFILE_PRODUCTION
-                ),
-                Locale.getDefault()
+        when {
+            contains(element = Constants.SPRING_PROFILE_DEVELOPMENT) &&
+                    contains(element = Constants.SPRING_PROFILE_PRODUCTION)
+            -> log.error(
+                context.getBean<MessageSource>().getMessage(
+                    Constants.STARTUP_LOG_MSG_KEY,
+                    arrayOf(
+                        Constants.SPRING_PROFILE_DEVELOPMENT,
+                        Constants.SPRING_PROFILE_PRODUCTION
+                    ),
+                    Locale.getDefault()
+                )
             )
-        )
-        if (contains(Constants.SPRING_PROFILE_DEVELOPMENT) &&
-            contains(Constants.SPRING_PROFILE_CLOUD)
-        ) log.error(
-            context.getBean<MessageSource>().getMessage(
-                Constants.STARTUP_LOG_MSG_KEY,
-                arrayOf(
-                    Constants.SPRING_PROFILE_DEVELOPMENT,
-                    Constants.SPRING_PROFILE_CLOUD
-                ),
-                Locale.getDefault()
+        }
+        when {
+            contains(Constants.SPRING_PROFILE_DEVELOPMENT) &&
+                    contains(Constants.SPRING_PROFILE_CLOUD)
+            -> log.error(
+                context.getBean<MessageSource>().getMessage(
+                    Constants.STARTUP_LOG_MSG_KEY,
+                    arrayOf(
+                        Constants.SPRING_PROFILE_DEVELOPMENT,
+                        Constants.SPRING_PROFILE_CLOUD
+                    ),
+                    Locale.getDefault()
+                )
             )
-        )
+        }
     }
 
 

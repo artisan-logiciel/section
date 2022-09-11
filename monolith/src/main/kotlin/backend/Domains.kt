@@ -12,7 +12,7 @@ import javax.validation.constraints.Size
 import javax.validation.constraints.Email as EmailConstraints
 
 /**
- * Représente le user view model sans le password
+ * Représente l'account domain model sans le password
  */
 //TODO: add field enabled=false
 data class Account(
@@ -43,7 +43,8 @@ data class Account(
 }
 
 /**
- * Représente l'account view model avec le password
+ * Représente l'account domain model avec le password et l'activationKey
+ * pour la vue
  */
 data class AccountCredentials(
     @field:NotNull
@@ -111,7 +112,7 @@ data class AccountCredentials(
 }
 
 /**
- * représente le user view model minimaliste pour la view
+ * Représente l'account domain model minimaliste pour la view
  */
 data class Avatar(
     val id: UUID? = null,
