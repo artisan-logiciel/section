@@ -54,14 +54,17 @@ class AccountAuthorityRepositoryR2dbc(
     private val dao: R2dbcEntityTemplate
 ) : AccountAuthorityRepository {
     override suspend fun save(id: UUID, authority: String) {
-        dao.insert(AccountAuthorityEntity(userId = id, role = authority)).awaitSingle()
+        dao.insert(AccountAuthorityEntity(userId = id, role = authority))
+            .awaitSingle()
     }
 
     override suspend fun delete(id: UUID, authority: String) {
-        dao.delete(AccountAuthorityEntity(userId = id, role = authority)).awaitSingle()
+        dao.delete(AccountAuthorityEntity(userId = id, role = authority))
+            .awaitSingle()
     }
 
-    override suspend fun count(): Long = dao.select<AccountAuthorityEntity>().count().awaitSingle()
+    override suspend fun count(): Long = dao.select<AccountAuthorityEntity>().count()
+        .awaitSingle()
 
 
     override suspend fun deleteAll() {
@@ -69,7 +72,8 @@ class AccountAuthorityRepositoryR2dbc(
     }
 
     override suspend fun deleteAllByAccountId(id: UUID) {
-        dao.delete<AccountAuthorityEntity>().matching(query(where("userId").`is`(id))).allAndAwait()
+        dao.delete<AccountAuthorityEntity>().matching(query(where("userId").`is`(id)))
+            .allAndAwait()
     }
 
 }
@@ -89,17 +93,15 @@ class AccountRepositoryR2dbc(
     override suspend fun count(): Long = dao.select<AccountEntity>().count().awaitSingle()
 
     override suspend fun delete(account: Account) {
-        if (account.login != null || account.email != null && account.id == null) {
-            (if (account.login != null) {
-                findOneByLogin(account.login)
-            }
-            else if (account.email != null) {
-                findOneByEmail(account.email)
-            }
-            else null).run {
-                if (this != null) dao.delete(AccountEntity(this)).awaitSingle()
-            }
-        } else dao.delete(AccountEntity(AccountCredentials(account))).awaitSingle()
+        when {
+            account.login != null || account.email != null && account.id == null -> when {
+                account.login != null -> findOneByLogin(account.login)
+                account.email != null -> findOneByEmail(account.email)
+                else -> null
+            }.run { if (this != null) dao.delete(AccountEntity(this)).awaitSingle() }
+
+            else -> dao.delete(AccountEntity(AccountCredentials(account))).awaitSingle()
+        }
     }
 
     override suspend fun findOneByLogin(login: String): AccountCredentials? =
@@ -123,7 +125,7 @@ class AccountRepositoryR2dbc(
     override suspend fun signup(model: AccountCredentials) {
         dao.run {
             AccountEntity(model).run {
-                 insert(this).toMono().awaitSingleOrNull()?.id.run {
+                insert(this).toMono().awaitSingleOrNull()?.id.run {
                     if (this != null) authorities?.map {
                         insert(AccountAuthorityEntity(userId = this, role = it.role)).awaitSingle()
                     }
@@ -133,12 +135,13 @@ class AccountRepositoryR2dbc(
     }
 
     override suspend fun findActivationKeyByLogin(login: String): String? =
-        dao.select<AccountEntity>().matching(query(where("login").`is`(login))).awaitOneOrNull()?.activationKey
+        dao.select<AccountEntity>().matching(query(where("login").`is`(login)))
+            .awaitOneOrNull()?.activationKey
 
 
     override suspend fun findOneByActivationKey(key: String): AccountCredentials? =
-        dao.select<AccountEntity>().matching(query(where("activationKey").`is`(key))).awaitOneOrNull()
-            ?.toCredentialsModel()
+        dao.select<AccountEntity>().matching(query(where("activationKey").`is`(key)))
+            .awaitOneOrNull()?.toCredentialsModel()
 }
 
 @Repository
