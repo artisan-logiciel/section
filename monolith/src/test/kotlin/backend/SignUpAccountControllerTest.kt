@@ -162,8 +162,6 @@ internal class SignUpAccountControllerTest {
             .returnResult<Unit>()
             .run {
                 responseBodyContent?.isNotEmpty()?.let { assertTrue(it) }
-
-
             }
         assertEquals(0, countAccount(dao))
     }
@@ -190,12 +188,6 @@ internal class SignUpAccountControllerTest {
             .isBadRequest
             .returnResult<Unit>()
             .run { responseBodyContent?.isNotEmpty()?.let { assertTrue(it) } }
-
-//        deleteAllAccountAuthority(dao)
-//        deleteAccounts(dao)
-//
-//        assertEquals(0, countAccountAuthority(dao))
-//        assertEquals(0, countAccount(dao))
     }
 
 
@@ -221,13 +213,6 @@ internal class SignUpAccountControllerTest {
             .isBadRequest
             .returnResult<Unit>()
             .run { responseBodyContent?.isNotEmpty()?.let { assertTrue(it) } }
-
-//        deleteAllAccountAuthority(dao)
-//        deleteAccounts(dao)
-//
-//
-//        assertEquals(0, countAccountAuthority(dao))
-//        assertEquals(0, countAccount(dao))
     }
 
 
