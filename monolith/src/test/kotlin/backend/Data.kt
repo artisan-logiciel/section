@@ -9,7 +9,7 @@ package backend
 import org.apache.commons.lang3.StringUtils
 
 
-object Data {
+internal object Data {
     const val ADMIN_LOGIN = "admin"
     const val ACCOUNT_LOGIN = "user"
     const val ACCOUNT1_LOGIN = "test1"

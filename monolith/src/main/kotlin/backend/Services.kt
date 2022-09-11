@@ -3,6 +3,7 @@
 package backend
 
 import backend.Constants.BASE_URL
+import backend.Constants.DEFAULT_LANGUAGE
 import backend.Constants.ROLE_USER
 import backend.Constants.USER
 import backend.Log.log
@@ -18,6 +19,7 @@ import org.thymeleaf.context.Context
 import org.thymeleaf.spring5.SpringWebFluxTemplateEngine
 import java.nio.charset.StandardCharsets.UTF_8
 import java.security.SecureRandom
+import java.time.Instant
 import java.util.Locale.forLanguageTag
 import javax.mail.MessagingException
 
@@ -32,16 +34,25 @@ class SignUpService(
         UsernameAlreadyUsedException::class,
         UsernameAlreadyUsedException::class
     )
-    suspend fun signup(model: AccountCredentials) {
+    suspend fun signup(account: AccountCredentials) {
         InvalidPasswordException().run {
-            if (isPasswordLengthInvalid(model.password)) throw this
+            if (isPasswordLengthInvalid(account.password)) throw this
         }
-        loginValidation(model)
-        emailValidation(model)
-        model.copy(
+        loginValidation(account)
+        emailValidation(account)
+        val createdDate = Instant.now()
+        account.copy(
             //TODO: hash password
             activationKey = RandomUtils.generateActivationKey,
-            authorities = setOf(ROLE_USER)
+            authorities = setOf(ROLE_USER),
+            langKey = when {
+                account.langKey.isNullOrBlank() -> DEFAULT_LANGUAGE
+                else -> account.langKey
+            },
+            createdBy = Constants.SYSTEM_USER,
+            createdDate = createdDate,
+            lastModifiedBy = Constants.SYSTEM_USER,
+            lastModifiedDate = createdDate,
         ).run {
             accountRepository.signup(this)
             mailService.sendActivationEmail(this)
