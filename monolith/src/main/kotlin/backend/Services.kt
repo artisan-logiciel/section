@@ -24,6 +24,7 @@ import java.util.Locale.forLanguageTag
 import javax.mail.MessagingException
 
 @Service
+@Transactional
 class SignUpService(
     private val accountRepository: AccountRepository,
     private val mailService: MailService
@@ -34,6 +35,7 @@ class SignUpService(
         UsernameAlreadyUsedException::class,
         UsernameAlreadyUsedException::class
     )
+
     suspend fun signup(account: AccountCredentials) {
         InvalidPasswordException().run {
             if (isPasswordLengthInvalid(account.password)) throw this
@@ -82,11 +84,8 @@ class SignUpService(
         }
     }
 
-    private suspend fun suppress(model: AccountCredentials) {
-        accountRepository.suppress(model.toAccount())
-    }
 
-    suspend fun activateRegistration(key: String): Boolean {
+    suspend fun activate(key: String): Boolean {
         accountRepository.run {
             with(findOneByActivationKey(key)) {
                 when {
@@ -224,80 +223,6 @@ class MailService(
         }
 }
 
-@Service
-class AccountService(
-    private val accountRepository: AccountRepository,
-    private val mailService: MailService,
-//    private val passwordEncoder:PasswordEncoder
-) {
-    @Transactional
-    suspend fun register(
-        account: AccountCredentials
-    ) {
-        InvalidPasswordException().run { if (isPasswordLengthInvalid(account.password)) throw this }
-
-        accountRepository.findOneByLogin(account.login!!)?.run {
-            when {
-                !activated -> accountRepository.delete(account = this.toAccount())
-                else -> throw UsernameAlreadyUsedException()
-            }
-        }
-        accountRepository.findOneByEmail(account.email!!)?.run {
-            when {
-                !activated -> accountRepository.delete(account = this.toAccount())
-                else -> throw EmailAlreadyUsedException()
-            }
-        }
-        account.copy(
-            //TODO:                password = password,//encrypt
-            activationKey = RandomUtils.generateActivationKey
-        ).run {
-            accountRepository.save(this)
-            when {
-                accountRepository
-                    .findActivationKeyByLogin(login = account.login)
-                    ?.isNotEmpty() == true -> mailService.sendActivationEmail(
-                    AccountCredentials(
-                        password = password,
-                        activationKey = activationKey,
-                        id = id,
-                        login = login,
-                        firstName = firstName,
-                        lastName = lastName,
-                        email = email,
-                        imageUrl = imageUrl,
-                        activated = activated,
-                        langKey = langKey,
-                        createdBy = createdBy,
-                        createdDate = createdDate,
-                        lastModifiedBy = lastModifiedBy,
-                        lastModifiedDate = lastModifiedDate,
-                        authorities = authorities
-                    )
-                )
-            }
-        }
-    }
-
-    fun activateRegistration(key: String): Account? {
-        TODO("Not yet implemented")
-    }
-//    @Transactional
-//    suspend fun activateRegistration(key: String): User? =
-//        log.debug("Activating user for activation key {}", key).run {
-//            return@run iUserRepository.findOneByActivationKey(key).apply {
-//                if (this != null) {
-//                    activated = true
-//                    activationKey = null
-//                    saveUser(user = this).run {
-//                        log.debug("Activated user: {}", this)
-//                    }
-//                } else log.debug("No user found with activation key {}", key)
-//            }
-//        }
-
-
-}
 
 //@Service("userService")
 //@Suppress("unused")

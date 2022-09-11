@@ -46,7 +46,7 @@ class SignUpController(
     @GetMapping("/activate")
     suspend fun activateAccount(@RequestParam(value = "key") key: String) {
         when {
-            !signUpService.activateRegistration(key = key) -> throw AccountException("No user was found for this activation key")
+            !signUpService.activate(key = key) -> throw AccountException("No user was found for this activation key")
         }
     }
 }
