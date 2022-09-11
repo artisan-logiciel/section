@@ -43,7 +43,7 @@ interface AccountAuthorityRepository {
 
     suspend fun count(): Long
 
-    suspend fun deleteAll(): Unit
+//    suspend fun deleteAll(): Unit
 
     suspend fun deleteAllByAccountId(id: UUID): Unit
 }
@@ -72,16 +72,14 @@ class AccountAuthorityRepositoryR2dbc(
     override suspend fun count(): Long = dao.select<AccountAuthorityEntity>().count()
         .awaitSingle()
 
-
-    override suspend fun deleteAll() {
-        dao.delete<AccountAuthorityEntity>().allAndAwait()
-    }
-
     override suspend fun deleteAllByAccountId(id: UUID) {
         dao.delete<AccountAuthorityEntity>().matching(query(where("userId").`is`(id)))
             .allAndAwait()
     }
 
+//    override suspend fun deleteAll() {
+//        dao.delete<AccountAuthorityEntity>().allAndAwait()
+//    }
 }
 
 
