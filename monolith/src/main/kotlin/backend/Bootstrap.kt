@@ -6,7 +6,7 @@ import org.springframework.boot.SpringApplication
 import org.springframework.boot.runApplication
 import org.springframework.context.ApplicationContext
 import org.springframework.context.MessageSource
-import java.net.InetAddress.*
+import java.net.InetAddress.getLocalHost
 import java.net.UnknownHostException
 import java.util.*
 
@@ -18,8 +18,8 @@ fun start(args: Array<String>): Unit =
         loader(app = this)
     }.run { startupLog(context = this) }
 
-fun checkProfileLog(context: ApplicationContext): Array<String> =
-    context.environment.activeProfiles.apply {
+fun checkProfileLog(context: ApplicationContext) =
+    context.environment.activeProfiles.run {
         if (contains(element = Constants.SPRING_PROFILE_DEVELOPMENT) &&
             contains(element = Constants.SPRING_PROFILE_PRODUCTION)
         ) log.error(

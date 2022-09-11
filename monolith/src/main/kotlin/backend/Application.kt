@@ -13,7 +13,7 @@ import javax.annotation.PostConstruct
 @EnableConfigurationProperties(ApplicationProperties::class)
 class Server(private val context: ApplicationContext) {
     @PostConstruct
-    private fun init(): Array<String> = checkProfileLog(context)
+    private fun init() = checkProfileLog(context)
 }
 
 
