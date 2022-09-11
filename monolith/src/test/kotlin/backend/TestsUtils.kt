@@ -58,6 +58,15 @@ fun createDataAccounts(accounts: Set<AccountCredentials>, dao: R2dbcEntityTempla
     assertTrue(accounts.size <= countAccountAuthority(dao))
 }
 
+fun activateAccount(account: AccountCredentials, dao: R2dbcEntityTemplate) {
+    saveAccount(account.copy(activated = true, activationKey = null), dao)
+}
+
+fun createActivatedDataAccounts(accounts: Set<AccountCredentials>, dao: R2dbcEntityTemplate) {
+    createDataAccounts(accounts, dao)
+    accounts.map { activateAccount(it, dao) }
+}
+
 fun deleteAllAccounts(dao: R2dbcEntityTemplate) {
     deleteAllAccountAuthority(dao)
     deleteAccounts(dao)

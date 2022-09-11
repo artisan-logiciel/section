@@ -4,9 +4,6 @@
 
 package backend
 
-import backend.Constants.ROLE_ADMIN
-import backend.Constants.ROLE_USER
-import backend.Data.defaultAccount
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeAll
@@ -57,14 +54,14 @@ internal class SignUpAccountControllerTest {
             .post()
             .uri("")
             .contentType(MediaType.APPLICATION_JSON)
-            .bodyValue(defaultAccount)
+            .bodyValue(Data.defaultAccount)
             .exchange()
             .returnResult<Unit>()
             .requestBodyContent!!
             .map { it.toInt().toChar().toString() }
             .reduce { acc: String, s: String -> acc + s }
             .run {
-                defaultAccount.run {
+                Data.defaultAccount.run {
                     setOf(
                         "\"login\":\"${login}\"",
                         "\"password\":\"${password}\"",
@@ -89,7 +86,7 @@ internal class SignUpAccountControllerTest {
             .post()
             .uri(SIGNUP_URI)
             .contentType(MediaType.APPLICATION_JSON)
-            .bodyValue(defaultAccount)
+            .bodyValue(Data.defaultAccount)
             .exchange()
             .expectStatus()
             .isCreated
@@ -97,7 +94,11 @@ internal class SignUpAccountControllerTest {
             .responseBodyContent!!.isEmpty().run { assertTrue(this) }
         assertEquals(countUserBefore + 1, countAccount(dao))
         assertEquals(countUserAuthBefore + 1, countAccountAuthority(dao))
-        assertFalse(findOneByEmail(defaultAccount.email!!, dao)!!.activated)
+        findOneByEmail(Data.defaultAccount.email!!, dao).run {
+            assertNotNull(this)
+            assertFalse(activated)
+            assertNotNull(activationKey)
+        }
     }
 
 
@@ -108,7 +109,7 @@ internal class SignUpAccountControllerTest {
             .post()
             .uri(SIGNUP_URI)
             .contentType(MediaType.APPLICATION_JSON)
-            .bodyValue(defaultAccount.copy(login = "funky-log(n"))
+            .bodyValue(Data.defaultAccount.copy(login = "funky-log(n"))
             .exchange()
             .expectStatus()
             .isBadRequest
@@ -126,7 +127,7 @@ internal class SignUpAccountControllerTest {
             .post()
             .uri(SIGNUP_URI)
             .contentType(MediaType.APPLICATION_JSON)
-            .bodyValue(defaultAccount.copy(password = "inv"))
+            .bodyValue(Data.defaultAccount.copy(password = "inv"))
             .exchange()
             .expectStatus()
             .isBadRequest
@@ -142,7 +143,7 @@ internal class SignUpAccountControllerTest {
         client.post()
             .uri(SIGNUP_URI)
             .contentType(MediaType.APPLICATION_JSON)
-            .bodyValue(defaultAccount.copy(password = "123"))
+            .bodyValue(Data.defaultAccount.copy(password = "123"))
             .exchange()
             .expectStatus()
             .isBadRequest
@@ -159,7 +160,7 @@ internal class SignUpAccountControllerTest {
             .post()
             .uri(SIGNUP_URI)
             .contentType(MediaType.APPLICATION_JSON)
-            .bodyValue(defaultAccount.copy(password = null))
+            .bodyValue(Data.defaultAccount.copy(password = null))
             .exchange()
             .expectStatus()
             .isBadRequest
@@ -174,19 +175,25 @@ internal class SignUpAccountControllerTest {
         assertEquals(0, countAccount(dao))
         assertEquals(0, countAccountAuthority(dao))
         //TODO: remplacer par createAccounts()
+        //activation de l'account
         saveAccountAuthority(
-            saveAccount(defaultAccount.copy(activated = true), dao)?.id!!,
-            ROLE_USER, dao
+            saveAccount(Data.defaultAccount.copy(activated = true), dao)?.id!!,
+            Constants.ROLE_USER, dao
         )
+//        createActivatedDataAccounts(setOf(Data.defaultAccount), dao)
         assertEquals(1, countAccount(dao))
         assertEquals(1, countAccountAuthority(dao))
-        assertTrue(findOneByEmail(defaultAccount.email!!, dao)!!.activated)
+        findOneByEmail(Data.defaultAccount.email!!, dao).run {
+            assertNotNull(this)
+            assertTrue(activated)
+            assertNull(activationKey)
+        }
 
         client
             .post()
             .uri(SIGNUP_URI)
             .contentType(MediaType.APPLICATION_JSON)
-            .bodyValue(defaultAccount.copy(login = "foo"))
+            .bodyValue(Data.defaultAccount.copy(login = "foo"))
             .exchange()
             .expectStatus()
             .isBadRequest
@@ -200,11 +207,17 @@ internal class SignUpAccountControllerTest {
         assertEquals(0, countAccount(dao))
         assertEquals(0, countAccountAuthority(dao))
         //TODO: remplacer par createAccounts()
+        //activation de l'account
         saveAccountAuthority(
-            saveAccount(defaultAccount.copy(activated = true), dao)?.id!!,
-            ROLE_USER, dao
+            saveAccount(Data.defaultAccount.copy(activated = true, activationKey = null), dao)?.id!!,
+            Constants.ROLE_USER, dao
         )
-        assertTrue(findOneByEmail(defaultAccount.email!!, dao)!!.activated)
+//        createActivatedDataAccounts(setOf(Data.defaultAccount), dao)
+        findOneByEmail(Data.defaultAccount.email!!, dao).run {
+            assertNotNull(this)
+            assertTrue(activated)
+            assertNull(activationKey)
+        }
         assertEquals(1, countAccount(dao))
         assertEquals(1, countAccountAuthority(dao))
 
@@ -212,14 +225,13 @@ internal class SignUpAccountControllerTest {
             .post()
             .uri(SIGNUP_URI)
             .contentType(MediaType.APPLICATION_JSON)
-            .bodyValue(defaultAccount.copy(email = "foo@localhost"))
+            .bodyValue(Data.defaultAccount.copy(email = "foo@localhost"))
             .exchange()
             .expectStatus()
             .isBadRequest
             .returnResult<Unit>()
             .responseBodyContent!!.isNotEmpty().run { assertTrue(this) }
     }
-
 
     @Test
     fun `test signup account avec un email dupliqué`() {
@@ -232,7 +244,7 @@ internal class SignUpAccountControllerTest {
             .post()
             .uri(SIGNUP_URI)
             .contentType(MediaType.APPLICATION_JSON)
-            .bodyValue(defaultAccount)
+            .bodyValue(Data.defaultAccount)
             .exchange()
             .expectStatus()
             .isCreated
@@ -240,7 +252,7 @@ internal class SignUpAccountControllerTest {
             .responseBodyContent!!.isEmpty().run { assertTrue(this) }
         assertEquals(1, countAccount(dao))
         assertEquals(1, countAccountAuthority(dao))
-        assertFalse(findOneByEmail(defaultAccount.email!!, dao)!!.activated)
+        assertFalse(findOneByEmail(Data.defaultAccount.email!!, dao)!!.activated)
 
         // email dupliqué, login different
         // sign up un second user (non activé)
@@ -249,7 +261,7 @@ internal class SignUpAccountControllerTest {
             .post()
             .uri(SIGNUP_URI)
             .contentType(MediaType.APPLICATION_JSON)
-            .bodyValue(defaultAccount.copy(login = secondLogin))
+            .bodyValue(Data.defaultAccount.copy(login = secondLogin))
             .exchange()
             .expectStatus()
             .isCreated
@@ -257,10 +269,10 @@ internal class SignUpAccountControllerTest {
             .responseBodyContent!!.isEmpty().run { assertTrue(this) }
         assertEquals(1, countAccount(dao))
         assertEquals(1, countAccountAuthority(dao))
-        assertNull(findOneByLogin(defaultAccount.login!!, dao))
+        assertNull(findOneByLogin(Data.defaultAccount.login!!, dao))
         findOneByLogin(secondLogin, dao).run {
             assertNotNull(this)
-            assertEquals(defaultAccount.email!!, email)
+            assertEquals(Data.defaultAccount.email!!, email)
             assertFalse(activated)
         }
 
@@ -272,9 +284,9 @@ internal class SignUpAccountControllerTest {
             .uri(SIGNUP_URI)
             .contentType(MediaType.APPLICATION_JSON)
             .bodyValue(
-                defaultAccount.copy(
+                Data.defaultAccount.copy(
                     login = thirdLogin,
-                    email = defaultAccount.email!!.uppercase()
+                    email = Data.defaultAccount.email!!.uppercase()
                 )
             )
             .exchange()
@@ -286,10 +298,11 @@ internal class SignUpAccountControllerTest {
         assertEquals(1, countAccountAuthority(dao))
         findOneByLogin(thirdLogin, dao).run {
             assertNotNull(this)
-            assertEquals(defaultAccount.email!!, email!!.lowercase())
+            assertEquals(Data.defaultAccount.email!!, email!!.lowercase())
             assertFalse(activated)
             //activation du troisieme user
             saveAccount(copy(activated = true, activationKey = null), dao)
+//            activateAccount(this,dao)
         }
         //validation que le troisieme est actif et activationKey est null
         findOneByLogin(thirdLogin, dao).run {
@@ -304,7 +317,7 @@ internal class SignUpAccountControllerTest {
             .post()
             .uri(SIGNUP_URI)
             .contentType(MediaType.APPLICATION_JSON)
-            .bodyValue(defaultAccount.copy(login = fourthLogin))
+            .bodyValue(Data.defaultAccount.copy(login = fourthLogin))
             .exchange()
             .expectStatus()
             .isBadRequest
@@ -319,9 +332,9 @@ internal class SignUpAccountControllerTest {
                 assertNotNull(this)
                 assertTrue(activated)
                 assertNull(activationKey)
-                assertTrue(defaultAccount.email!!.equals(email!!, ignoreCase = true))
+                assertTrue(Data.defaultAccount.email!!.equals(email!!, ignoreCase = true))
             }!!.id,
-            findOneByEmail(defaultAccount.email!!, dao).apply {
+            findOneByEmail(Data.defaultAccount.email!!, dao).apply {
                 assertNotNull(this)
                 assertTrue(activated)
                 assertNull(activationKey)
@@ -336,7 +349,7 @@ internal class SignUpAccountControllerTest {
         val countUserAuthBefore = countAccountAuthority(dao)
         assertEquals(0, countUserBefore)
         assertEquals(0, countUserAuthBefore)
-        val login="badguy"
+        val login = "badguy"
         client
             .post()
             .uri(SIGNUP_URI)
@@ -351,7 +364,7 @@ internal class SignUpAccountControllerTest {
                     activated = true,
                     imageUrl = "http://placehold.it/50x50",
                     langKey = Constants.DEFAULT_LANGUAGE,
-                    authorities = setOf(ROLE_ADMIN),
+                    authorities = setOf(Constants.ROLE_ADMIN),
                 )
             )
             .exchange()
@@ -368,8 +381,7 @@ internal class SignUpAccountControllerTest {
         }
 
         assertTrue(findAllAccountAuthority(dao).none {
-            it.role.equals(ROLE_ADMIN, ignoreCase = true)
+            it.role.equals(Constants.ROLE_ADMIN, ignoreCase = true)
         })
     }
 }
-
