@@ -107,13 +107,17 @@ internal class AccountRepositoryR2dbcTest {
         assertEquals(0, countAccount(dao))
         assertEquals(0, countAccountAuthority(dao))
         runBlocking {
-            accountRepository.signup(Data.defaultAccount.copy(activationKey = RandomUtils.generateActivationKey,
-                langKey = Constants.DEFAULT_LANGUAGE,
-                createdBy = Constants.SYSTEM_USER,
-                createdDate = Instant.now(),
-                lastModifiedBy = Constants.SYSTEM_USER,
-                lastModifiedDate = Instant.now(),
-                authorities = mutableSetOf(Constants.ROLE_USER)))
+            accountRepository.signup(
+                Data.defaultAccount.copy(
+                    activationKey = RandomUtils.generateActivationKey,
+                    langKey = Constants.DEFAULT_LANGUAGE,
+                    createdBy = Constants.SYSTEM_USER,
+                    createdDate = Instant.now(),
+                    lastModifiedBy = Constants.SYSTEM_USER,
+                    lastModifiedDate = Instant.now(),
+                    authorities = mutableSetOf(Constants.ROLE_USER)
+                )
+            )
         }
         assertEquals(1, countAccount(dao))
         assertEquals(1, countAccountAuthority(dao))
@@ -139,21 +143,19 @@ internal class AccountRepositoryR2dbcTest {
         createDataAccounts(Data.accounts, dao)
         assertEquals(Data.accounts.size, countAccount(dao))
         assertEquals(Data.accounts.size + 1, countAccountAuthority(dao))
-
-        runBlocking {
-            val result = findOneByLogin(Data.defaultAccount.login!!, dao)
-            log.info("result: $result")
-            assertNotNull(result)
-            assertNotNull(result.activationKey)
-            accountRepository.findOneActivationKey(result.activationKey!!).run {
-//                log.info(this)
-                assertNotNull(this)
+        findOneByLogin(Data.defaultAccount.login!!, dao).run {
+            log.info("result: $this")
+            assertNotNull(this)
+            assertNotNull(this.activationKey)
+//            runBlocking {
+//            val result = findOneByLogin(Data.defaultAccount.login!!, dao)
+//                accountRepository.findOneActivationKey(result.activationKey!!).run {
+//                    log.info(this)
+//                assertNotNull(this)
 //                assertEquals(
 //                    result.id,
 //                    accountRepository.findOneActivationKey(Data.defaultAccount.login!!)?.id
 //                )
-            }
-
         }
     }
 }

@@ -8,22 +8,22 @@ internal class AccountAuthorityRepositoryR2dbcTest {
     private lateinit var dao: R2dbcEntityTemplate
 
     @Test
-    fun save() {
+    fun test_save() {
     }
 
     @Test
-    fun delete() {
+    fun test_delete() {
     }
 
     @Test
-    fun count() {
+    fun test_count() {
     }
 
     @Test
-    fun deleteAll() {
+    fun test_deleteAll() {
     }
 
     @Test
-    fun deleteAllByAccountId() {
+    fun test_deleteAllByAccountId() {
     }
 }
