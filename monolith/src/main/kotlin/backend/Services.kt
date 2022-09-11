@@ -26,7 +26,7 @@ import javax.mail.MessagingException
 
 
 @Service
-class PasswordService(
+class ResetPasswordService(
     private val accountRepository: AccountRepository
 ){
     //    suspend fun completePasswordReset(newPassword: String, key: String): User? =

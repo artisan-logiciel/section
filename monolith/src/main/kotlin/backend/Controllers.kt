@@ -43,7 +43,7 @@ class SignUpController(
      * @param key the activation key.
      * @throws RuntimeException `500 (Internal Server Error)` if the user couldn't be activated.
      */
-    @GetMapping("/activate")
+    @GetMapping("activate")
     suspend fun activateAccount(@RequestParam(value = "key") key: String) {
         when {
             !signUpService.activate(key = key) -> throw AccountException("No user was found for this activation key")
@@ -54,9 +54,53 @@ class SignUpController(
 /*=================================================================================*/
 @RestController
 @RequestMapping("api/account")
-class PasswordController(
-    private val passwordService: PasswordService
-) 
+class ResetPasswordController(
+    private val resetPasswordService: ResetPasswordService
+) {
+    /**
+     * {@code POST  /account/change-password} : changes the current user's password.
+     *
+     * @param passwordChange current and new password.
+     * @throws InvalidPasswordProblem {@code 400 (Bad Request)} if the new password is incorrect.
+     */
+    @PostMapping("change-password")
+    suspend fun changePassword(@RequestBody passwordChange: PasswordChange): Unit {}
+//        passwordChange.run {
+//            InvalidPasswordException().apply { if (isPasswordLengthInvalid(newPassword)) throw this }
+//            if (currentPassword != null && newPassword != null)
+//                userService.changePassword(currentPassword, newPassword)
+//        }
+//
+    /**
+     * {@code POST   /account/reset-password/init} : Send an email to reset the password of the user.
+     *
+     * @param mail the mail of the user.
+     */
+    @PostMapping("reset-password/init")
+    suspend fun requestPasswordReset(@RequestBody mail: String): Unit {}
+//        userService.requestPasswordReset(mail).run {
+//            if (this == null) log.warn("Password reset requested for non existing mail")
+//            else mailService.sendPasswordResetMail(this)
+//        }
+//
+    /**
+     * {@code POST   /account/reset-password/finish} : Finish to reset the password of the user.
+     *
+     * @param keyAndPassword the generated key and the new password.
+     * @throws InvalidPasswordProblem {@code 400 (Bad Request)} if the password is incorrect.
+     * @throws RuntimeException         {@code 500 (Internal Server Error)} if the password could not be reset.
+     */
+    @PostMapping("reset-password/finish")
+    suspend fun finishPasswordReset(@RequestBody keyAndPassword: KeyAndPassword): Unit {}
+//    {
+//        keyAndPassword.run {
+//            InvalidPasswordException().apply { if (isPasswordLengthInvalid(newPassword)) throw this }
+//            if (newPassword != null && key != null)
+//                if (userService.completePasswordReset(newPassword, key) == null)
+//                    throw AccountException("No user was found for this reset key")
+//        }
+//    }
+}
 /*=================================================================================*/
 
 
