@@ -23,6 +23,42 @@ import java.time.Instant
 import java.util.Locale.forLanguageTag
 import javax.mail.MessagingException
 
+
+
+@Service
+class PasswordService(
+    private val accountRepository: AccountRepository
+){
+    //    suspend fun completePasswordReset(newPassword: String, key: String): User? =
+//        log.debug("Reset user password for reset key {}", key).run {
+//            userRepository.findOneByResetKey(key).apply {
+//                return if (this != null &&
+//                    resetDate?.isAfter(now().minusSeconds(86400)) == true
+//                ) saveUser(
+//                    apply {
+//                        password = passwordEncoder.encode(newPassword)
+//                        resetKey = null
+//                        resetDate = null
+//                    })
+//                else null
+//            }
+//        }
+//
+//
+//    @Transactional
+//    suspend fun requestPasswordReset(mail: String): User? {
+//        return userRepository
+//            .findOneByEmail(mail)
+//            .apply {
+//                if (this != null && this.activated) {
+//                    resetKey = generateResetKey
+//                    resetDate = now()
+//                    saveUser(this)
+//                } else return null
+//            }
+//    }
+
+}
 @Service
 @Transactional
 class SignUpService(

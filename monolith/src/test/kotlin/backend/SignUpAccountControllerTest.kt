@@ -23,7 +23,7 @@ import kotlin.test.*
 internal class SignUpAccountControllerTest {
 
     companion object {
-        private const val SIGNUP_URI = "api/signup"
+        private const val SIGNUP_URI = "api/account/signup"
         private const val BASE_URL = "http://localhost:8080"
     }
 

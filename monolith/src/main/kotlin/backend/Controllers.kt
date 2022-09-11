@@ -17,7 +17,7 @@ import javax.validation.Valid
 
 
 @RestController
-@RequestMapping("api")
+@RequestMapping("api/account")
 class SignUpController(
     private val signUpService: SignUpService
 ) {
@@ -52,7 +52,12 @@ class SignUpController(
 }
 
 /*=================================================================================*/
-
+@RestController
+@RequestMapping("api/account")
+class PasswordController(
+    private val passwordService: PasswordService
+) 
+/*=================================================================================*/
 
 
 //@RestController

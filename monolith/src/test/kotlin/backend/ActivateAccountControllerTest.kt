@@ -21,7 +21,7 @@ internal class ActivateAccountControllerTest {
 
     companion object {
         private const val BASE_URL = "http://localhost:8080/"
-        private const val SIGNUP_URI = "api/activate?key="
+        private const val SIGNUP_URI = "api/account/activate?key="
         private const val SIGNUP_URI_KEY_PARAM = "{activationKey}"
 
     }
