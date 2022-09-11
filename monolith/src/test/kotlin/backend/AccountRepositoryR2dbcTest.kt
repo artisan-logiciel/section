@@ -2,7 +2,6 @@
 
 package backend
 
-import backend.Log.log
 import backend.data.Data
 import backend.tdd.testLoader
 import kotlinx.coroutines.reactor.mono
@@ -138,22 +137,22 @@ internal class AccountRepositoryR2dbcTest {
     }
 
     @Test
-    fun test_findOneActivationKey() {
+    fun test_findOneByActivationKey() {
         assertEquals(0, countAccount(dao))
         createDataAccounts(Data.accounts, dao)
         assertEquals(Data.accounts.size, countAccount(dao))
         assertEquals(Data.accounts.size + 1, countAccountAuthority(dao))
-        findOneByLogin(Data.defaultAccount.login!!, dao).run {
-            log.info("result: $this")
-            assertNotNull(this)
-            assertNotNull(this.activationKey)
+        findOneByLogin(Data.defaultAccount.login!!, dao).run findOneByLogin@{
+            assertNotNull(this@findOneByLogin)
+            assertNotNull(this@findOneByLogin.activationKey)
             runBlocking {
-                accountRepository.findOneActivationKey(this@run.activationKey!!).run findOneActivationKey@{
-                    log.info("findOneActivationKey: ${this@findOneActivationKey}")
-//                assertEquals(
-//                    result.id,
-//                    accountRepository.findOneActivationKey(Data.defaultAccount.login!!)?.id
-//                )
+                accountRepository.findOneByActivationKey(this@findOneByLogin.activationKey!!).run findOneByActivationKey@{
+                    assertNotNull(this@findOneByActivationKey)
+                    assertNotNull(this@findOneByActivationKey.id)
+                    assertEquals(
+                        this@findOneByLogin.id,
+                        this@findOneByActivationKey.id
+                    )
                 }
             }
         }

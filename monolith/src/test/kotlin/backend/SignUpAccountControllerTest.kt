@@ -122,7 +122,6 @@ internal class SignUpAccountControllerTest {
     @Test
     fun `test register account avec un email invalid`() {
         val countBefore = countAccount(dao)
-        log.info("countBefore: $countBefore")
         assertEquals(0, countBefore)
         client
             .post()
@@ -309,11 +308,11 @@ internal class SignUpAccountControllerTest {
         saveAccount(findOneByEmail(defaultAccount.email!!, dao)!!.copy(activated = true), dao)
 
 
-        log.info(
-            "findOneByEmail(defaultAccount.email!!): ${
-                findOneByEmail(defaultAccount.email!!, dao)
-            }"
-        )
+//        log.info(
+//            "findOneByEmail(defaultAccount.email!!): ${
+//                findOneByEmail(defaultAccount.email!!, dao)
+//            }"
+//        )
 //        assertTrue(findOneByEmail(defaultAccount.email!!)!!.activated)
 //
 //        // Register 4th (already activated) user

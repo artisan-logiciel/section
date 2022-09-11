@@ -76,7 +76,7 @@ class SignUpService(
 
     suspend fun activateRegistration(key: String): Boolean {
         accountRepository.run {
-            with(findOneActivationKey(key)) {
+            with(findOneByActivationKey(key)) {
                 when {
                     this == null -> return false
                     else -> {

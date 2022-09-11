@@ -33,7 +33,7 @@ interface AccountRepository {
     suspend fun count(): Long
     suspend fun suppress(account: Account)
     suspend fun signup(model: AccountCredentials)
-    suspend fun findOneActivationKey(key: String): AccountCredentials?
+    suspend fun findOneByActivationKey(key: String): AccountCredentials?
 }
 
 interface AccountAuthorityRepository {
@@ -113,7 +113,7 @@ class AccountRepositoryR2dbc(
 
     override suspend fun suppress(account: Account) {
         dao.run {
-            delete<AccountAuthorityEntity>().matching(query(where("user_id").`is`(account.id!!)))
+            delete<AccountAuthorityEntity>().matching(query(where("userId").`is`(account.id!!)))
                 .allAndAwait()
             delete(AccountEntity(AccountCredentials(account))).awaitSingle()
         }
@@ -123,12 +123,12 @@ class AccountRepositoryR2dbc(
     override suspend fun signup(model: AccountCredentials) {
         dao.run {
             AccountEntity(model).run {
-                val id = insert(this).toMono().awaitSingleOrNull()?.id
-                if (id != null) authorities?.map {
-                    insert(AccountAuthorityEntity(userId = id, role = it.role)).awaitSingle()
+                 insert(this).toMono().awaitSingleOrNull()?.id.run {
+                    if (this != null) authorities?.map {
+                        insert(AccountAuthorityEntity(userId = this, role = it.role)).awaitSingle()
+                    }
                 }
             }
-
         }
     }
 
@@ -136,7 +136,7 @@ class AccountRepositoryR2dbc(
         dao.select<AccountEntity>().matching(query(where("login").`is`(login))).awaitOneOrNull()?.activationKey
 
 
-    override suspend fun findOneActivationKey(key: String): AccountCredentials? =
+    override suspend fun findOneByActivationKey(key: String): AccountCredentials? =
         dao.select<AccountEntity>().matching(query(where("activationKey").`is`(key))).awaitOneOrNull()
             ?.toCredentialsModel()
 }
