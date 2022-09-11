@@ -279,15 +279,13 @@ internal class SignUpAccountControllerTest {
             .returnResult<Unit>()
             .run { responseBodyContent?.isEmpty()?.let { assertTrue(it) } }
         log.info(countAccount(dao))
-//        assertEquals(1, countAccount(dao))
-//        assertEquals(1, countAccountAuthority(dao))
-//        assertNull(findOneByLogin(defaultAccount.login!!, dao))
-//        findOneByLogin(secondLogin, dao).run {
-//            assertNotNull(this)
-//            assertEquals(defaultAccount.email!!, email)
-//            assertFalse(activated)
-//        }
-
+        assertEquals(1, countAccount(dao))
+        assertEquals(1, countAccountAuthority(dao))
+        findOneByLogin(thirdLogin, dao).run {
+            assertNotNull(this)
+            assertEquals(defaultAccount.email!!, email!!.lowercase())
+            assertFalse(activated)
+        }
 
 
 //        assertEquals(1, countAccount(dao))

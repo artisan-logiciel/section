@@ -58,7 +58,7 @@ class AccountAuthorityRepositoryR2dbc(
 
     override suspend fun delete(id: UUID, authority: String) {
         dao.selectOne(
-            query(where("userId").`is`(id).and(where("role").`is`(authority))),
+            query(where("userId").`is`(id).and(where("role").`is`(authority).ignoreCase(true))),
             AccountAuthorityEntity::class.java
         ).awaitSingleOrNull().run {
             if (this != null && this.id != null)
@@ -103,12 +103,12 @@ class AccountRepositoryR2dbc(
     }
 
     override suspend fun findOneByLogin(login: String): AccountCredentials? =
-        dao.select<AccountEntity>().matching(query(where("login").`is`(login)))
+        dao.select<AccountEntity>().matching(query(where("login").`is`(login).ignoreCase(true)))
             .awaitOneOrNull()?.toCredentialsModel()
 
 
     override suspend fun findOneByEmail(email: String): AccountCredentials? =
-        dao.select<AccountEntity>().matching(query(where("email").`is`(email)))
+        dao.select<AccountEntity>().matching(query(where("email").`is`(email).ignoreCase(true)))
             .awaitOneOrNull()?.toCredentialsModel()
 
     override suspend fun suppress(account: Account) {
@@ -133,7 +133,7 @@ class AccountRepositoryR2dbc(
     }
 
     override suspend fun findActivationKeyByLogin(login: String): String? =
-        dao.select<AccountEntity>().matching(query(where("login").`is`(login)))
+        dao.select<AccountEntity>().matching(query(where("login").`is`(login).ignoreCase(true)))
             .awaitOneOrNull()?.activationKey
 
 
