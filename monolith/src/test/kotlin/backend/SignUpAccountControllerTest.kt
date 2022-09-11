@@ -130,7 +130,8 @@ internal class SignUpAccountControllerTest {
             .expectStatus()
             .isBadRequest
             .returnResult<Unit>()
-            .run { responseBodyContent?.isNotEmpty()?.let { assertTrue(it) } }
+            .responseBodyContent!!.isNotEmpty().run { assertTrue(this) }
+
         assertEquals(0, countBefore)
     }
 
@@ -145,7 +146,8 @@ internal class SignUpAccountControllerTest {
             .expectStatus()
             .isBadRequest
             .returnResult<Unit>()
-            .run { responseBodyContent?.isNotEmpty()?.let { assertTrue(it) } }
+            .responseBodyContent!!.isNotEmpty().run { assertTrue(this) }
+
         assertEquals(0, countAccount(dao))
     }
 
@@ -161,9 +163,8 @@ internal class SignUpAccountControllerTest {
             .expectStatus()
             .isBadRequest
             .returnResult<Unit>()
-            .run {
-                responseBodyContent?.isNotEmpty()?.let { assertTrue(it) }
-            }
+            .responseBodyContent!!.isNotEmpty().run { assertTrue(this) }
+
         assertEquals(0, countAccount(dao))
     }
 
@@ -188,7 +189,7 @@ internal class SignUpAccountControllerTest {
             .expectStatus()
             .isBadRequest
             .returnResult<Unit>()
-            .run { responseBodyContent?.isNotEmpty()?.let { assertTrue(it) } }
+            .responseBodyContent!!.isNotEmpty().run { assertTrue(this) }
     }
 
 
@@ -213,7 +214,7 @@ internal class SignUpAccountControllerTest {
             .expectStatus()
             .isBadRequest
             .returnResult<Unit>()
-            .run { responseBodyContent?.isNotEmpty()?.let { assertTrue(it) } }
+            .responseBodyContent!!.isNotEmpty().run { assertTrue(this) }
     }
 
 
@@ -233,7 +234,7 @@ internal class SignUpAccountControllerTest {
             .expectStatus()
             .isCreated
             .returnResult<Unit>()
-            .run { responseBodyContent?.isEmpty()?.let { assertTrue(it) } }
+            .responseBodyContent!!.isEmpty().run { assertTrue(this) }
         assertEquals(1, countAccount(dao))
         assertEquals(1, countAccountAuthority(dao))
         assertFalse(findOneByEmail(defaultAccount.email!!, dao)!!.activated)
@@ -250,7 +251,7 @@ internal class SignUpAccountControllerTest {
             .expectStatus()
             .isCreated
             .returnResult<Unit>()
-            .run { responseBodyContent?.isEmpty()?.let { assertTrue(it) } }
+            .responseBodyContent!!.isEmpty().run { assertTrue(this) }
         assertEquals(1, countAccount(dao))
         assertEquals(1, countAccountAuthority(dao))
         assertNull(findOneByLogin(defaultAccount.login!!, dao))
@@ -277,7 +278,7 @@ internal class SignUpAccountControllerTest {
             .expectStatus()
             .isCreated
             .returnResult<Unit>()
-            .run { responseBodyContent?.isEmpty()?.let { assertTrue(it) } }
+            .responseBodyContent!!.isEmpty().run { assertTrue(this) }
         assertEquals(1, countAccount(dao))
         assertEquals(1, countAccountAuthority(dao))
         findOneByLogin(thirdLogin, dao).run {
@@ -305,7 +306,7 @@ internal class SignUpAccountControllerTest {
             .expectStatus()
             .isBadRequest
             .returnResult<Unit>()
-            .run { responseBodyContent?.isNotEmpty()?.let { assertTrue(it) } }
+            .responseBodyContent!!.isNotEmpty().run { assertTrue(this) }
         assertEquals(1, countAccount(dao))
         assertEquals(1, countAccountAuthority(dao))
         assertNull(findOneByLogin(fourthLogin, dao))
