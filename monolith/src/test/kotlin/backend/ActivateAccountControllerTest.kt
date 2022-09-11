@@ -5,10 +5,12 @@
 package backend
 
 import org.junit.jupiter.api.AfterAll
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeAll
 import org.springframework.beans.factory.getBean
 import org.springframework.boot.runApplication
 import org.springframework.context.ConfigurableApplicationContext
+import org.springframework.data.r2dbc.core.R2dbcEntityTemplate
 import org.springframework.test.web.reactive.server.WebTestClient
 
 
@@ -24,6 +26,7 @@ internal class ActivateAccountControllerTest {
                 .build()
         }
         private lateinit var context: ConfigurableApplicationContext
+        private val dao: R2dbcEntityTemplate by lazy { context.getBean() }
         private val accountRepository: AccountRepository by lazy { context.getBean() }
         private val accountAuthorityRepository: AccountAuthorityRepository by lazy { context.getBean() }
     }
@@ -35,7 +38,8 @@ internal class ActivateAccountControllerTest {
 
     @AfterAll
     fun `arrête le serveur`() = context.close()
-
+    @AfterEach
+    fun tearDown() = deleteAllAccounts(dao)
 
 //    @Test//TODO: revisiter avec coherence de la requete
 //    fun `vérifie que la requete contient bien des données cohérentes`() {
