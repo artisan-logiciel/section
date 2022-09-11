@@ -147,15 +147,15 @@ internal class AccountRepositoryR2dbcTest {
             log.info("result: $this")
             assertNotNull(this)
             assertNotNull(this.activationKey)
-//            runBlocking {
-//            val result = findOneByLogin(Data.defaultAccount.login!!, dao)
-//                accountRepository.findOneActivationKey(result.activationKey!!).run {
-//                    log.info(this)
-//                assertNotNull(this)
+            runBlocking {
+                accountRepository.findOneActivationKey(this@run.activationKey!!).run findOneActivationKey@{
+                    log.info("findOneActivationKey: ${this@findOneActivationKey}")
 //                assertEquals(
 //                    result.id,
 //                    accountRepository.findOneActivationKey(Data.defaultAccount.login!!)?.id
 //                )
+                }
+            }
         }
     }
 }

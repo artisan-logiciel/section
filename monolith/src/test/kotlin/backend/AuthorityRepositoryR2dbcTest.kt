@@ -29,7 +29,7 @@ internal class AuthorityRepositoryR2dbcTest {
     fun `arrête le serveur`() = context.close()
 
     @Test
-    fun findOne(): Unit = runBlocking {
+    fun test_findOne(): Unit = runBlocking {
         mapOf(
             ROLE_ADMIN to ROLE_ADMIN,
             ROLE_USER to ROLE_USER,

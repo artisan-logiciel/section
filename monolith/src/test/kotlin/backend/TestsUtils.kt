@@ -1,6 +1,5 @@
 package backend
 
-import backend.Log.log
 import backend.data.Data
 import org.springframework.data.r2dbc.core.R2dbcEntityTemplate
 import org.springframework.data.r2dbc.core.select
@@ -14,8 +13,9 @@ import kotlin.test.assertTrue
 
 fun createDataAccounts(accounts: Set<AccountCredentials>, dao: R2dbcEntityTemplate) {
     assertEquals(0, countAccount(dao))
-    accounts.map {
-        AccountEntity(it.copy(
+    assertEquals(0, countAccountAuthority(dao))
+    accounts.map { acc ->
+        AccountEntity(acc.copy(
             activationKey = RandomUtils.generateActivationKey,
             langKey = Constants.DEFAULT_LANGUAGE,
             createdBy = Constants.SYSTEM_USER,
@@ -23,13 +23,12 @@ fun createDataAccounts(accounts: Set<AccountCredentials>, dao: R2dbcEntityTempla
             lastModifiedBy = Constants.SYSTEM_USER,
             lastModifiedDate = Instant.now(),
             authorities = mutableSetOf(Constants.ROLE_USER).apply {
-                if (it.login == Data.ADMIN_LOGIN) add(Constants.ROLE_ADMIN)
+                if (acc.login == Data.ADMIN_LOGIN) add(Constants.ROLE_ADMIN)
             }
         )).run {
-            log.info("activationKey: $activationKey")
-            dao.insert(this).block()!!.id!!.run {
-                    authorities!!.map {
-                    dao.insert(AccountAuthorityEntity(userId = this, role = it.role)).block()
+            dao.insert(this).block()!!.id!!.let { uuid ->
+                authorities!!.map { authority ->
+                    dao.insert(AccountAuthorityEntity(userId = uuid, role = authority.role)).block()
                 }
             }
         }
