@@ -6,6 +6,7 @@ package backend
 
 import backend.Constants.ROLE_USER
 import backend.Data.defaultAccount
+import backend.Log.log
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeAll
@@ -256,11 +257,10 @@ internal class SignUpAccountControllerTest {
         findOneByLogin(secondLogin, dao).run {
             assertNotNull(this)
             assertEquals(defaultAccount.email!!, email)
+            assertFalse(activated)
         }
-        assertFalse(findOneByEmail(defaultAccount.email!!, dao)!!.activated)
 
-
-        // Duplicate email - with uppercase email address
+        // Duplicate email - with uppercase email address, different login
         // Register third (not activated) user
         val thirdLogin = "bar"
         client
@@ -278,6 +278,18 @@ internal class SignUpAccountControllerTest {
             .isCreated
             .returnResult<Unit>()
             .run { responseBodyContent?.isEmpty()?.let { assertTrue(it) } }
+        log.info(countAccount(dao))
+//        assertEquals(1, countAccount(dao))
+//        assertEquals(1, countAccountAuthority(dao))
+//        assertNull(findOneByLogin(defaultAccount.login!!, dao))
+//        findOneByLogin(secondLogin, dao).run {
+//            assertNotNull(this)
+//            assertEquals(defaultAccount.email!!, email)
+//            assertFalse(activated)
+//        }
+
+
+
 //        assertEquals(1, countAccount(dao))
 //        assertEquals(1, countAccountAuthority(dao))
 //        assertNull(findOneByLogin(secondLogin, dao))
