@@ -336,13 +336,14 @@ internal class SignUpAccountControllerTest {
         val countUserAuthBefore = countAccountAuthority(dao)
         assertEquals(0, countUserBefore)
         assertEquals(0, countUserAuthBefore)
+        val login="badguy"
         client
             .post()
             .uri(SIGNUP_URI)
             .contentType(MediaType.APPLICATION_JSON)
             .bodyValue(
                 AccountCredentials(
-                    login = "badguy",
+                    login = login,
                     password = "password",
                     firstName = "Bad",
                     lastName = "Guy",
@@ -360,7 +361,12 @@ internal class SignUpAccountControllerTest {
             .responseBodyContent!!.isEmpty().run { assertTrue(this) }
         assertEquals(countUserBefore + 1, countAccount(dao))
         assertEquals(countUserAuthBefore + 1, countAccountAuthority(dao))
-        assertFalse(findOneByLogin("badguy", dao)!!.activated)
+        findOneByLogin(login, dao).run {
+            assertNotNull(this)
+            assertFalse(activated)
+            assertFalse(activationKey.isNullOrBlank())
+        }
+
         assertTrue(findAllAccountAuthority(dao).none {
             it.role.equals(ROLE_ADMIN, ignoreCase = true)
         })
