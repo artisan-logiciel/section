@@ -74,7 +74,18 @@ fun deleteAllAccountAuthority(dao: R2dbcEntityTemplate) {
 }
 
 fun saveAccount(model: AccountCredentials, dao: R2dbcEntityTemplate): Account? =
-    dao.insert(AccountEntity(model)).block()?.toModel()
+    when {
+        model.id != null -> dao.update(
+            AccountEntity(model).copy(
+                version = dao.selectOne(
+                    query(where("login").`is`(model.login!!).ignoreCase(true)),
+                    AccountEntity::class.java
+                ).block()!!.version
+            )
+        ).block()?.toModel()
+
+        else -> dao.insert(AccountEntity(model)).block()?.toModel()
+    }
 
 fun saveAccountAuthority(id: UUID, role: String, dao: R2dbcEntityTemplate): AccountAuthorityEntity? =
     dao.insert(AccountAuthorityEntity(userId = id, role = role)).block()

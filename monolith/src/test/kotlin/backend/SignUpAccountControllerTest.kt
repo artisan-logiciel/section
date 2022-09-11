@@ -285,26 +285,15 @@ internal class SignUpAccountControllerTest {
             assertNotNull(this)
             assertEquals(defaultAccount.email!!, email!!.lowercase())
             assertFalse(activated)
+            //activate third
+            saveAccount(copy(activated = true, activationKey = null), dao)
         }
-
-
-//        assertEquals(1, countAccount(dao))
-//        assertEquals(1, countAccountAuthority(dao))
-//        assertNull(findOneByLogin(secondLogin, dao))
-//        findOneByLogin(thirdLogin, dao).run {
-//            assertNotNull(this)
-//            assertEquals(defaultAccount.email!!.uppercase(), email)
-//        }
-        //activate third
-//        saveAccount(findOneByEmail(defaultAccount.email!!, dao)!!.copy(activated = true), dao)
-
-
-//        log.info(
-//            "findOneByEmail(defaultAccount.email!!): ${
-//                findOneByEmail(defaultAccount.email!!, dao)
-//            }"
-//        )
-//        assertTrue(findOneByEmail(defaultAccount.email!!)!!.activated)
+        //validate third is active and activationKey is null
+        findOneByLogin(thirdLogin, dao).run {
+            assertNotNull(this)
+            assertTrue(activated)
+            assertNull(activationKey)
+        }
 //
 //        // Register 4th (already activated) user
 //        client
