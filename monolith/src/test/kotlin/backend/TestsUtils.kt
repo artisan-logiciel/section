@@ -101,15 +101,13 @@ fun countAccountAuthority(dao: R2dbcEntityTemplate): Int =
 
 fun findOneByLogin(login: String, dao: R2dbcEntityTemplate): AccountCredentials? =
     dao.select<AccountEntity>()
-        .matching(query(where("login").`is`(login)))
+        .matching(query(where("login").`is`(login).ignoreCase(true)))
         .one().block()?.toCredentialsModel()
 
 fun findOneByEmail(email: String, dao: R2dbcEntityTemplate): AccountCredentials? = dao.select<AccountEntity>()
-    .matching(query(where("email").`is`(email)))
+    .matching(query(where("email").`is`(email).ignoreCase(true)))
     .one().block()?.toCredentialsModel()
 
-
-private val mapper = createObjectMapper()
 
 private fun createObjectMapper() =
     ObjectMapper().apply {
@@ -126,7 +124,7 @@ private fun createObjectMapper() =
  * @throws IOException
  */
 @Throws(IOException::class)
-fun convertObjectToJsonBytes(`object`: Any): ByteArray = mapper.writeValueAsBytes(`object`)
+fun convertObjectToJsonBytes(`object`: Any): ByteArray = createObjectMapper().writeValueAsBytes(`object`)
 
 /**
  * Create a byte array with a specific size filled with specified data.

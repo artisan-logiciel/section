@@ -6,7 +6,6 @@ package backend
 
 import backend.Constants.ROLE_USER
 import backend.Data.defaultAccount
-import backend.Log.log
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeAll
@@ -59,22 +58,23 @@ internal class SignUpAccountControllerTest {
             .contentType(MediaType.APPLICATION_JSON)
             .bodyValue(defaultAccount)
             .exchange()
-            .returnResult<Unit>().run {
-                assertTrue(requestBodyContent!!.isNotEmpty())
-                requestBodyContent
-                    ?.map { it.toInt().toChar().toString() }
-                    ?.reduce { acc: String, s: String -> acc + s }.apply requestContent@{
-                        //test request contains passed values
-                        defaultAccount.run {
-                            setOf(
-                                "\"login\":\"${login}\"",
-                                "\"password\":\"${password}\"",
-                                "\"firstName\":\"${firstName}\"",
-                                "\"lastName\":\"${lastName}\"",
-                                "\"email\":\"${email}\"",
-                            ).map { assertTrue(this@requestContent?.contains(it) ?: false) }
-                        }
+            .returnResult<Unit>()
+            .requestBodyContent!!
+            .map { it.toInt().toChar().toString() }
+            .reduce { acc: String, s: String -> acc + s }
+            .run {
+                defaultAccount.run {
+                    setOf(
+                        "\"login\":\"${login}\"",
+                        "\"password\":\"${password}\"",
+                        "\"firstName\":\"${firstName}\"",
+                        "\"lastName\":\"${lastName}\"",
+                        "\"email\":\"${email}\"",
+                    ).map {
+                        //test request contient les parametres passés
+                        assertTrue(contains(it))
                     }
+                }
             }
     }
 
@@ -93,7 +93,7 @@ internal class SignUpAccountControllerTest {
             .expectStatus()
             .isCreated
             .returnResult<Unit>()
-            .run { responseBodyContent?.isEmpty()?.let { assertTrue(it) } }
+            .responseBodyContent!!.isEmpty().run { assertTrue(this) }
         assertEquals(countUserBefore + 1, countAccount(dao))
         assertEquals(countUserAuthBefore + 1, countAccountAuthority(dao))
         assertFalse(findOneByEmail(defaultAccount.email!!, dao)!!.activated)
@@ -112,7 +112,7 @@ internal class SignUpAccountControllerTest {
             .expectStatus()
             .isBadRequest
             .returnResult<Unit>()
-            .run { responseBodyContent?.isNotEmpty()?.let { assertTrue(it) } }
+            .responseBodyContent!!.isNotEmpty().run { assertTrue(this) }
         assertEquals(0, countAccount(dao))
     }
 
@@ -278,7 +278,6 @@ internal class SignUpAccountControllerTest {
             .isCreated
             .returnResult<Unit>()
             .run { responseBodyContent?.isEmpty()?.let { assertTrue(it) } }
-        log.info(countAccount(dao))
         assertEquals(1, countAccount(dao))
         assertEquals(1, countAccountAuthority(dao))
         findOneByLogin(thirdLogin, dao).run {
@@ -306,17 +305,25 @@ internal class SignUpAccountControllerTest {
             .expectStatus()
             .isBadRequest
             .returnResult<Unit>()
-            .run { responseBodyContent?.isEmpty()?.let { assertTrue(it) } }
+            .run { responseBodyContent?.isNotEmpty()?.let { assertTrue(it) } }
         assertEquals(1, countAccount(dao))
         assertEquals(1, countAccountAuthority(dao))
         assertNull(findOneByLogin(fourthLogin, dao))
-        findOneByLogin(thirdLogin, dao).run {
-            assertNotNull(this)
-            assertTrue(activated)
-            assertNull(activationKey)
-            assertTrue(defaultAccount.email!!.equals(email!!, ignoreCase = true))
-        }
-        assertTrue(findOneByEmail(defaultAccount.email!!, dao)!!.activated)
+        //meme id
+        assertEquals(
+            findOneByLogin(thirdLogin, dao).apply {
+                assertNotNull(this)
+                assertTrue(activated)
+                assertNull(activationKey)
+                assertTrue(defaultAccount.email!!.equals(email!!, ignoreCase = true))
+            }!!.id,
+            findOneByEmail(defaultAccount.email!!, dao).apply {
+                assertNotNull(this)
+                assertTrue(activated)
+                assertNull(activationKey)
+                assertTrue(thirdLogin.equals(login, ignoreCase = true))
+            }!!.id
+        )
     }
 
 
