@@ -82,9 +82,24 @@ class AccountRepositoryR2dbc(
     private val dao: R2dbcEntityTemplate
 ) : AccountRepository {
     override suspend fun save(model: AccountCredentials): Account? =
-        try {//TODO: cas insert et update
-            dao.insert(AccountEntity(model)).awaitSingle()?.toModel()
+        try {
+            when {
+                model.id != null -> dao.update(
+                    AccountEntity(model).copy(
+                        version = dao.selectOne(
+                            query(
+                                where("login").`is`(model.login!!).ignoreCase(true)
+                                    .or(where("email").`is`(model.email!!).ignoreCase(true))
+                            ), AccountEntity::class.java
+                        ).awaitSingle()!!.version
+                    )
+                ).awaitSingle()?.toModel()
+
+                else -> dao.insert(AccountEntity(model)).awaitSingle()?.toModel()
+            }
         } catch (_: DataAccessException) {
+            null
+        } catch (_: NoSuchElementException) {
             null
         }
 

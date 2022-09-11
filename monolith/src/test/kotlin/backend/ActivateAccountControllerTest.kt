@@ -15,15 +15,15 @@ import org.springframework.data.r2dbc.core.R2dbcEntityTemplate
 import org.springframework.test.web.reactive.server.WebTestClient
 import org.springframework.test.web.reactive.server.returnResult
 import java.net.URI
-import kotlin.test.Test
-import kotlin.test.assertEquals
+import kotlin.test.*
 
 
 internal class ActivateAccountControllerTest {
 
     companion object {
-        private const val SIGNUP_URI = "api/activate?key="
         private const val BASE_URL = "http://localhost:8080/"
+        private const val SIGNUP_URI = "api/activate?key="
+        private const val SIGNUP_URI_KEY_PARAM = "{activationKey}"
 
     }
 
@@ -52,49 +52,54 @@ internal class ActivateAccountControllerTest {
         RandomUtils.generateActivationKey.run {
             client
                 .get()
-                .uri("/api/activate?key={activationKey}", this)
+                .uri("$SIGNUP_URI$SIGNUP_URI_KEY_PARAM", this)
                 .exchange()
-                .expectStatus()
-                .is5xxServerError
                 .returnResult<Unit>().url.let {
-                    assertEquals(URI("$BASE_URL$SIGNUP_URI?key=$this"), it)
+                    assertEquals(URI("$BASE_URL$SIGNUP_URI$this"), it)
                 }
 
         }
     }
 
-//    /*
-//        @Test
-//        void testActivateAccount() {
-//            final String activationKey = "some activation key";
-//            User user = new User();
-//            user.setLogin("activate-account");
-//            user.setEmail("activate-account@example.com");
-//            user.setPassword(RandomStringUtils.random(60));
-//            user.setActivated(false);
-//            user.setActivationKey(activationKey);
-//            user.setCreatedBy(Constants.SYSTEM);
-//
-//            userRepository.save(user).block();
-//
-//            accountWebTestClient.get().uri("/api/activate?key={activationKey}", activationKey).exchange().expectStatus().isOk();
-//
-//            user = userRepository.findOneByLogin(user.getLogin()).block();
-//            assertThat(user.isActivated()).isTrue();
-//        }
-//    */
-//
-//    /*
-//        @Test
-//        void testActivateAccountWithWrongKey() {
-//            accountWebTestClient
-//                .get()
-//                .uri("/api/activate?key=wrongActivationKey")
-//                .exchange()
-//                .expectStatus()
-//                .isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
-//        }
-//    */
+    @Test
+    fun `test activate avec une mauvaise clé`() {
+        client
+            .get()
+            .uri("$SIGNUP_URI$SIGNUP_URI_KEY_PARAM", "wrongActivationKey")
+            .exchange()
+            .expectStatus()
+            .is5xxServerError
+            .returnResult<Unit>()
 
 
+    }
+
+    @Test
+    fun `test activate avec une clé valide`() {
+        assertEquals(0, countAccount(dao))
+        assertEquals(0, countAccountAuthority(dao))
+        createDataAccounts(setOf(Data.defaultAccount), dao)
+        assertEquals(1, countAccount(dao))
+        assertEquals(1, countAccountAuthority(dao))
+
+        val validActivationKey = findOneByLogin(Data.defaultAccount.login!!, dao)!!.apply {
+            assertTrue(activationKey!!.isNotBlank())
+            assertFalse(activated)
+        }.activationKey
+
+        client
+            .get()
+            .uri(
+                "$SIGNUP_URI$SIGNUP_URI_KEY_PARAM",
+                validActivationKey
+            )
+            .exchange()
+            .expectStatus().isOk
+            .returnResult<Unit>()
+
+        findOneByLogin(Data.defaultAccount.login!!, dao)!!.run {
+            assertNull(activationKey)
+            assertTrue(activated)
+        }
+    }
 }
