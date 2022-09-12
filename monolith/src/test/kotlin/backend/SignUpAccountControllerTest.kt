@@ -19,17 +19,12 @@ import kotlin.test.*
 
 internal class SignUpAccountControllerTest {
 
-    companion object {
-        private const val SIGNUP_URI = "api/account/signup"
-        private const val BASE_URL = "http://localhost:8080"
-    }
-
     private lateinit var context: ConfigurableApplicationContext
 
     private val client: WebTestClient by lazy {
         WebTestClient
             .bindToServer()
-            .baseUrl(BASE_URL)
+            .baseUrl(BASE_URL_DEV)
             .build()
     }
 
@@ -84,7 +79,7 @@ internal class SignUpAccountControllerTest {
         assertEquals(0, countUserAuthBefore)
         client
             .post()
-            .uri(SIGNUP_URI)
+            .uri(Constants.SIGNUP_URI)
             .contentType(MediaType.APPLICATION_JSON)
             .bodyValue(Data.defaultAccount)
             .exchange()
@@ -107,7 +102,7 @@ internal class SignUpAccountControllerTest {
         assertEquals(0, countAccount(dao))
         client
             .post()
-            .uri(SIGNUP_URI)
+            .uri(Constants.SIGNUP_URI)
             .contentType(MediaType.APPLICATION_JSON)
             .bodyValue(Data.defaultAccount.copy(login = "funky-log(n"))
             .exchange()
@@ -125,7 +120,7 @@ internal class SignUpAccountControllerTest {
         assertEquals(0, countBefore)
         client
             .post()
-            .uri(SIGNUP_URI)
+            .uri(Constants.SIGNUP_URI)
             .contentType(MediaType.APPLICATION_JSON)
             .bodyValue(Data.defaultAccount.copy(password = "inv"))
             .exchange()
@@ -141,7 +136,7 @@ internal class SignUpAccountControllerTest {
     fun `test signup account avec un password invalid`() {
         assertEquals(0, countAccount(dao))
         client.post()
-            .uri(SIGNUP_URI)
+            .uri(Constants.SIGNUP_URI)
             .contentType(MediaType.APPLICATION_JSON)
             .bodyValue(Data.defaultAccount.copy(password = "123"))
             .exchange()
@@ -158,7 +153,7 @@ internal class SignUpAccountControllerTest {
         assertEquals(0, countAccount(dao))
         client
             .post()
-            .uri(SIGNUP_URI)
+            .uri(Constants.SIGNUP_URI)
             .contentType(MediaType.APPLICATION_JSON)
             .bodyValue(Data.defaultAccount.copy(password = null))
             .exchange()
@@ -186,7 +181,7 @@ internal class SignUpAccountControllerTest {
 
         client
             .post()
-            .uri(SIGNUP_URI)
+            .uri(Constants.SIGNUP_URI)
             .contentType(MediaType.APPLICATION_JSON)
             .bodyValue(Data.defaultAccount.copy(login = "foo"))
             .exchange()
@@ -213,7 +208,7 @@ internal class SignUpAccountControllerTest {
 
         client
             .post()
-            .uri(SIGNUP_URI)
+            .uri(Constants.SIGNUP_URI)
             .contentType(MediaType.APPLICATION_JSON)
             .bodyValue(Data.defaultAccount.copy(email = "foo@localhost"))
             .exchange()
@@ -232,7 +227,7 @@ internal class SignUpAccountControllerTest {
         // sign up premier user
         client
             .post()
-            .uri(SIGNUP_URI)
+            .uri(Constants.SIGNUP_URI)
             .contentType(MediaType.APPLICATION_JSON)
             .bodyValue(Data.defaultAccount)
             .exchange()
@@ -249,7 +244,7 @@ internal class SignUpAccountControllerTest {
         val secondLogin = "foo"
         client
             .post()
-            .uri(SIGNUP_URI)
+            .uri(Constants.SIGNUP_URI)
             .contentType(MediaType.APPLICATION_JSON)
             .bodyValue(Data.defaultAccount.copy(login = secondLogin))
             .exchange()
@@ -271,7 +266,7 @@ internal class SignUpAccountControllerTest {
         val thirdLogin = "bar"
         client
             .post()
-            .uri(SIGNUP_URI)
+            .uri(Constants.SIGNUP_URI)
             .contentType(MediaType.APPLICATION_JSON)
             .bodyValue(
                 Data.defaultAccount.copy(
@@ -304,7 +299,7 @@ internal class SignUpAccountControllerTest {
         // le user existant au meme mail est deja activé
         client
             .post()
-            .uri(SIGNUP_URI)
+            .uri(Constants.SIGNUP_URI)
             .contentType(MediaType.APPLICATION_JSON)
             .bodyValue(Data.defaultAccount.copy(login = fourthLogin))
             .exchange()
@@ -341,7 +336,7 @@ internal class SignUpAccountControllerTest {
         val login = "badguy"
         client
             .post()
-            .uri(SIGNUP_URI)
+            .uri(Constants.SIGNUP_URI)
             .contentType(MediaType.APPLICATION_JSON)
             .bodyValue(
                 AccountCredentials(

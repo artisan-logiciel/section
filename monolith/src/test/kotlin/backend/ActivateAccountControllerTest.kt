@@ -4,6 +4,8 @@
 
 package backend
 
+import backend.Constants.ACTIVATE_URI
+import backend.Constants.ACTIVATE_URI_KEY_PARAM
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeAll
@@ -19,17 +21,10 @@ import kotlin.test.*
 
 internal class ActivateAccountControllerTest {
 
-    companion object {
-        private const val BASE_URL = "http://localhost:8080/"
-        private const val SIGNUP_URI = "api/account/activate?key="
-        private const val SIGNUP_URI_KEY_PARAM = "{activationKey}"
-
-    }
-
     private val client: WebTestClient by lazy {
         WebTestClient
             .bindToServer()
-            .baseUrl(BASE_URL)
+            .baseUrl(BASE_URL_DEV)
             .build()
     }
     private lateinit var context: ConfigurableApplicationContext
@@ -51,10 +46,10 @@ internal class ActivateAccountControllerTest {
         RandomUtils.generateActivationKey.run {
             client
                 .get()
-                .uri("$SIGNUP_URI$SIGNUP_URI_KEY_PARAM", this)
+                .uri("$ACTIVATE_URI$ACTIVATE_URI_KEY_PARAM", this)
                 .exchange()
                 .returnResult<Unit>().url.let {
-                    assertEquals(URI("$BASE_URL$SIGNUP_URI$this"), it)
+                    assertEquals(URI("$BASE_URL_DEV$ACTIVATE_URI$this"), it)
                 }
         }
     }
@@ -63,7 +58,7 @@ internal class ActivateAccountControllerTest {
     fun `test activate avec une mauvaise clé`() {
         client
             .get()
-            .uri("$SIGNUP_URI$SIGNUP_URI_KEY_PARAM", "wrongActivationKey")
+            .uri("$ACTIVATE_URI$ACTIVATE_URI_KEY_PARAM", "wrongActivationKey")
             .exchange()
             .expectStatus()
             .is5xxServerError
@@ -86,7 +81,7 @@ internal class ActivateAccountControllerTest {
         client
             .get()
             .uri(
-                "$SIGNUP_URI$SIGNUP_URI_KEY_PARAM",
+                "$ACTIVATE_URI$ACTIVATE_URI_KEY_PARAM",
                 validActivationKey
             )
             .exchange()

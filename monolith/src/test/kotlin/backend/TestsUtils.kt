@@ -24,6 +24,8 @@ import kotlin.reflect.full.createInstance
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
+const val BASE_URL_DEV = "http://localhost:8080"
+
 fun testLoader(app: SpringApplication) = with(app) {
     setDefaultProperties(
         hashMapOf<String, Any>().apply {

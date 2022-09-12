@@ -6,6 +6,13 @@ import java.net.URI
 
 
 object Constants {
+    const val ACCOUNT_API_MAPPING = "/api/account"
+    const val SIGNUP_API_MAPPING = "/signup"
+    const val ACTIVATE_API_MAPPING = "/activate"
+    const val SIGNUP_URI = "$ACCOUNT_API_MAPPING$SIGNUP_API_MAPPING"
+    const val ACTIVATE_URI = "$ACCOUNT_API_MAPPING$ACTIVATE_API_MAPPING?key="
+    const val ACTIVATE_URI_KEY_PARAM = "{activationKey}"
+
     //SignUpController
     val ALLOWED_ORDERED_PROPERTIES = arrayOf(
         "id",

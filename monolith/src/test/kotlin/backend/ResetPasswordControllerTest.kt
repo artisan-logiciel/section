@@ -19,16 +19,15 @@ import org.springframework.test.web.reactive.server.WebTestClient
 internal class ResetPasswordControllerTest {
 
     companion object {
-        private const val BASE_URL = "http://localhost:8080/"
-        private const val SIGNUP_URI = "api/account/activate?key="
-        private const val SIGNUP_URI_KEY_PARAM = "{activationKey}"
+        private const val ACTIVATE_URI = "api/account/activate?key="
+        private const val ACTIVATE_URI_KEY_PARAM = "{activationKey}"
 
     }
 
     private val client: WebTestClient by lazy {
         WebTestClient
             .bindToServer()
-            .baseUrl(BASE_URL)
+            .baseUrl(BASE_URL_DEV)
             .build()
     }
     private lateinit var context: ConfigurableApplicationContext
@@ -53,7 +52,7 @@ internal class ResetPasswordControllerTest {
 //                .uri("$SIGNUP_URI$SIGNUP_URI_KEY_PARAM", this)
 //                .exchange()
 //                .returnResult<Unit>().url.let {
-//                    assertEquals(URI("$BASE_URL$SIGNUP_URI$this"), it)
+//                    assertEquals(URI("$BASE_URL_DEV$SIGNUP_URI$this"), it)
 //                }
 //
 //        }

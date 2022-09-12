@@ -16,7 +16,7 @@ import javax.validation.Valid
 /*=================================================================================*/
 
 @RestController
-@RequestMapping("api/account")
+@RequestMapping(Constants.ACCOUNT_API_MAPPING)
 class SignUpController(
     private val signUpService: SignUpService
 ) {
@@ -30,7 +30,7 @@ class SignUpController(
      * @throws backend.EmailAlreadyUsedProblem {@code 400 (Bad Request)} if the email is already used.
      * @throws backend.LoginAlreadyUsedProblem {@code 400 (Bad Request)} if the login is already used.
      */
-    @PostMapping("signup")
+    @PostMapping(Constants.SIGNUP_API_MAPPING)
     @ResponseStatus(HttpStatus.CREATED)
     suspend fun signup(
         @RequestBody @Valid accountCredentials: AccountCredentials
@@ -42,7 +42,7 @@ class SignUpController(
      * @param key the activation key.
      * @throws RuntimeException `500 (Internal Server Error)` if the user couldn't be activated.
      */
-    @GetMapping("activate")
+    @GetMapping(Constants.ACTIVATE_API_MAPPING)
     suspend fun activateAccount(@RequestParam(value = "key") key: String) {
         when {
             !signUpService.activate(key = key) -> throw AccountException("No user was found for this activation key")
@@ -52,7 +52,7 @@ class SignUpController(
 
 /*=================================================================================*/
 @RestController
-@RequestMapping("api/account")
+@RequestMapping(Constants.ACCOUNT_API_MAPPING)
 class ResetPasswordController(
     private val resetPasswordService: ResetPasswordService
 ) {
