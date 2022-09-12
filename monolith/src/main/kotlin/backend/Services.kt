@@ -7,7 +7,6 @@ import backend.Constants.DEFAULT_LANGUAGE
 import backend.Constants.ROLE_USER
 import backend.Constants.USER
 import backend.Log.log
-import org.apache.commons.lang3.RandomStringUtils
 import org.springframework.context.MessageSource
 import org.springframework.mail.MailException
 import org.springframework.mail.javamail.JavaMailSender
@@ -18,17 +17,17 @@ import org.springframework.transaction.annotation.Transactional
 import org.thymeleaf.context.Context
 import org.thymeleaf.spring5.SpringWebFluxTemplateEngine
 import java.nio.charset.StandardCharsets.UTF_8
-import java.security.SecureRandom
 import java.time.Instant
 import java.util.Locale.forLanguageTag
 import javax.mail.MessagingException
 
 
 @Service
+@Transactional
 class ResetPasswordService(
     private val accountRepository: AccountRepository
 ) {
-    //    suspend fun completePasswordReset(newPassword: String, key: String): User? =
+    suspend fun completePasswordReset(newPassword: String, key: String): AccountCredentials? = null
 //        log.debug("Reset user password for reset key {}", key).run {
 //            userRepository.findOneByResetKey(key).apply {
 //                return if (this != null &&
@@ -44,8 +43,8 @@ class ResetPasswordService(
 //        }
 //
 //
-//    @Transactional
-//    suspend fun requestPasswordReset(mail: String): User? {
+
+    suspend fun requestPasswordReset(mail: String): AccountCredentials? = null
 //        return userRepository
 //            .findOneByEmail(mail)
 //            .apply {
@@ -71,7 +70,6 @@ class SignUpService(
         UsernameAlreadyUsedException::class,
         UsernameAlreadyUsedException::class
     )
-
     suspend fun signup(account: AccountCredentials) {
         InvalidPasswordException().run {
             if (isPasswordLengthInvalid(account.password)) throw this
@@ -142,26 +140,6 @@ class SignUpService(
     }
 }
 
-object RandomUtils {
-    private const val DEF_COUNT = 20
-    private val SECURE_RANDOM: SecureRandom by lazy {
-        SecureRandom().apply { nextBytes(ByteArray(size = 64)) }
-    }
-
-    private val generateRandomAlphanumericString: String
-        get() = RandomStringUtils.random(
-            DEF_COUNT, 0, 0, true, true, null, SECURE_RANDOM
-        )
-
-    val generatePassword: String
-        get() = generateRandomAlphanumericString
-
-    val generateActivationKey: String
-        get() = generateRandomAlphanumericString
-
-    val generateResetKey: String
-        get() = generateRandomAlphanumericString
-}
 
 @Service("mailService")
 class MailService(
