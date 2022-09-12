@@ -100,7 +100,7 @@ interface AccountRecord<AUTH : AuthorityRecord> {
             createdDate = createdDate,
             lastModifiedBy = lastModifiedBy,
             lastModifiedDate = lastModifiedDate,
-            authorities = authorities?.map { it.role }?.toMutableSet()
+            authorities = authorities?.map { it.role }?.toSet()
         )
 
     val toCredentialsModel: AccountCredentials
@@ -119,7 +119,7 @@ interface AccountRecord<AUTH : AuthorityRecord> {
             createdDate = createdDate,
             lastModifiedBy = lastModifiedBy,
             lastModifiedDate = lastModifiedDate,
-            authorities = authorities?.map { it.role }?.toMutableSet()
+            authorities = authorities?.map { it.role }?.toSet()
         )
 }
 
@@ -239,6 +239,4 @@ data class AccountEntity @JvmOverloads constructor(
         password = model.password
         activationKey = model.activationKey
     }
-
-
 }
