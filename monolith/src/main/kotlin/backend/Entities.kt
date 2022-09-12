@@ -3,8 +3,6 @@
 package backend
 
 
-import backend.AuthorityRecord.Companion.ROLE_COLUMN
-import backend.Constants.LOGIN_REGEX
 import com.fasterxml.jackson.annotation.JsonIgnore
 import org.springframework.data.annotation.*
 import org.springframework.data.domain.Persistable
@@ -32,7 +30,7 @@ data class AuthorityEntity(
     @Id
     @field:NotNull
     @field:Size(max = 50)
-    @Column(ROLE_COLUMN)
+    @Column(AuthorityRecord.ROLE_COLUMN)
     override val role: String
 ) : AuthorityRecord
 
@@ -42,7 +40,7 @@ data class AuthorityEntity(
 data class PhoneEntity(
     @Id var id: UUID? = null,
     @field:NotNull
-    @field:Pattern(regexp = LOGIN_REGEX)
+    @field:Pattern(regexp = Constants.LOGIN_REGEX)
     @field:Size(min = 1, max = 50)
     var value: String? = null
 )
@@ -133,7 +131,7 @@ data class AccountEntity @JvmOverloads constructor(
     @Id override var id: UUID? = null,
 
     @field:NotNull
-    @field:Pattern(regexp = LOGIN_REGEX)
+    @field:Pattern(regexp = Constants.LOGIN_REGEX)
     @field:Size(min = 1, max = 50)
     override var login: String? = null,
 
