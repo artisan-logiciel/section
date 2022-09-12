@@ -24,11 +24,10 @@ import java.util.Locale.forLanguageTag
 import javax.mail.MessagingException
 
 
-
 @Service
 class ResetPasswordService(
     private val accountRepository: AccountRepository
-){
+) {
     //    suspend fun completePasswordReset(newPassword: String, key: String): User? =
 //        log.debug("Reset user password for reset key {}", key).run {
 //            userRepository.findOneByResetKey(key).apply {
@@ -59,6 +58,7 @@ class ResetPasswordService(
 //    }
 
 }
+
 @Service
 @Transactional
 class SignUpService(
@@ -120,17 +120,21 @@ class SignUpService(
         }
     }
 
-
     suspend fun activate(key: String): Boolean {
         accountRepository.run {
             with(findOneByActivationKey(key)) {
-                when {
-                    this == null -> return false
+                return when {
+                    this == null -> false
                     else -> {
-                        save(copy(activated = true, activationKey = null)).apply {
+                        save(
+                            copy(
+                                activated = true,
+                                activationKey = null
+                            )
+                        ).apply {
                             if (id != null) log.info("activation: $login")
                         }
-                        return true
+                        true
                     }
                 }
             }

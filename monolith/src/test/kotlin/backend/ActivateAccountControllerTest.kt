@@ -56,7 +56,6 @@ internal class ActivateAccountControllerTest {
                 .returnResult<Unit>().url.let {
                     assertEquals(URI("$BASE_URL$SIGNUP_URI$this"), it)
                 }
-
         }
     }
 
@@ -69,8 +68,6 @@ internal class ActivateAccountControllerTest {
             .expectStatus()
             .is5xxServerError
             .returnResult<Unit>()
-
-
     }
 
     @Test
