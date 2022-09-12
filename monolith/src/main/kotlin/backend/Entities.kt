@@ -2,7 +2,6 @@
 
 package backend
 
-
 import com.fasterxml.jackson.annotation.JsonIgnore
 import org.springframework.data.annotation.*
 import org.springframework.data.domain.Persistable
@@ -35,7 +34,6 @@ data class AuthorityEntity(
 ) : AuthorityRecord
 
 
-
 @Table("`phone`")
 data class PhoneEntity(
     @Id var id: UUID? = null,
@@ -59,8 +57,6 @@ data class EmailEntity(@Id val value: @EmailConstraint String) : Persistable<Str
     override fun getId() = value
     override fun isNew() = true
 }
-
-
 
 
 @Table("`user_authority`")
@@ -90,39 +86,41 @@ interface AccountRecord<AUTH : AuthorityRecord> {
     var createdDate: Instant?
     var lastModifiedBy: String?
     var lastModifiedDate: Instant?
-    fun toModel(): Account = Account(
-        id = id,
-        login = login,
-        firstName = firstName,
-        lastName = lastName,
-        email = email,
-        imageUrl = imageUrl,
-        activated = activated,
-        langKey = langKey,
-        createdBy = createdBy,
-        createdDate = createdDate,
-        lastModifiedBy = lastModifiedBy,
-        lastModifiedDate = lastModifiedDate,
-        authorities = authorities?.map { it.role }?.toMutableSet()
-    )
+    val toModel: Account
+        get() = Account(
+            id = id,
+            login = login,
+            firstName = firstName,
+            lastName = lastName,
+            email = email,
+            imageUrl = imageUrl,
+            activated = activated,
+            langKey = langKey,
+            createdBy = createdBy,
+            createdDate = createdDate,
+            lastModifiedBy = lastModifiedBy,
+            lastModifiedDate = lastModifiedDate,
+            authorities = authorities?.map { it.role }?.toMutableSet()
+        )
 
-    fun toCredentialsModel(): AccountCredentials = AccountCredentials(
-        id = id,
-        login = login,
-        firstName = firstName,
-        lastName = lastName,
-        email = email,
-        password = password,
-        activationKey = activationKey,
-        imageUrl = imageUrl,
-        activated = activated,
-        langKey = langKey,
-        createdBy = createdBy,
-        createdDate = createdDate,
-        lastModifiedBy = lastModifiedBy,
-        lastModifiedDate = lastModifiedDate,
-        authorities = authorities?.map { it.role }?.toMutableSet()
-    )
+    val toCredentialsModel: AccountCredentials
+        get() = AccountCredentials(
+            id = id,
+            login = login,
+            firstName = firstName,
+            lastName = lastName,
+            email = email,
+            password = password,
+            activationKey = activationKey,
+            imageUrl = imageUrl,
+            activated = activated,
+            langKey = langKey,
+            createdBy = createdBy,
+            createdDate = createdDate,
+            lastModifiedBy = lastModifiedBy,
+            lastModifiedDate = lastModifiedDate,
+            authorities = authorities?.map { it.role }?.toMutableSet()
+        )
 }
 
 
@@ -239,7 +237,7 @@ data class AccountEntity @JvmOverloads constructor(
         imageUrl = model.imageUrl
         authorities = model.authorities?.map { AuthorityEntity(it) }?.toMutableSet()
         password = model.password
-        activationKey=model.activationKey
+        activationKey = model.activationKey
     }
 
 

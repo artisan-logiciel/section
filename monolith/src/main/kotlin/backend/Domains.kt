@@ -2,7 +2,6 @@
 
 package backend
 
-import backend.Constants.IMAGE_URL_DEFAULT
 import java.time.Instant
 import java.util.*
 import javax.validation.constraints.NotBlank
@@ -29,7 +28,7 @@ data class Account(
     @field:Size(min = 5, max = 254)
     val email: String? = null,
     @field:Size(max = 256)
-    val imageUrl: String? = IMAGE_URL_DEFAULT,
+    val imageUrl: String? = Constants.IMAGE_URL_DEFAULT,
     val activated: Boolean = false,
     @field:Size(min = 2, max = 10)
     val langKey: String? = null,
@@ -67,7 +66,7 @@ data class AccountCredentials(
     @field:Size(min = 5, max = 254)
     val email: String? = null,
     @field:Size(max = 256)
-    val imageUrl: String? = IMAGE_URL_DEFAULT,
+    val imageUrl: String? = Constants.IMAGE_URL_DEFAULT,
     val activated: Boolean = false,
     @field:Size(min = 2, max = 10)
     val langKey: String? = null,

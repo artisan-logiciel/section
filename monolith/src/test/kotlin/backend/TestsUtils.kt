@@ -113,9 +113,9 @@ fun saveAccount(model: AccountCredentials, dao: R2dbcEntityTemplate): Account? =
                     AccountEntity::class.java
                 ).block()!!.version
             )
-        ).block()?.toModel()
+        ).block()?.toModel
 
-        else -> dao.insert(AccountEntity(model)).block()?.toModel()
+        else -> dao.insert(AccountEntity(model)).block()?.toModel
     }
 
 fun saveAccountAuthority(id: UUID, role: String, dao: R2dbcEntityTemplate): AccountAuthorityEntity? =
@@ -133,11 +133,11 @@ fun countAccountAuthority(dao: R2dbcEntityTemplate): Int =
 fun findOneByLogin(login: String, dao: R2dbcEntityTemplate): AccountCredentials? =
     dao.select<AccountEntity>()
         .matching(query(where("login").`is`(login).ignoreCase(true)))
-        .one().block()?.toCredentialsModel()
+        .one().block()?.toCredentialsModel
 
 fun findOneByEmail(email: String, dao: R2dbcEntityTemplate): AccountCredentials? = dao.select<AccountEntity>()
     .matching(query(where("email").`is`(email).ignoreCase(true)))
-    .one().block()?.toCredentialsModel()
+    .one().block()?.toCredentialsModel
 
 fun findAllAccountAuthority(dao: R2dbcEntityTemplate): Set<AccountAuthorityEntity> =
     dao.select(AccountAuthorityEntity::class.java).all().toIterable().toHashSet()

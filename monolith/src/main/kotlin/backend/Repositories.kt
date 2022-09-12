@@ -93,9 +93,9 @@ class AccountRepositoryR2dbc(
                             ), AccountEntity::class.java
                         ).awaitSingle()!!.version
                     )
-                ).awaitSingle()?.toModel()
+                ).awaitSingle()?.toModel
 
-                else -> dao.insert(AccountEntity(model)).awaitSingle()?.toModel()
+                else -> dao.insert(AccountEntity(model)).awaitSingle()?.toModel
             }
         } catch (_: DataAccessException) {
             null
@@ -119,12 +119,12 @@ class AccountRepositoryR2dbc(
 
     override suspend fun findOneByLogin(login: String): AccountCredentials? =
         dao.select<AccountEntity>().matching(query(where("login").`is`(login).ignoreCase(true)))
-            .awaitOneOrNull()?.toCredentialsModel()
+            .awaitOneOrNull()?.toCredentialsModel
 
 
     override suspend fun findOneByEmail(email: String): AccountCredentials? =
         dao.select<AccountEntity>().matching(query(where("email").`is`(email).ignoreCase(true)))
-            .awaitOneOrNull()?.toCredentialsModel()
+            .awaitOneOrNull()?.toCredentialsModel
 
     override suspend fun suppress(account: Account) {
         dao.run {
@@ -154,7 +154,7 @@ class AccountRepositoryR2dbc(
 
     override suspend fun findOneByActivationKey(key: String): AccountCredentials? =
         dao.select<AccountEntity>().matching(query(where("activationKey").`is`(key)))
-            .awaitOneOrNull()?.toCredentialsModel()
+            .awaitOneOrNull()?.toCredentialsModel
 }
 
 @Repository
