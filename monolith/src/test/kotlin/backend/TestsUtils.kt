@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 package backend
 
 import backend.Constants.ADMIN
@@ -84,7 +86,7 @@ fun createActivatedDataAccounts(accounts: Set<AccountCredentials>, dao: R2dbcEnt
             lastModifiedDate = Instant.now(),
             authorities = mutableSetOf(ROLE_USER).apply {
                 if (acc.login == ADMIN) add(ROLE_ADMIN)
-            }//.toSet()
+            }.toSet()
         )).run {
             dao.insert(this).block()!!.id!!.let { uuid ->
                 authorities!!.map { authority ->
