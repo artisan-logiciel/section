@@ -15,7 +15,6 @@ import javax.validation.Valid
 
 /*=================================================================================*/
 
-
 @RestController
 @RequestMapping("api/account")
 class SignUpController(

@@ -6,7 +6,7 @@ import java.net.URI
 
 
 object Constants {
-    //registerController
+    //SignUpController
     val ALLOWED_ORDERED_PROPERTIES = arrayOf(
         "id",
         "login",
