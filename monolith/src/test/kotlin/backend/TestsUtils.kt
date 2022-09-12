@@ -27,7 +27,10 @@ import kotlin.test.assertTrue
 fun testLoader(app: SpringApplication) = with(app) {
     setDefaultProperties(
         hashMapOf<String, Any>().apply {
-            set(Constants.SPRING_PROFILE_CONF_DEFAULT_KEY, Constants.SPRING_PROFILE_TEST)
+            set(
+                Constants.SPRING_PROFILE_CONF_DEFAULT_KEY,
+                Constants.SPRING_PROFILE_TEST
+            )
         })
     setAdditionalProfiles(Constants.SPRING_PROFILE_TEST)
 }
@@ -64,7 +67,7 @@ fun createActivatedDataAccounts(accounts: Set<AccountCredentials>, dao: R2dbcEnt
     assertEquals(0, countAccountAuthority(dao))
     accounts.map { acc ->
         AccountEntity(acc.copy(
-            activated=true,
+            activated = true,
             langKey = Constants.DEFAULT_LANGUAGE,
             createdBy = Constants.SYSTEM_USER,
             createdDate = Instant.now(),
@@ -100,6 +103,7 @@ fun deleteAllAccountAuthority(dao: R2dbcEntityTemplate) {
     dao.delete(AccountAuthorityEntity::class.java).all().block()
 }
 
+//TODO: revoir les updates avec id!=null
 fun saveAccount(model: AccountCredentials, dao: R2dbcEntityTemplate): Account? =
     when {
         model.id != null -> dao.update(
