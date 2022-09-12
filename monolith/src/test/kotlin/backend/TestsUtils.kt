@@ -1,5 +1,12 @@
 package backend
 
+import backend.Constants.DEFAULT_LANGUAGE
+import backend.Constants.ROLE_ADMIN
+import backend.Constants.ROLE_USER
+import backend.Constants.SPRING_PROFILE_CONF_DEFAULT_KEY
+import backend.Constants.SPRING_PROFILE_TEST
+import backend.Constants.SYSTEM_USER
+import backend.Data.ADMIN_LOGIN
 import com.fasterxml.jackson.annotation.JsonInclude.Include.NON_EMPTY
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.SerializationFeature.WRITE_DURATIONS_AS_TIMESTAMPS
@@ -30,11 +37,11 @@ fun testLoader(app: SpringApplication) = with(app) {
     setDefaultProperties(
         hashMapOf<String, Any>().apply {
             set(
-                Constants.SPRING_PROFILE_CONF_DEFAULT_KEY,
-                Constants.SPRING_PROFILE_TEST
+                SPRING_PROFILE_CONF_DEFAULT_KEY,
+                SPRING_PROFILE_TEST
             )
         })
-    setAdditionalProfiles(Constants.SPRING_PROFILE_TEST)
+    setAdditionalProfiles(SPRING_PROFILE_TEST)
 }
 
 fun createDataAccounts(accounts: Set<AccountCredentials>, dao: R2dbcEntityTemplate) {
@@ -43,13 +50,13 @@ fun createDataAccounts(accounts: Set<AccountCredentials>, dao: R2dbcEntityTempla
     accounts.map { acc ->
         AccountEntity(acc.copy(
             activationKey = RandomUtils.generateActivationKey,
-            langKey = Constants.DEFAULT_LANGUAGE,
-            createdBy = Constants.SYSTEM_USER,
+            langKey = DEFAULT_LANGUAGE,
+            createdBy = SYSTEM_USER,
             createdDate = Instant.now(),
-            lastModifiedBy = Constants.SYSTEM_USER,
+            lastModifiedBy = SYSTEM_USER,
             lastModifiedDate = Instant.now(),
-            authorities = mutableSetOf(Constants.ROLE_USER).apply {
-                if (acc.login == Data.ADMIN_LOGIN) add(Constants.ROLE_ADMIN)
+            authorities = mutableSetOf(ROLE_USER).apply {
+                if (acc.login == ADMIN_LOGIN) add(ROLE_ADMIN)
             }
         )).run {
             dao.insert(this).block()!!.id!!.let { uuid ->
@@ -70,13 +77,13 @@ fun createActivatedDataAccounts(accounts: Set<AccountCredentials>, dao: R2dbcEnt
     accounts.map { acc ->
         AccountEntity(acc.copy(
             activated = true,
-            langKey = Constants.DEFAULT_LANGUAGE,
-            createdBy = Constants.SYSTEM_USER,
+            langKey = DEFAULT_LANGUAGE,
+            createdBy = SYSTEM_USER,
             createdDate = Instant.now(),
-            lastModifiedBy = Constants.SYSTEM_USER,
+            lastModifiedBy = SYSTEM_USER,
             lastModifiedDate = Instant.now(),
-            authorities = mutableSetOf(Constants.ROLE_USER).apply {
-                if (acc.login == Data.ADMIN_LOGIN) add(Constants.ROLE_ADMIN)
+            authorities = mutableSetOf(ROLE_USER).apply {
+                if (acc.login == ADMIN_LOGIN) add(ROLE_ADMIN)
             }
         )).run {
             dao.insert(this).block()!!.id!!.let { uuid ->

@@ -2,10 +2,13 @@
 
 package backend
 
+import backend.Constants.DEFAULT_LANGUAGE
 import backend.Constants.ROLE_ADMIN
 import backend.Constants.ROLE_ANONYMOUS
 import backend.Constants.ROLE_USER
+import backend.Constants.SYSTEM_USER
 import backend.Data.ACCOUNT_LOGIN
+import backend.RandomUtils.generateActivationKey
 import kotlinx.coroutines.reactor.mono
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.AfterAll
@@ -134,11 +137,11 @@ internal class AccountRepositoryR2dbcTest {
         runBlocking {
             accountRepository.signup(
                 Data.defaultAccount.copy(
-                    activationKey = RandomUtils.generateActivationKey,
-                    langKey = Constants.DEFAULT_LANGUAGE,
-                    createdBy = Constants.SYSTEM_USER,
+                    activationKey = generateActivationKey,
+                    langKey = DEFAULT_LANGUAGE,
+                    createdBy = SYSTEM_USER,
                     createdDate = Instant.now(),
-                    lastModifiedBy = Constants.SYSTEM_USER,
+                    lastModifiedBy = SYSTEM_USER,
                     lastModifiedDate = Instant.now(),
                     authorities = mutableSetOf(ROLE_USER)
                 )

@@ -6,6 +6,7 @@ package backend
 
 import backend.Constants.ACTIVATE_URI
 import backend.Constants.ACTIVATE_URI_KEY_PARAM
+import backend.RandomUtils.generateActivationKey
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeAll
@@ -43,7 +44,7 @@ internal class ActivateAccountControllerTest {
 
     @Test
     fun `vérifie que la requete contient bien des données cohérentes`() {
-        RandomUtils.generateActivationKey.run {
+        generateActivationKey.run {
             client
                 .get()
                 .uri("$ACTIVATE_URI$ACTIVATE_URI_KEY_PARAM", this)
