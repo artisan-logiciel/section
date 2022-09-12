@@ -8,6 +8,9 @@ package backend
 import backend.Constants.ACCOUNT_API_MAPPING
 import backend.Constants.ACTIVATE_API_MAPPING
 import backend.Constants.ACTIVATE_URI_KEY_NAME
+import backend.Constants.RESET_PASSWORD_CHANGE_API_MAPPING
+import backend.Constants.RESET_PASSWORD_FINISH_API_MAPPING
+import backend.Constants.RESET_PASSWORD_INIT_API_MAPPING
 import backend.Constants.SIGNUP_API_MAPPING
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
@@ -62,7 +65,7 @@ class ResetPasswordController(
      * @param passwordChange current and new password.
      * @throws InvalidPasswordProblem {@code 400 (Bad Request)} if the new password is incorrect.
      */
-    @PostMapping("change-password")
+    @PostMapping(RESET_PASSWORD_CHANGE_API_MAPPING)
     suspend fun changePassword(@RequestBody passwordChange: PasswordChange): Unit {
     }
 //        passwordChange.run {
@@ -76,7 +79,7 @@ class ResetPasswordController(
      *
      * @param mail the mail of the user.
      */
-    @PostMapping("reset-password/init")
+    @PostMapping(RESET_PASSWORD_INIT_API_MAPPING)
     suspend fun requestPasswordReset(@RequestBody mail: String): Unit {
     }
 //        userService.requestPasswordReset(mail).run {
@@ -91,7 +94,7 @@ class ResetPasswordController(
      * @throws InvalidPasswordProblem {@code 400 (Bad Request)} if the password is incorrect.
      * @throws RuntimeException         {@code 500 (Internal Server Error)} if the password could not be reset.
      */
-    @PostMapping("reset-password/finish")
+    @PostMapping(RESET_PASSWORD_FINISH_API_MAPPING)
     suspend fun finishPasswordReset(@RequestBody keyAndPassword: KeyAndPassword): Unit {
     }
 //    {

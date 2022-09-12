@@ -12,19 +12,11 @@ import org.apache.commons.lang3.StringUtils
 
 
 internal object Data {
-//    const val ACCOUNT1_LOGIN = "test1"
-//    const val ACCOUNT2_LOGIN = "test2"
-//    const val ACCOUNT3_LOGIN = "test3"
 
     val adminAccount by lazy { accountCredentialsFactory(ADMIN) }
     val defaultAccount by lazy { accountCredentialsFactory(USER) }
-//    val account1 by lazy { accountCredentialsFactory(ACCOUNT1_LOGIN) }
-//    val account2 by lazy { accountCredentialsFactory(ACCOUNT2_LOGIN) }
-//    val account3 by lazy { accountCredentialsFactory(ACCOUNT3_LOGIN) }
 
-    val accounts = setOf(adminAccount, defaultAccount
-//        , account1, account2, account3
-    )
+    val accounts = setOf(adminAccount, defaultAccount)
 }
 
 

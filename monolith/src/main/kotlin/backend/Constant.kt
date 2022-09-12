@@ -13,6 +13,10 @@ object Constants {
     const val ACTIVATE_URI = "$ACCOUNT_API_MAPPING$ACTIVATE_API_MAPPING?key="
     const val ACTIVATE_URI_KEY_PARAM = "{activationKey}"
     const val ACTIVATE_URI_KEY_NAME = "key"
+    const val RESET_PASSWORD_INIT_API_MAPPING = "/reset-password/init"
+    const val RESET_PASSWORD_CHANGE_API_MAPPING = "/change-password"
+    const val RESET_PASSWORD_FINISH_API_MAPPING = "/reset-password/finish"
+
 
     //SignUpController
     val ALLOWED_ORDERED_PROPERTIES = arrayOf(
