@@ -7,6 +7,7 @@ package backend
 
 import backend.Constants.ACCOUNT_API_MAPPING
 import backend.Constants.ACTIVATE_API_MAPPING
+import backend.Constants.ACTIVATE_URI_KEY_NAME
 import backend.Constants.SIGNUP_API_MAPPING
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
@@ -42,7 +43,7 @@ class SignUpController(
      * @throws RuntimeException `500 (Internal Server Error)` if the user couldn't be activated.
      */
     @GetMapping(ACTIVATE_API_MAPPING)
-    suspend fun activateAccount(@RequestParam(value = "key") key: String) {
+    suspend fun activateAccount(@RequestParam(value = ACTIVATE_URI_KEY_NAME) key: String) {
         when {
             !signUpService.activate(key = key) -> throw AccountException("No user was found for this activation key")
         }

@@ -2,6 +2,11 @@
 
 package backend
 
+import backend.Constants.BASE_URL
+import backend.Constants.DEFAULT_LANGUAGE
+import backend.Constants.ROLE_USER
+import backend.Constants.SYSTEM_USER
+import backend.Constants.USER
 import backend.Log.log
 import org.springframework.context.MessageSource
 import org.springframework.mail.MailException
@@ -76,14 +81,14 @@ class SignUpService(
         account.copy(
             //TODO: hash password
             activationKey = RandomUtils.generateActivationKey,
-            authorities = setOf(Constants.ROLE_USER),
+            authorities = setOf(ROLE_USER),
             langKey = when {
-                account.langKey.isNullOrBlank() -> Constants.DEFAULT_LANGUAGE
+                account.langKey.isNullOrBlank() -> DEFAULT_LANGUAGE
                 else -> account.langKey
             },
-            createdBy = Constants.SYSTEM_USER,
+            createdBy = SYSTEM_USER,
             createdDate = createdDate,
-            lastModifiedBy = Constants.SYSTEM_USER,
+            lastModifiedBy = SYSTEM_USER,
             lastModifiedDate = createdDate,
             activated = false
         ).run {
@@ -192,8 +197,8 @@ class MailService(
                     templateEngine.process(
                         templateName,
                         Context(this).apply {
-                            setVariable(Constants.USER, account)
-                            setVariable(Constants.BASE_URL, properties.mail.baseUrl)
+                            setVariable(USER, account)
+                            setVariable(BASE_URL, properties.mail.baseUrl)
                         }
                     ),
                     isMultipart = false,

@@ -7,7 +7,7 @@ import backend.Constants.ROLE_ADMIN
 import backend.Constants.ROLE_ANONYMOUS
 import backend.Constants.ROLE_USER
 import backend.Constants.SYSTEM_USER
-import backend.Data.ACCOUNT_LOGIN
+import backend.Constants.USER
 import backend.RandomUtils.generateActivationKey
 import kotlinx.coroutines.reactor.mono
 import kotlinx.coroutines.runBlocking
@@ -215,7 +215,7 @@ internal class AccountAuthorityRepositoryR2dbcTest {
         assertEquals(Data.accounts.size, countAccount(dao))
         assertEquals(Data.accounts.size + 1, countAccountAuthority(dao))
         runBlocking {
-            accountAuthorityRepository.save(findOneByLogin(ACCOUNT_LOGIN, dao)!!.id!!, ROLE_ADMIN)
+            accountAuthorityRepository.save(findOneByLogin(USER, dao)!!.id!!, ROLE_ADMIN)
         }
         assertEquals(Data.accounts.size + 2, countAccountAuthority(dao))
     }
@@ -239,7 +239,7 @@ internal class AccountAuthorityRepositoryR2dbcTest {
         assertEquals(Data.accounts.size, countAccount(dao))
         assertEquals(Data.accounts.size + 1, countAccountAuthority(dao))
         runBlocking {
-            accountAuthorityRepository.delete(findOneByLogin(ACCOUNT_LOGIN, dao)!!.id!!, ROLE_USER)
+            accountAuthorityRepository.delete(findOneByLogin(USER, dao)!!.id!!, ROLE_USER)
         }
         assertEquals(Data.accounts.size, countAccountAuthority(dao))
     }
@@ -251,7 +251,7 @@ internal class AccountAuthorityRepositoryR2dbcTest {
         assertEquals(Data.accounts.size, countAccount(dao))
         assertEquals(Data.accounts.size + 1, countAccountAuthority(dao))
         runBlocking {
-            accountAuthorityRepository.deleteAllByAccountId(findOneByLogin(ACCOUNT_LOGIN, dao)!!.id!!)
+            accountAuthorityRepository.deleteAllByAccountId(findOneByLogin(USER, dao)!!.id!!)
         }
         assertEquals(Data.accounts.size, countAccount(dao))
         assertEquals(Data.accounts.size, countAccountAuthority(dao))

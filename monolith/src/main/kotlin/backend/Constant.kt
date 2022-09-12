@@ -12,6 +12,7 @@ object Constants {
     const val SIGNUP_URI = "$ACCOUNT_API_MAPPING$SIGNUP_API_MAPPING"
     const val ACTIVATE_URI = "$ACCOUNT_API_MAPPING$ACTIVATE_API_MAPPING?key="
     const val ACTIVATE_URI_KEY_PARAM = "{activationKey}"
+    const val ACTIVATE_URI_KEY_NAME = "key"
 
     //SignUpController
     val ALLOWED_ORDERED_PROPERTIES = arrayOf(
@@ -77,6 +78,7 @@ object Constants {
 
     //Email activation
     const val USER = "user"
+    const val ADMIN = "admin"
     const val BASE_URL = "baseUrl"
 
     // Regex for acceptable logins
