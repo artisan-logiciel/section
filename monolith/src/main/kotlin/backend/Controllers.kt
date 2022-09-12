@@ -5,18 +5,17 @@ package backend
 //import backend.services.SecurityUtils.getCurrentUserLogin
 
 
-import org.springframework.data.domain.Page
-import org.springframework.http.HttpHeaders
+import backend.Constants.ACCOUNT_API_MAPPING
+import backend.Constants.ACTIVATE_API_MAPPING
+import backend.Constants.SIGNUP_API_MAPPING
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
-import org.springframework.web.util.UriComponentsBuilder
-import java.text.MessageFormat
 import javax.validation.Valid
 
 /*=================================================================================*/
 
 @RestController
-@RequestMapping(Constants.ACCOUNT_API_MAPPING)
+@RequestMapping(ACCOUNT_API_MAPPING)
 class SignUpController(
     private val signUpService: SignUpService
 ) {
@@ -30,7 +29,7 @@ class SignUpController(
      * @throws backend.EmailAlreadyUsedProblem {@code 400 (Bad Request)} if the email is already used.
      * @throws backend.LoginAlreadyUsedProblem {@code 400 (Bad Request)} if the login is already used.
      */
-    @PostMapping(Constants.SIGNUP_API_MAPPING)
+    @PostMapping(SIGNUP_API_MAPPING)
     @ResponseStatus(HttpStatus.CREATED)
     suspend fun signup(
         @RequestBody @Valid accountCredentials: AccountCredentials
@@ -42,7 +41,7 @@ class SignUpController(
      * @param key the activation key.
      * @throws RuntimeException `500 (Internal Server Error)` if the user couldn't be activated.
      */
-    @GetMapping(Constants.ACTIVATE_API_MAPPING)
+    @GetMapping(ACTIVATE_API_MAPPING)
     suspend fun activateAccount(@RequestParam(value = "key") key: String) {
         when {
             !signUpService.activate(key = key) -> throw AccountException("No user was found for this activation key")
@@ -52,7 +51,7 @@ class SignUpController(
 
 /*=================================================================================*/
 @RestController
-@RequestMapping(Constants.ACCOUNT_API_MAPPING)
+@RequestMapping(ACCOUNT_API_MAPPING)
 class ResetPasswordController(
     private val resetPasswordService: ResetPasswordService
 ) {
@@ -63,7 +62,8 @@ class ResetPasswordController(
      * @throws InvalidPasswordProblem {@code 400 (Bad Request)} if the new password is incorrect.
      */
     @PostMapping("change-password")
-    suspend fun changePassword(@RequestBody passwordChange: PasswordChange): Unit {}
+    suspend fun changePassword(@RequestBody passwordChange: PasswordChange): Unit {
+    }
 //        passwordChange.run {
 //            InvalidPasswordException().apply { if (isPasswordLengthInvalid(newPassword)) throw this }
 //            if (currentPassword != null && newPassword != null)
@@ -76,7 +76,8 @@ class ResetPasswordController(
      * @param mail the mail of the user.
      */
     @PostMapping("reset-password/init")
-    suspend fun requestPasswordReset(@RequestBody mail: String): Unit {}
+    suspend fun requestPasswordReset(@RequestBody mail: String): Unit {
+    }
 //        userService.requestPasswordReset(mail).run {
 //            if (this == null) log.warn("Password reset requested for non existing mail")
 //            else mailService.sendPasswordResetMail(this)
@@ -90,7 +91,8 @@ class ResetPasswordController(
      * @throws RuntimeException         {@code 500 (Internal Server Error)} if the password could not be reset.
      */
     @PostMapping("reset-password/finish")
-    suspend fun finishPasswordReset(@RequestBody keyAndPassword: KeyAndPassword): Unit {}
+    suspend fun finishPasswordReset(@RequestBody keyAndPassword: KeyAndPassword): Unit {
+    }
 //    {
 //        keyAndPassword.run {
 //            InvalidPasswordException().apply { if (isPasswordLengthInvalid(newPassword)) throw this }
@@ -574,81 +576,4 @@ class ResetPasswordController(
 //        .getAuthorities()
 //        .toCollection(mutableListOf())
 //}
-/*=================================================================================*/
-/**
- * Utility class for handling pagination.
- *
- *
- *
- * Pagination uses the same principles as the [GitHub API](https://developer.github.com/v3/#pagination),
- * and follow [RFC 5988 (Link header)](http://tools.ietf.org/html/rfc5988).
- */
-object PaginationUtil {
-    private const val HEADER_X_TOTAL_COUNT = "X-Total-Count"
-    private const val HEADER_LINK_FORMAT = "<{0}>; rel=\"{1}\""
-
-    /**
-     * Generate pagination headers for a Spring Data [org.springframework.data.domain.Page] object.
-     *
-     * @param uriBuilder The URI builder.
-     * @param page The page.
-     * @param <T> The type of object.
-     * @return http header.
-    </T> */
-    fun <T> generatePaginationHttpHeaders(uriBuilder: UriComponentsBuilder, page: Page<T>): HttpHeaders {
-        val headers = HttpHeaders()
-        headers.add(HEADER_X_TOTAL_COUNT, page.totalElements.toString())
-        val pageNumber = page.number
-        val pageSize = page.size
-        val link = StringBuilder()
-        if (pageNumber < page.totalPages - 1) {
-            link.append(
-                prepareLink(
-                    uriBuilder = uriBuilder,
-                    pageNumber = pageNumber + 1,
-                    pageSize = pageSize,
-                    relType = "next"
-                )
-            ).append(",")
-        }
-        if (pageNumber > 0) {
-            link.append(prepareLink(uriBuilder, pageNumber - 1, pageSize, "prev"))
-                .append(",")
-        }
-        link.append(prepareLink(uriBuilder, page.totalPages - 1, pageSize, "last"))
-            .append(",")
-            .append(prepareLink(uriBuilder, 0, pageSize, "first"))
-        headers.add(HttpHeaders.LINK, link.toString())
-        return headers
-    }
-
-    private fun prepareLink(
-        uriBuilder: UriComponentsBuilder,
-        pageNumber: Int,
-        pageSize: Int,
-        relType: String
-    ): String = MessageFormat.format(
-        HEADER_LINK_FORMAT,
-        preparePageUri(
-            uriBuilder = uriBuilder,
-            pageNumber = pageNumber,
-            pageSize = pageSize
-        ),
-        relType
-    )
-
-    private fun preparePageUri(
-        uriBuilder: UriComponentsBuilder,
-        pageNumber: Int,
-        pageSize: Int
-    ): String = uriBuilder.replaceQueryParam(
-        "page",
-        pageNumber.toString()
-    ).replaceQueryParam(
-        "size",
-        pageSize.toString()
-    ).toUriString()
-        .replace(oldValue = ",", newValue = "%2C")
-        .replace(oldValue = ";", newValue = "%3B")
-}
 /*=================================================================================*/
