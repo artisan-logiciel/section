@@ -3,6 +3,7 @@
 package backend
 
 import java.net.URI
+import java.net.URI.create
 
 
 object Constants {
@@ -93,29 +94,32 @@ object Constants {
     private const val PROBLEM_BASE_URL: String = "https://www.cheroliv.com/problem"
 
     @JvmField
-    val DEFAULT_TYPE: URI = URI.create("$PROBLEM_BASE_URL/problem-with-message")
+    val DEFAULT_TYPE: URI = create("$PROBLEM_BASE_URL/problem-with-message")
 
     @JvmField
-    val CONSTRAINT_VIOLATION_TYPE: URI = URI.create("$PROBLEM_BASE_URL/constraint-violation")
+    val CONSTRAINT_VIOLATION_TYPE: URI = create("$PROBLEM_BASE_URL/constraint-violation")
 
     @JvmField
-    val INVALID_PASSWORD_TYPE: URI = URI.create("$PROBLEM_BASE_URL/invalid-password")
+    val INVALID_PASSWORD_TYPE: URI = create("$PROBLEM_BASE_URL/invalid-password")
 
     @JvmField
-    val EMAIL_ALREADY_USED_TYPE: URI = URI.create("$PROBLEM_BASE_URL/email-already-used")
+    val EMAIL_ALREADY_USED_TYPE: URI = create("$PROBLEM_BASE_URL/email-already-used")
 
     @JvmField
-    val LOGIN_ALREADY_USED_TYPE: URI = URI.create("$PROBLEM_BASE_URL/login-already-used")
+    val LOGIN_ALREADY_USED_TYPE: URI = create("$PROBLEM_BASE_URL/login-already-used")
     //URIs
-    const val ACCOUNT_API_PATH = "/api/account"
-    const val SIGNUP_API_ENDPOINT = "/signup"
-    const val ACTIVATE_API_ENDPOINT = "/activate"
-    const val SIGNUP_API_PATH = "$ACCOUNT_API_PATH$SIGNUP_API_ENDPOINT"
-    const val ACTIVATE_API_PATH = "$ACCOUNT_API_PATH$ACTIVATE_API_ENDPOINT?key="
+    const val ACCOUNT_API = "/api/account"
+    const val SIGNUP_API = "/signup"
+    const val SIGNUP_API_PATH = "$ACCOUNT_API$SIGNUP_API"
+
+    const val ACTIVATE_API = "/activate"
+    const val ACTIVATE_API_PATH = "$ACCOUNT_API$ACTIVATE_API?key="
     const val ACTIVATE_API_PARAM = "{activationKey}"
     const val ACTIVATE_API_KEY = "key"
-    const val RESET_PASSWORD_API_INIT_ENDPOINT = "/reset-password/init"
-    const val RESET_PASSWORD_API_CHANGE_ENDPOINT = "/change-password"
-    const val RESET_PASSWORD_API_FINISH_ENDPOINT = "/reset-password/finish"
+
+    const val RESET_PASSWORD_API_INIT = "/reset-password/init"
+    const val RESET_PASSWORD_API_FINISH = "/reset-password/finish"
+
+    const val CHANGE_PASSWORD_API = "/change-password"
 
 }
