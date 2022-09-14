@@ -60,21 +60,6 @@ class ResetPasswordController(
     private val resetPasswordService: ResetPasswordService
 ) {
 
-//    /**
-//     * {@code POST  /account/change-password} : changes the current user's password.
-//     *
-//     * @param passwordChange current and new password.
-//     * @throws InvalidPasswordProblem {@code 400 (Bad Request)} if the new password is incorrect.
-//     */
-//    //TODO: passer ce endpoint dans accountController
-//    @PostMapping(RESET_PASSWORD_CHANGE_API_MAPPING)
-//    suspend fun changePassword(@RequestBody passwordChange: PasswordChange): Unit {
-//    }
-////        passwordChange.run {
-////            InvalidPasswordException().apply { if (isPasswordLengthInvalid(newPassword)) throw this }
-////            if (currentPassword != null && newPassword != null)
-////                userService.changePassword(currentPassword, newPassword)
-////        }
 
     /**
      * {@code POST   /account/reset-password/init} : Send an email to reset the password of the user.
@@ -108,6 +93,33 @@ class ResetPasswordController(
 //        }
 //    }
 }
+
+/*=================================================================================*/
+@RestController
+@RequestMapping("api")
+class ChangePasswordController(
+    private val changePasswordService: ChangePasswordService
+) {
+    internal class AccountException(message: String) : RuntimeException(message)
+
+    /**
+     * {@code POST  /account/change-password} : changes the current user's password.
+     *
+     * @param passwordChange current and new password.
+     * @throws InvalidPasswordProblem {@code 400 (Bad Request)} if the new password is incorrect.
+     */
+    @PostMapping(RESET_PASSWORD_CHANGE_API_MAPPING)
+    suspend fun changePassword(@RequestBody passwordChange: PasswordChange): Unit =
+        InvalidPasswordException().run {
+            if (isPasswordLengthInvalid(passwordChange.newPassword)) throw this
+            if (passwordChange.currentPassword != null && passwordChange.newPassword != null)
+                changePasswordService.changePassword(passwordChange.currentPassword, passwordChange.newPassword)
+
+        }
+
+
+}
+
 /*=================================================================================*/
 
 

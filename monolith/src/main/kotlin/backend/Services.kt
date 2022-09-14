@@ -21,6 +21,13 @@ import java.nio.charset.StandardCharsets.UTF_8
 import java.time.Instant
 import java.util.Locale.forLanguageTag
 import javax.mail.MessagingException
+@Service
+class ChangePasswordService {
+    fun changePassword(currentPassword: String, newPassword: String) {
+        TODO("Not yet implemented")
+    }
+
+}
 
 
 @Service
@@ -28,22 +35,22 @@ import javax.mail.MessagingException
 class ResetPasswordService(
     private val accountRepository: AccountRepository
 ) {
-    suspend fun completePasswordReset(newPassword: String, key: String): AccountCredentials? = null
-//        log.debug("Reset user password for reset key {}", key).run {
-//            userRepository.findOneByResetKey(key).apply {
-//                return if (this != null &&
+    suspend fun completePasswordReset(newPassword: String, key: String): AccountCredentials?  = null
+//        accountRepository.findOneByResetKey(key).apply {
+//            log.debug("Reset user password for reset key {}", key).run {
+//
+//                if (this != null &&
 //                    resetDate?.isAfter(now().minusSeconds(86400)) == true
-//                ) saveUser(
+//                ) return saveUser(
 //                    apply {
 //                        password = passwordEncoder.encode(newPassword)
 //                        resetKey = null
 //                        resetDate = null
 //                    })
-//                else null
+//                else return null
 //            }
 //        }
-//
-//
+
 
     suspend fun requestPasswordReset(mail: String): AccountCredentials? = null
 //        return userRepository
