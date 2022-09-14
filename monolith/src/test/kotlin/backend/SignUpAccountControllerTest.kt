@@ -358,7 +358,10 @@ internal class SignUpAccountControllerTest {
             .expectStatus()
             .isCreated
             .returnResult<Unit>()
-            .responseBodyContent!!.isEmpty().run  { assertTrue(this) }
+            .responseBodyContent.run {
+                assertNotNull(this)
+                assertTrue(isEmpty())
+            }
         assertEquals(countUserBefore + 1, countAccount(dao))
         assertEquals(countUserAuthBefore + 1, countAccountAuthority(dao))
         findOneByLogin(login, dao).run {
