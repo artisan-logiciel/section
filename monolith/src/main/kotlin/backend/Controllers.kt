@@ -59,21 +59,23 @@ class SignUpController(
 class ResetPasswordController(
     private val resetPasswordService: ResetPasswordService
 ) {
-    /**
-     * {@code POST  /account/change-password} : changes the current user's password.
-     *
-     * @param passwordChange current and new password.
-     * @throws InvalidPasswordProblem {@code 400 (Bad Request)} if the new password is incorrect.
-     */
-    @PostMapping(RESET_PASSWORD_CHANGE_API_MAPPING)
-    suspend fun changePassword(@RequestBody passwordChange: PasswordChange): Unit {
-    }
-//        passwordChange.run {
-//            InvalidPasswordException().apply { if (isPasswordLengthInvalid(newPassword)) throw this }
-//            if (currentPassword != null && newPassword != null)
-//                userService.changePassword(currentPassword, newPassword)
-//        }
-//
+
+//    /**
+//     * {@code POST  /account/change-password} : changes the current user's password.
+//     *
+//     * @param passwordChange current and new password.
+//     * @throws InvalidPasswordProblem {@code 400 (Bad Request)} if the new password is incorrect.
+//     */
+//    //TODO: passer ce endpoint dans accountController
+//    @PostMapping(RESET_PASSWORD_CHANGE_API_MAPPING)
+//    suspend fun changePassword(@RequestBody passwordChange: PasswordChange): Unit {
+//    }
+////        passwordChange.run {
+////            InvalidPasswordException().apply { if (isPasswordLengthInvalid(newPassword)) throw this }
+////            if (currentPassword != null && newPassword != null)
+////                userService.changePassword(currentPassword, newPassword)
+////        }
+
     /**
      * {@code POST   /account/reset-password/init} : Send an email to reset the password of the user.
      *
@@ -111,36 +113,11 @@ class ResetPasswordController(
 
 //@RestController
 //@RequestMapping("api")
-//class RegistrationController(
+//class AccountController(
 //    private val accountService: AccountService
 //) {
 //    internal class AccountException(message: String) : RuntimeException(message)
 //
-//    /**
-//     * {@code POST  /register} : register the user.
-//     *
-//     * @param accountCredentials the managed user View Model.
-//     * @throws backend.InvalidPasswordException {@code 400 (Bad Request)} if the password is incorrect.
-//     * @throws backend.EmailAlreadyUsedProblem {@code 400 (Bad Request)} if the email is already used.
-//     * @throws backend.LoginAlreadyUsedProblem {@code 400 (Bad Request)} if the login is already used.
-//     */
-//    @PostMapping("register")
-//    @ResponseStatus(HttpStatus.CREATED)
-//    suspend fun registerAccount(
-//        @RequestBody @Valid accountCredentials: AccountCredentials
-//    ) = accountService.register(accountCredentials)
-//
-//    /**
-//     * `GET  /activate` : activate the registered user.
-//     *
-//     * @param key the activation key.
-//     * @throws RuntimeException `500 (Internal Server Error)` if the user couldn't be activated.
-//     */
-//    @GetMapping("/activate_")
-//    suspend fun activateAccount(@RequestParam(value = "key") key: String): Unit =
-//        accountService.activateRegistration(key = key).run {
-//            if (this == null) throw AccountException("No user was found for this activation key")
-//        }
 ////
 ////    /**
 ////     * `GET  /authenticate` : check if the user is authenticated, and return its login.

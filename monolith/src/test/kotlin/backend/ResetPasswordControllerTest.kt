@@ -4,6 +4,7 @@
 
 package backend
 
+//import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeAll
@@ -12,17 +13,13 @@ import org.springframework.boot.runApplication
 import org.springframework.context.ConfigurableApplicationContext
 import org.springframework.data.r2dbc.core.R2dbcEntityTemplate
 import org.springframework.test.web.reactive.server.WebTestClient
-//import org.springframework.test.web.reactive.server.returnResult
-//import java.net.URI
-//import kotlin.test.*
+import org.springframework.test.web.reactive.server.returnResult
+import java.net.URI
+import kotlin.test.*
 
 internal class ResetPasswordControllerTest {
 
-    companion object {
-        private const val ACTIVATE_URI = "api/account/activate?key="
-        private const val ACTIVATE_URI_KEY_PARAM = "{activationKey}"
 
-    }
 
     private val client: WebTestClient by lazy {
         WebTestClient
@@ -44,59 +41,234 @@ internal class ResetPasswordControllerTest {
     @AfterEach
     fun tearDown() = deleteAllAccounts(dao)
 
-//    @Test
-//    fun `vérifie que la requete contient bien des données cohérentes`() {
-//        RandomUtils.generateActivationKey.run {
-//            client
-//                .get()
-//                .uri("$SIGNUP_URI$SIGNUP_URI_KEY_PARAM", this)
-//                .exchange()
-//                .returnResult<Unit>().url.let {
-//                    assertEquals(URI("$BASE_URL_DEV$SIGNUP_URI$this"), it)
-//                }
-//
-//        }
-//    }
-//
-//    @Test
-//    fun `test activate avec une mauvaise clé`() {
-//        client
-//            .get()
-//            .uri("$SIGNUP_URI$SIGNUP_URI_KEY_PARAM", "wrongActivationKey")
-//            .exchange()
-//            .expectStatus()
-//            .is5xxServerError
-//            .returnResult<Unit>()
-//
-//
-//    }
-//
-//    @Test
-//    fun `test activate avec une clé valide`() {
-//        assertEquals(0, countAccount(dao))
-//        assertEquals(0, countAccountAuthority(dao))
-//        createDataAccounts(setOf(Data.defaultAccount), dao)
-//        assertEquals(1, countAccount(dao))
-//        assertEquals(1, countAccountAuthority(dao))
-//
-//        val validActivationKey = findOneByLogin(Data.defaultAccount.login!!, dao)!!.apply {
-//            assertTrue(activationKey!!.isNotBlank())
-//            assertFalse(activated)
-//        }.activationKey
-//
-//        client
-//            .get()
-//            .uri(
-//                "$SIGNUP_URI$SIGNUP_URI_KEY_PARAM",
-//                validActivationKey
-//            )
-//            .exchange()
-//            .expectStatus().isOk
-//            .returnResult<Unit>()
-//
-//        findOneByLogin(Data.defaultAccount.login!!, dao)!!.run {
-//            assertNull(activationKey)
-//            assertTrue(activated)
-//        }
-//    }
+/*
+    @Test //TODO: test pour AccountController
+    @WithMockUser("change-password-wrong-existing-password")
+    fun testChangePasswordWrongExistingPassword() {
+        val currentPassword = RandomStringUtils.random(60)
+        val user = User(
+            password = passwordEncoder.encode(currentPassword),
+            login = "change-password-wrong-existing-password",
+            createdBy = SYSTEM_ACCOUNT,
+            email = "change-password-wrong-existing-password@example.com"
+        )
+
+        userRepository.save(user).block()
+
+        accountWebTestClient.post().uri("/api/account/change-password")
+            .contentType(MediaType.APPLICATION_JSON)
+            .bodyValue(convertObjectToJsonBytes(PasswordChangeDTO("1$currentPassword", "new password")))
+            .exchange()
+            .expectStatus().isBadRequest
+
+        val updatedUser = userRepository.findOneByLogin("change-password-wrong-existing-password").block()
+        assertThat(passwordEncoder.matches("new password", updatedUser.password)).isFalse
+        assertThat(passwordEncoder.matches(currentPassword, updatedUser.password)).isTrue
+    }
+
+    @Test //TODO: test pour AccountController
+    @WithMockUser("change-password")
+    fun testChangePassword() {
+        val currentPassword = RandomStringUtils.random(60)
+        val user = User(
+            password = passwordEncoder.encode(currentPassword),
+            login = "change-password",
+            createdBy = SYSTEM_ACCOUNT,
+            email = "change-password@example.com"
+        )
+
+        userRepository.save(user).block()
+
+        accountWebTestClient.post().uri("/api/account/change-password")
+            .contentType(MediaType.APPLICATION_JSON)
+            .bodyValue(convertObjectToJsonBytes(PasswordChangeDTO(currentPassword, "new password")))
+            .exchange()
+            .expectStatus().isOk
+
+        val updatedUser = userRepository.findOneByLogin("change-password").block()
+        assertThat(passwordEncoder.matches("new password", updatedUser.password)).isTrue
+    }
+
+    @Test //TODO: test pour AccountController
+    @WithMockUser("change-password-too-small")
+    fun testChangePasswordTooSmall() {
+        val currentPassword = RandomStringUtils.random(60)
+        val user = User(
+            password = passwordEncoder.encode(currentPassword),
+            login = "change-password-too-small",
+            createdBy = SYSTEM_ACCOUNT,
+            email = "change-password-too-small@example.com"
+        )
+
+        userRepository.save(user).block()
+
+        val newPassword = RandomStringUtils.random(ManagedUserVM.PASSWORD_MIN_LENGTH - 1)
+
+        accountWebTestClient.post().uri("/api/account/change-password")
+            .contentType(MediaType.APPLICATION_JSON)
+            .bodyValue(convertObjectToJsonBytes(PasswordChangeDTO(currentPassword, newPassword)))
+            .exchange()
+            .expectStatus().isBadRequest
+
+        val updatedUser = userRepository.findOneByLogin("change-password-too-small").block()
+        assertThat(updatedUser.password).isEqualTo(user.password)
+    }
+
+    @Test //TODO: test pour AccountController
+    @WithMockUser("change-password-too-long")
+    fun testChangePasswordTooLong() {
+        val currentPassword = RandomStringUtils.random(60)
+        val user = User(
+            password = passwordEncoder.encode(currentPassword),
+            login = "change-password-too-long",
+            createdBy = SYSTEM_ACCOUNT,
+            email = "change-password-too-long@example.com"
+        )
+
+        userRepository.save(user).block()
+
+        val newPassword = RandomStringUtils.random(ManagedUserVM.PASSWORD_MAX_LENGTH + 1)
+
+        accountWebTestClient.post().uri("/api/account/change-password")
+            .contentType(MediaType.APPLICATION_JSON)
+            .bodyValue(convertObjectToJsonBytes(PasswordChangeDTO(currentPassword, newPassword)))
+            .exchange()
+            .expectStatus().isBadRequest
+
+        val updatedUser = userRepository.findOneByLogin("change-password-too-long").block()
+        assertThat(updatedUser.password).isEqualTo(user.password)
+    }
+
+    @Test //TODO: test pour AccountController
+    @WithMockUser("change-password-empty")
+    fun testChangePasswordEmpty() {
+        val currentPassword = RandomStringUtils.random(60)
+        val user = User(
+            password = passwordEncoder.encode(currentPassword),
+            login = "change-password-empty",
+            createdBy = SYSTEM_ACCOUNT,
+            email = "change-password-empty@example.com"
+        )
+
+        userRepository.save(user).block()
+
+        accountWebTestClient.post().uri("/api/account/change-password")
+            .contentType(MediaType.APPLICATION_JSON)
+            .bodyValue(convertObjectToJsonBytes(PasswordChangeDTO(currentPassword, "")))
+            .exchange()
+            .expectStatus().isBadRequest
+
+        val updatedUser = userRepository.findOneByLogin("change-password-empty").block()
+        assertThat(updatedUser.password).isEqualTo(user.password)
+    }
+
+    @Test
+    fun testRequestPasswordReset() {
+        val user = User(
+            password = RandomStringUtils.random(60),
+            activated = true,
+            login = "password-reset",
+            createdBy = SYSTEM_ACCOUNT,
+            email = "password-reset@example.com"
+        )
+
+        userRepository.save(user).block()
+
+        accountWebTestClient.post().uri("/api/account/reset-password/init")
+            .bodyValue("password-reset@example.com")
+            .exchange()
+            .expectStatus().isOk
+    }
+
+    @Test
+    fun testRequestPasswordResetUpperCaseEmail() {
+        val user = User(
+            password = RandomStringUtils.random(60),
+            activated = true,
+            login = "password-reset-upper-case",
+            createdBy = SYSTEM_ACCOUNT,
+            email = "password-reset-upper-case@example.com"
+        )
+
+        userRepository.save(user).block()
+
+        accountWebTestClient.post().uri("/api/account/reset-password/init")
+            .bodyValue("password-reset-upper-case@EXAMPLE.COM")
+            .exchange()
+            .expectStatus().isOk
+    }
+
+    @Test
+    fun testRequestPasswordResetWrongEmail() {
+        accountWebTestClient.post().uri("/api/account/reset-password/init")
+            .bodyValue("password-reset-wrong-email@example.com")
+            .exchange()
+            .expectStatus().isOk
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun testFinishPasswordReset() {
+        val user = User(
+            password = RandomStringUtils.random(60),
+            login = "finish-password-reset",
+            email = "finish-password-reset@example.com",
+            resetDate = Instant.now().plusSeconds(60),
+            createdBy = SYSTEM_ACCOUNT,
+            resetKey = "reset key"
+        )
+
+        userRepository.save(user).block()
+
+        val keyAndPassword = KeyAndPasswordVM(key = user.resetKey, newPassword = "new password")
+
+        accountWebTestClient.post().uri("/api/account/reset-password/finish")
+            .contentType(MediaType.APPLICATION_JSON)
+            .bodyValue(convertObjectToJsonBytes(keyAndPassword))
+            .exchange()
+            .expectStatus().isOk
+
+        val updatedUser = userRepository.findOneByLogin(user.login!!).block()
+        assertThat(passwordEncoder.matches(keyAndPassword.newPassword, updatedUser.password)).isTrue
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun testFinishPasswordResetTooSmall() {
+        val user = User(
+            password = RandomStringUtils.random(60),
+            login = "finish-password-reset-too-small",
+            email = "finish-password-reset-too-small@example.com",
+            resetDate = Instant.now().plusSeconds(60),
+            createdBy = SYSTEM_ACCOUNT,
+            resetKey = "reset key too small"
+        )
+
+        userRepository.save(user).block()
+
+        val keyAndPassword = KeyAndPasswordVM(key = user.resetKey, newPassword = "foo")
+
+        accountWebTestClient.post().uri("/api/account/reset-password/finish")
+            .contentType(MediaType.APPLICATION_JSON)
+            .bodyValue(convertObjectToJsonBytes(keyAndPassword))
+            .exchange()
+            .expectStatus().isBadRequest
+
+        val updatedUser = userRepository.findOneByLogin(user.login!!).block()
+        assertThat(passwordEncoder.matches(keyAndPassword.newPassword, updatedUser.password)).isFalse
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun testFinishPasswordResetWrongKey() {
+        val keyAndPassword = KeyAndPasswordVM(key = "wrong reset key", newPassword = "new password")
+
+        accountWebTestClient.post().uri("/api/account/reset-password/finish")
+            .contentType(MediaType.APPLICATION_JSON)
+            .bodyValue(convertObjectToJsonBytes(keyAndPassword))
+            .exchange()
+            .expectStatus().isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR)
+    }
+
+ */
 }
