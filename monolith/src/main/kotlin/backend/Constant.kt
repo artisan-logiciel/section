@@ -3,6 +3,7 @@
 package backend
 
 import java.net.URI
+import java.net.URI.create
 
 
 object Constants {
@@ -19,6 +20,7 @@ object Constants {
 
 
     //SignUpController
+    @JvmStatic
     val ALLOWED_ORDERED_PROPERTIES = arrayOf(
         "id",
         "login",
@@ -97,9 +99,9 @@ object Constants {
     const val PASSWORD_MAX_LENGTH: Int = 100
     const val ERR_CONCURRENCY_FAILURE: String = "error.concurrencyFailure"
     const val ERR_VALIDATION: String = "error.validation"
-    private const val PROBLEM_BASE_URL: String = "https://www.cccp.education/problem"
     const val USER_INITIAL_ACTIVATED_VALUE = false
     const val IMAGE_URL_DEFAULT = "http://placehold.it/50x50"
+    private const val PROBLEM_BASE_URL: String = "https://www.cheroliv.com/problem"
 
     @JvmField
     val DEFAULT_TYPE: URI = URI.create("$PROBLEM_BASE_URL/problem-with-message")
