@@ -12,9 +12,11 @@ import backend.Constants.CHANGE_PASSWORD_API
 import backend.Constants.RESET_PASSWORD_API_FINISH
 import backend.Constants.RESET_PASSWORD_API_INIT
 import backend.Constants.SIGNUP_API
+import backend.Log.log
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
 import javax.validation.Valid
+import javax.validation.constraints.Email
 
 /*=================================================================================*/
 
@@ -57,9 +59,10 @@ class SignUpController(
 @RestController
 @RequestMapping(ACCOUNT_API)
 class ResetPasswordController(
-    private val resetPasswordService: ResetPasswordService
+    private val resetPasswordService: ResetPasswordService,
+    private val mailService: MailService
 ) {
-
+    internal class AccountException(message: String) : RuntimeException(message)
 
     /**
      * {@code POST   /account/reset-password/init} : Send an email to reset the password of the user.
@@ -67,13 +70,14 @@ class ResetPasswordController(
      * @param mail the mail of the user.
      */
     @PostMapping(RESET_PASSWORD_API_INIT)
-    suspend fun requestPasswordReset(@RequestBody mail: String): Unit {
-    }
-//        userService.requestPasswordReset(mail).run {
-//            if (this == null) log.warn("Password reset requested for non existing mail")
-//            else mailService.sendPasswordResetMail(this)
-//        }
-//
+    suspend fun requestPasswordReset(@RequestBody @Email mail: String): Unit =
+        with(resetPasswordService.requestPasswordReset(mail)) {
+            when {
+                this == null -> log.warn("Password reset requested for non existing mail")
+                else -> mailService.sendPasswordResetMail(this)
+            }
+        }
+
     /**
      * {@code POST   /account/reset-password/finish} : Finish to reset the password of the user.
      *
@@ -82,16 +86,19 @@ class ResetPasswordController(
      * @throws RuntimeException         {@code 500 (Internal Server Error)} if the password could not be reset.
      */
     @PostMapping(RESET_PASSWORD_API_FINISH)
-    suspend fun finishPasswordReset(@RequestBody keyAndPassword: KeyAndPassword): Unit {
-    }
-//    {
-//        keyAndPassword.run {
-//            InvalidPasswordException().apply { if (isPasswordLengthInvalid(newPassword)) throw this }
-//            if (newPassword != null && key != null)
-//                if (userService.completePasswordReset(newPassword, key) == null)
-//                    throw AccountException("No user was found for this reset key")
-//        }
-//    }
+    suspend fun finishPasswordReset(@RequestBody keyAndPassword: KeyAndPassword): Unit =
+        with(InvalidPasswordException()) {
+            when {
+                isPasswordLengthInvalid(keyAndPassword.newPassword) -> throw this
+                keyAndPassword.newPassword != null
+                        && keyAndPassword.key != null
+                        && resetPasswordService.completePasswordReset(
+                    keyAndPassword.newPassword,
+                    keyAndPassword.key
+                ) == null -> throw AccountException("No user was found for this reset key")
+            }
+        }
+
 }
 
 /*=================================================================================*/
@@ -111,9 +118,15 @@ class ChangePasswordController(
     @PostMapping(CHANGE_PASSWORD_API)
     suspend fun changePassword(@RequestBody passwordChange: PasswordChange): Unit =
         InvalidPasswordException().run {
-            if (isPasswordLengthInvalid(passwordChange.newPassword)) throw this
-            if (passwordChange.currentPassword != null && passwordChange.newPassword != null)
-                changePasswordService.changePassword(passwordChange.currentPassword, passwordChange.newPassword)
+            when {
+                isPasswordLengthInvalid(passwordChange.newPassword) -> throw this
+
+                passwordChange.currentPassword != null
+                        && passwordChange.newPassword != null -> changePasswordService.changePassword(
+                    passwordChange.currentPassword,
+                    passwordChange.newPassword
+                )
+            }
 
         }
 
