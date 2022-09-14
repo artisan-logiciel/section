@@ -34,7 +34,7 @@ interface AccountRepository {
     suspend fun suppress(account: Account)
     suspend fun signup(model: AccountCredentials)
     suspend fun findOneByActivationKey(key: String): AccountCredentials?
-    suspend fun findOneByResetKey(key: String): AccountCredentials?
+    suspend fun findOneByResetKey(key: String): AccountRecord<*>?//<AuthorityRecord>?
 }
 
 interface AccountAuthorityRepository {
@@ -159,11 +159,10 @@ class AccountRepositoryR2dbc(
             AccountEntity::class.java
         ).awaitSingleOrNull()?.toCredentialsModel
 
-    override suspend fun findOneByResetKey(key: String): AccountCredentials? =
-        dao.selectOne(
+    override suspend fun findOneByResetKey(key: String)=dao.selectOne(
             query(where("resetKey").`is`(key)),
             AccountEntity::class.java
-        ).awaitSingleOrNull()?.toCredentialsModel
+        ).awaitSingleOrNull() //as  AccountRecord<*>?
 
 }
 

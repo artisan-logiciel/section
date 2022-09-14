@@ -19,8 +19,10 @@ import org.thymeleaf.context.Context
 import org.thymeleaf.spring5.SpringWebFluxTemplateEngine
 import java.nio.charset.StandardCharsets.UTF_8
 import java.time.Instant
+import java.time.Instant.now
 import java.util.Locale.forLanguageTag
 import javax.mail.MessagingException
+
 @Service
 @Transactional
 class ChangePasswordService {
@@ -57,21 +59,28 @@ class ChangePasswordService {
 class ResetPasswordService(
     private val accountRepository: AccountRepository
 ) {
-    suspend fun completePasswordReset(newPassword: String, key: String): AccountCredentials?  = null
-//        accountRepository.findOneByResetKey(key).apply {
-//            log.debug("Reset user password for reset key {}", key).run {
-//
-//                if (this != null &&
-//                    resetDate?.isAfter(now().minusSeconds(86400)) == true
-//                ) return saveUser(
-//                    apply {
-//                        password = passwordEncoder.encode(newPassword)
-//                        resetKey = null
-//                        resetDate = null
-//                    })
-//                else return null
-//            }
-//        }
+    suspend fun completePasswordReset(newPassword: String, key: String): AccountCredentials? =
+        accountRepository.findOneByResetKey(key).run {
+            when {
+                this != null && resetDate?.isAfter(
+                    now().minusSeconds(86400)
+                ) == true -> {
+                    log.debug("Reset account password for reset key $key")
+                    return@completePasswordReset toCredentialsModel
+                    //                return saveUser(
+                    //                apply {
+                    ////                    password = passwordEncoder.encode(newPassword)
+                    //                    resetKey = null
+                    //                    resetDate = null
+                    //                })
+                }
+
+                else -> {
+                    log.debug("$key is not a valid reset account password key")
+                    return@completePasswordReset null
+                }
+            }
+        }
 
 
     suspend fun requestPasswordReset(mail: String): AccountCredentials? = null
@@ -91,14 +100,11 @@ class ResetPasswordService(
 @Service
 @Transactional
 class SignUpService(
-    private val accountRepository: AccountRepository,
-    private val mailService: MailService
+    private val accountRepository: AccountRepository, private val mailService: MailService
 ) {
 
     @Throws(
-        InvalidPasswordException::class,
-        UsernameAlreadyUsedException::class,
-        UsernameAlreadyUsedException::class
+        InvalidPasswordException::class, UsernameAlreadyUsedException::class, UsernameAlreadyUsedException::class
     )
     suspend fun signup(account: AccountCredentials) {
         InvalidPasswordException().run {
@@ -156,8 +162,7 @@ class SignUpService(
                     else -> {
                         save(
                             copy(
-                                activated = true,
-                                activationKey = null
+                                activated = true, activationKey = null
                             )
                         ).apply {
                             if (id != null) log.info("activation: $login")
@@ -180,38 +185,29 @@ class MailService(
 ) {
     @Async
     fun sendEmail(
-        to: String,
-        subject: String,
-        content: String,
-        isMultipart: Boolean,
-        isHtml: Boolean
-    ) = mailSender
-        .createMimeMessage().run {
-            try {
-                MimeMessageHelper(
-                    this,
-                    isMultipart,
-                    UTF_8.name()
-                ).apply {
-                    setTo(to)
-                    setFrom(properties.mail.from)
-                    setSubject(subject)
-                    setText(content, isHtml)
-                }
-                mailSender.send(this)
-                log.debug("Sent email to User '$to'")
-            } catch (e: MailException) {
-                log.warn("Email could not be sent to user '$to'", e)
-            } catch (e: MessagingException) {
-                log.warn("Email could not be sent to user '$to'", e)
+        to: String, subject: String, content: String, isMultipart: Boolean, isHtml: Boolean
+    ) = mailSender.createMimeMessage().run {
+        try {
+            MimeMessageHelper(
+                this, isMultipart, UTF_8.name()
+            ).apply {
+                setTo(to)
+                setFrom(properties.mail.from)
+                setSubject(subject)
+                setText(content, isHtml)
             }
+            mailSender.send(this)
+            log.debug("Sent email to User '$to'")
+        } catch (e: MailException) {
+            log.warn("Email could not be sent to user '$to'", e)
+        } catch (e: MessagingException) {
+            log.warn("Email could not be sent to user '$to'", e)
         }
+    }
 
     @Async
     fun sendEmailFromTemplate(
-        account: AccountCredentials,
-        templateName: String,
-        titleKey: String
+        account: AccountCredentials, templateName: String, titleKey: String
     ) {
         when (account.email) {
             null -> {
@@ -223,13 +219,10 @@ class MailService(
                 sendEmail(
                     account.email,
                     messageSource.getMessage(titleKey, null, this),
-                    templateEngine.process(
-                        templateName,
-                        Context(this).apply {
-                            setVariable(USER, account)
-                            setVariable(BASE_URL, properties.mail.baseUrl)
-                        }
-                    ),
+                    templateEngine.process(templateName, Context(this).apply {
+                        setVariable(USER, account)
+                        setVariable(BASE_URL, properties.mail.baseUrl)
+                    }),
                     isMultipart = false,
                     isHtml = true
                 )
@@ -238,35 +231,27 @@ class MailService(
     }
 
     @Async
-    fun sendActivationEmail(account: AccountCredentials): Unit = log
-        .debug(
-            "Sending activation email to '{}'",
-            account.email
-        ).run {
+    fun sendActivationEmail(account: AccountCredentials): Unit = log.debug(
+        "Sending activation email to '{}'", account.email
+    ).run {
+        sendEmailFromTemplate(
+            account, "mail/activationEmail", "email.activation.title"
+        )
+    }
+
+    @Async
+    fun sendCreationEmail(account: AccountCredentials): Unit =
+        log.debug("Sending creation email to '${account.email}'").run {
             sendEmailFromTemplate(
-                account,
-                "mail/activationEmail",
-                "email.activation.title"
+                account, "mail/creationEmail", "email.activation.title"
             )
         }
 
     @Async
-    fun sendCreationEmail(account: AccountCredentials): Unit = log
-        .debug("Sending creation email to '${account.email}'").run {
+    fun sendPasswordResetMail(account: AccountCredentials): Unit =
+        log.debug("Sending password reset email to '${account.email}'").run {
             sendEmailFromTemplate(
-                account,
-                "mail/creationEmail",
-                "email.activation.title"
-            )
-        }
-
-    @Async
-    fun sendPasswordResetMail(account: AccountCredentials): Unit = log
-        .debug("Sending password reset email to '${account.email}'").run {
-            sendEmailFromTemplate(
-                account,
-                "mail/passwordResetEmail",
-                "email.reset.title"
+                account, "mail/passwordResetEmail", "email.reset.title"
             )
         }
 }

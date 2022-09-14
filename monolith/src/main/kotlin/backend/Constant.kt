@@ -55,6 +55,18 @@ object Constants {
     const val VALID_TOKEN: Boolean = true
     const val INVALID_TOKEN: Boolean = false
 
+    //REST API
+    //URIs
+    const val ACCOUNT_API = "/api/account"
+    const val SIGNUP_API = "/signup"
+    const val SIGNUP_API_PATH = "$ACCOUNT_API$SIGNUP_API"
+    const val ACTIVATE_API = "/activate"
+    const val ACTIVATE_API_PATH = "$ACCOUNT_API$ACTIVATE_API?key="
+    const val ACTIVATE_API_PARAM = "{activationKey}"
+    const val ACTIVATE_API_KEY = "key"
+    const val RESET_PASSWORD_API_INIT = "/reset-password/init"
+    const val RESET_PASSWORD_API_FINISH = "/reset-password/finish"
+    const val CHANGE_PASSWORD_API = "/change-password"
 
     //properties
     const val PROP_ITEM = "backend.item"
@@ -93,6 +105,7 @@ object Constants {
     const val IMAGE_URL_DEFAULT = "http://placehold.it/50x50"
     private const val PROBLEM_BASE_URL: String = "https://www.cheroliv.com/problem"
 
+
     @JvmField
     val DEFAULT_TYPE: URI = create("$PROBLEM_BASE_URL/problem-with-message")
 
@@ -107,19 +120,4 @@ object Constants {
 
     @JvmField
     val LOGIN_ALREADY_USED_TYPE: URI = create("$PROBLEM_BASE_URL/login-already-used")
-    //URIs
-    const val ACCOUNT_API = "/api/account"
-    const val SIGNUP_API = "/signup"
-    const val SIGNUP_API_PATH = "$ACCOUNT_API$SIGNUP_API"
-
-    const val ACTIVATE_API = "/activate"
-    const val ACTIVATE_API_PATH = "$ACCOUNT_API$ACTIVATE_API?key="
-    const val ACTIVATE_API_PARAM = "{activationKey}"
-    const val ACTIVATE_API_KEY = "key"
-
-    const val RESET_PASSWORD_API_INIT = "/reset-password/init"
-    const val RESET_PASSWORD_API_FINISH = "/reset-password/finish"
-
-    const val CHANGE_PASSWORD_API = "/change-password"
-
 }
