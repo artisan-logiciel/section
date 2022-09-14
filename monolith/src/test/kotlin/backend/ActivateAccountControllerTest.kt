@@ -74,16 +74,14 @@ internal class ActivateAccountControllerTest {
         assertEquals(1, countAccount(dao))
         assertEquals(1, countAccountAuthority(dao))
 
-        val validActivationKey = findOneByLogin(Data.defaultAccount.login!!, dao)!!.apply {
-            assertTrue(activationKey!!.isNotBlank())
-            assertFalse(activated)
-        }.activationKey
-
         client
             .get()
             .uri(
                 "$ACTIVATE_URI$ACTIVATE_URI_KEY_PARAM",
-                validActivationKey
+                findOneByLogin(Data.defaultAccount.login!!, dao)!!.apply {
+                    assertTrue(activationKey!!.isNotBlank())
+                    assertFalse(activated)
+                }.activationKey
             )
             .exchange()
             .expectStatus().isOk
