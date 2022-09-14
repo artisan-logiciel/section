@@ -5,13 +5,13 @@ package backend
 //import backend.services.SecurityUtils.getCurrentUserLogin
 
 
-import backend.Constants.ACCOUNT_API_MAPPING
-import backend.Constants.ACTIVATE_API_MAPPING
-import backend.Constants.ACTIVATE_URI_KEY_NAME
-import backend.Constants.RESET_PASSWORD_CHANGE_API_MAPPING
-import backend.Constants.RESET_PASSWORD_FINISH_API_MAPPING
-import backend.Constants.RESET_PASSWORD_INIT_API_MAPPING
-import backend.Constants.SIGNUP_API_MAPPING
+import backend.Constants.ACCOUNT_API_PATH
+import backend.Constants.ACTIVATE_API_ENDPOINT
+import backend.Constants.ACTIVATE_API_KEY
+import backend.Constants.RESET_PASSWORD_API_CHANGE_ENDPOINT
+import backend.Constants.RESET_PASSWORD_API_FINISH_ENDPOINT
+import backend.Constants.RESET_PASSWORD_API_INIT_ENDPOINT
+import backend.Constants.SIGNUP_API_ENDPOINT
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
 import javax.validation.Valid
@@ -19,7 +19,7 @@ import javax.validation.Valid
 /*=================================================================================*/
 
 @RestController
-@RequestMapping(ACCOUNT_API_MAPPING)
+@RequestMapping(ACCOUNT_API_PATH)
 class SignUpController(
     private val signUpService: SignUpService
 ) {
@@ -33,7 +33,7 @@ class SignUpController(
      * @throws backend.EmailAlreadyUsedProblem {@code 400 (Bad Request)} if the email is already used.
      * @throws backend.LoginAlreadyUsedProblem {@code 400 (Bad Request)} if the login is already used.
      */
-    @PostMapping(SIGNUP_API_MAPPING)
+    @PostMapping(SIGNUP_API_ENDPOINT)
     @ResponseStatus(HttpStatus.CREATED)
     suspend fun signup(
         @RequestBody @Valid accountCredentials: AccountCredentials
@@ -45,8 +45,8 @@ class SignUpController(
      * @param key the activation key.
      * @throws RuntimeException `500 (Internal Server Error)` if the user couldn't be activated.
      */
-    @GetMapping(ACTIVATE_API_MAPPING)
-    suspend fun activateAccount(@RequestParam(value = ACTIVATE_URI_KEY_NAME) key: String) {
+    @GetMapping(ACTIVATE_API_ENDPOINT)
+    suspend fun activateAccount(@RequestParam(value = ACTIVATE_API_KEY) key: String) {
         when {
             !signUpService.activate(key = key) -> throw AccountException("No user was found for this activation key")
         }
@@ -55,7 +55,7 @@ class SignUpController(
 
 /*=================================================================================*/
 @RestController
-@RequestMapping(ACCOUNT_API_MAPPING)
+@RequestMapping(ACCOUNT_API_PATH)
 class ResetPasswordController(
     private val resetPasswordService: ResetPasswordService
 ) {
@@ -66,7 +66,7 @@ class ResetPasswordController(
      *
      * @param mail the mail of the user.
      */
-    @PostMapping(RESET_PASSWORD_INIT_API_MAPPING)
+    @PostMapping(RESET_PASSWORD_API_INIT_ENDPOINT)
     suspend fun requestPasswordReset(@RequestBody mail: String): Unit {
     }
 //        userService.requestPasswordReset(mail).run {
@@ -81,7 +81,7 @@ class ResetPasswordController(
      * @throws InvalidPasswordProblem {@code 400 (Bad Request)} if the password is incorrect.
      * @throws RuntimeException         {@code 500 (Internal Server Error)} if the password could not be reset.
      */
-    @PostMapping(RESET_PASSWORD_FINISH_API_MAPPING)
+    @PostMapping(RESET_PASSWORD_API_FINISH_ENDPOINT)
     suspend fun finishPasswordReset(@RequestBody keyAndPassword: KeyAndPassword): Unit {
     }
 //    {
@@ -108,7 +108,7 @@ class ChangePasswordController(
      * @param passwordChange current and new password.
      * @throws InvalidPasswordProblem {@code 400 (Bad Request)} if the new password is incorrect.
      */
-    @PostMapping(RESET_PASSWORD_CHANGE_API_MAPPING)
+    @PostMapping(RESET_PASSWORD_API_CHANGE_ENDPOINT)
     suspend fun changePassword(@RequestBody passwordChange: PasswordChange): Unit =
         InvalidPasswordException().run {
             if (isPasswordLengthInvalid(passwordChange.newPassword)) throw this

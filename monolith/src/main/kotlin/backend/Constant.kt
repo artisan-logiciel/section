@@ -3,20 +3,9 @@
 package backend
 
 import java.net.URI
-import java.net.URI.create
 
 
 object Constants {
-    const val ACCOUNT_API_MAPPING = "/api/account"
-    const val SIGNUP_API_MAPPING = "/signup"
-    const val ACTIVATE_API_MAPPING = "/activate"
-    const val SIGNUP_URI = "$ACCOUNT_API_MAPPING$SIGNUP_API_MAPPING"
-    const val ACTIVATE_URI = "$ACCOUNT_API_MAPPING$ACTIVATE_API_MAPPING?key="
-    const val ACTIVATE_URI_KEY_PARAM = "{activationKey}"
-    const val ACTIVATE_URI_KEY_NAME = "key"
-    const val RESET_PASSWORD_INIT_API_MAPPING = "/reset-password/init"
-    const val RESET_PASSWORD_CHANGE_API_MAPPING = "/change-password"
-    const val RESET_PASSWORD_FINISH_API_MAPPING = "/reset-password/finish"
 
 
     //SignUpController
@@ -117,4 +106,16 @@ object Constants {
 
     @JvmField
     val LOGIN_ALREADY_USED_TYPE: URI = URI.create("$PROBLEM_BASE_URL/login-already-used")
+    //URIs
+    const val ACCOUNT_API_PATH = "/api/account"
+    const val SIGNUP_API_ENDPOINT = "/signup"
+    const val ACTIVATE_API_ENDPOINT = "/activate"
+    const val SIGNUP_API_PATH = "$ACCOUNT_API_PATH$SIGNUP_API_ENDPOINT"
+    const val ACTIVATE_API_PATH = "$ACCOUNT_API_PATH$ACTIVATE_API_ENDPOINT?key="
+    const val ACTIVATE_API_PARAM = "{activationKey}"
+    const val ACTIVATE_API_KEY = "key"
+    const val RESET_PASSWORD_API_INIT_ENDPOINT = "/reset-password/init"
+    const val RESET_PASSWORD_API_CHANGE_ENDPOINT = "/change-password"
+    const val RESET_PASSWORD_API_FINISH_ENDPOINT = "/reset-password/finish"
+
 }

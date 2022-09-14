@@ -4,8 +4,8 @@
 
 package backend
 
-import backend.Constants.ACTIVATE_URI
-import backend.Constants.ACTIVATE_URI_KEY_PARAM
+import backend.Constants.ACTIVATE_API_PATH
+import backend.Constants.ACTIVATE_API_PARAM
 import backend.RandomUtils.generateActivationKey
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.AfterEach
@@ -47,10 +47,10 @@ internal class ActivateAccountControllerTest {
         generateActivationKey.run {
             client
                 .get()
-                .uri("$ACTIVATE_URI$ACTIVATE_URI_KEY_PARAM", this)
+                .uri("$ACTIVATE_API_PATH$ACTIVATE_API_PARAM", this)
                 .exchange()
                 .returnResult<Unit>().url.let {
-                    assertEquals(URI("$BASE_URL_DEV$ACTIVATE_URI$this"), it)
+                    assertEquals(URI("$BASE_URL_DEV$ACTIVATE_API_PATH$this"), it)
                 }
         }
     }
@@ -59,7 +59,7 @@ internal class ActivateAccountControllerTest {
     fun `test activate avec une mauvaise clé`() {
         client
             .get()
-            .uri("$ACTIVATE_URI$ACTIVATE_URI_KEY_PARAM", "wrongActivationKey")
+            .uri("$ACTIVATE_API_PATH$ACTIVATE_API_PARAM", "wrongActivationKey")
             .exchange()
             .expectStatus()
             .is5xxServerError
@@ -77,7 +77,7 @@ internal class ActivateAccountControllerTest {
         client
             .get()
             .uri(
-                "$ACTIVATE_URI$ACTIVATE_URI_KEY_PARAM",
+                "$ACTIVATE_API_PATH$ACTIVATE_API_PARAM",
                 findOneByLogin(Data.defaultAccount.login!!, dao)!!.apply {
                     assertTrue(activationKey!!.isNotBlank())
                     assertFalse(activated)

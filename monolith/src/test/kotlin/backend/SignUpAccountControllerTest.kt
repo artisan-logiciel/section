@@ -6,7 +6,7 @@ package backend
 
 import backend.Constants.DEFAULT_LANGUAGE
 import backend.Constants.ROLE_ADMIN
-import backend.Constants.SIGNUP_URI
+import backend.Constants.SIGNUP_API_PATH
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeAll
@@ -82,7 +82,7 @@ internal class SignUpAccountControllerTest {
         assertEquals(0, countUserAuthBefore)
         client
             .post()
-            .uri(SIGNUP_URI)
+            .uri(SIGNUP_API_PATH)
             .contentType(MediaType.APPLICATION_JSON)
             .bodyValue(Data.defaultAccount)
             .exchange()
@@ -105,7 +105,7 @@ internal class SignUpAccountControllerTest {
         assertEquals(0, countAccount(dao))
         client
             .post()
-            .uri(SIGNUP_URI)
+            .uri(SIGNUP_API_PATH)
             .contentType(MediaType.APPLICATION_JSON)
             .bodyValue(Data.defaultAccount.copy(login = "funky-log(n"))
             .exchange()
@@ -123,7 +123,7 @@ internal class SignUpAccountControllerTest {
         assertEquals(0, countBefore)
         client
             .post()
-            .uri(SIGNUP_URI)
+            .uri(SIGNUP_API_PATH)
             .contentType(MediaType.APPLICATION_JSON)
             .bodyValue(Data.defaultAccount.copy(password = "inv"))
             .exchange()
@@ -139,7 +139,7 @@ internal class SignUpAccountControllerTest {
     fun `test signup account avec un password invalid`() {
         assertEquals(0, countAccount(dao))
         client.post()
-            .uri(SIGNUP_URI)
+            .uri(SIGNUP_API_PATH)
             .contentType(MediaType.APPLICATION_JSON)
             .bodyValue(Data.defaultAccount.copy(password = "123"))
             .exchange()
@@ -156,7 +156,7 @@ internal class SignUpAccountControllerTest {
         assertEquals(0, countAccount(dao))
         client
             .post()
-            .uri(SIGNUP_URI)
+            .uri(SIGNUP_API_PATH)
             .contentType(MediaType.APPLICATION_JSON)
             .bodyValue(Data.defaultAccount.copy(password = null))
             .exchange()
@@ -184,7 +184,7 @@ internal class SignUpAccountControllerTest {
 
         client
             .post()
-            .uri(SIGNUP_URI)
+            .uri(SIGNUP_API_PATH)
             .contentType(MediaType.APPLICATION_JSON)
             .bodyValue(Data.defaultAccount.copy(login = "foo"))
             .exchange()
@@ -211,7 +211,7 @@ internal class SignUpAccountControllerTest {
 
         client
             .post()
-            .uri(SIGNUP_URI)
+            .uri(SIGNUP_API_PATH)
             .contentType(MediaType.APPLICATION_JSON)
             .bodyValue(Data.defaultAccount.copy(email = "foo@localhost"))
             .exchange()
@@ -230,7 +230,7 @@ internal class SignUpAccountControllerTest {
         // sign up premier user
         client
             .post()
-            .uri(SIGNUP_URI)
+            .uri(SIGNUP_API_PATH)
             .contentType(MediaType.APPLICATION_JSON)
             .bodyValue(Data.defaultAccount)
             .exchange()
@@ -247,7 +247,7 @@ internal class SignUpAccountControllerTest {
         val secondLogin = "foo"
         client
             .post()
-            .uri(SIGNUP_URI)
+            .uri(SIGNUP_API_PATH)
             .contentType(MediaType.APPLICATION_JSON)
             .bodyValue(Data.defaultAccount.copy(login = secondLogin))
             .exchange()
@@ -269,7 +269,7 @@ internal class SignUpAccountControllerTest {
         val thirdLogin = "bar"
         client
             .post()
-            .uri(SIGNUP_URI)
+            .uri(SIGNUP_API_PATH)
             .contentType(MediaType.APPLICATION_JSON)
             .bodyValue(
                 Data.defaultAccount.copy(
@@ -302,7 +302,7 @@ internal class SignUpAccountControllerTest {
         // le user existant au meme mail est deja activé
         client
             .post()
-            .uri(SIGNUP_URI)
+            .uri(SIGNUP_API_PATH)
             .contentType(MediaType.APPLICATION_JSON)
             .bodyValue(Data.defaultAccount.copy(login = fourthLogin))
             .exchange()
@@ -339,7 +339,7 @@ internal class SignUpAccountControllerTest {
         val login = "badguy"
         client
             .post()
-            .uri(SIGNUP_URI)
+            .uri(SIGNUP_API_PATH)
             .contentType(MediaType.APPLICATION_JSON)
             .bodyValue(
                 AccountCredentials(
