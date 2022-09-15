@@ -187,11 +187,17 @@ class MailService(
 ) {
     @Async
     fun sendEmail(
-        to: String, subject: String, content: String, isMultipart: Boolean, isHtml: Boolean
+        to: String,
+        subject: String,
+        content: String,
+        isMultipart: Boolean,
+        isHtml: Boolean
     ) = mailSender.createMimeMessage().run {
         try {
             MimeMessageHelper(
-                this, isMultipart, UTF_8.name()
+                this,
+                isMultipart,
+                UTF_8.name()
             ).apply {
                 setTo(to)
                 setFrom(properties.mail.from)
