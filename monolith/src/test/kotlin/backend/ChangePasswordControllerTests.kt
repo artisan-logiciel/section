@@ -1,9 +1,11 @@
+@file:Suppress("unused")
+
 package backend
 
-class AccountControllerTests {
+class ChangePasswordControllerTests {
 
 /*
-    @Test //TODO: test pour AccountController
+    @Test
     @WithMockUser("change-password-wrong-existing-password")
     fun testChangePasswordWrongExistingPassword() {
         val currentPassword = RandomStringUtils.random(60)
@@ -27,7 +29,7 @@ class AccountControllerTests {
         assertThat(passwordEncoder.matches(currentPassword, updatedUser.password)).isTrue
     }
 
-    @Test //TODO: test pour AccountController
+    @Test
     @WithMockUser("change-password")
     fun testChangePassword() {
         val currentPassword = RandomStringUtils.random(60)
@@ -50,7 +52,7 @@ class AccountControllerTests {
         assertThat(passwordEncoder.matches("new password", updatedUser.password)).isTrue
     }
 
-    @Test //TODO: test pour AccountController
+    @Test
     @WithMockUser("change-password-too-small")
     fun testChangePasswordTooSmall() {
         val currentPassword = RandomStringUtils.random(60)
@@ -75,7 +77,7 @@ class AccountControllerTests {
         assertThat(updatedUser.password).isEqualTo(user.password)
     }
 
-    @Test //TODO: test pour AccountController
+    @Test
     @WithMockUser("change-password-too-long")
     fun testChangePasswordTooLong() {
         val currentPassword = RandomStringUtils.random(60)
@@ -100,7 +102,7 @@ class AccountControllerTests {
         assertThat(updatedUser.password).isEqualTo(user.password)
     }
 
-    @Test //TODO: test pour AccountController
+    @Test
     @WithMockUser("change-password-empty")
     fun testChangePasswordEmpty() {
         val currentPassword = RandomStringUtils.random(60)

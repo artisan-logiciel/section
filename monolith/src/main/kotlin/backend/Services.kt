@@ -23,84 +23,12 @@ import java.time.Instant.now
 import java.util.Locale.forLanguageTag
 import javax.mail.MessagingException
 
-@Service
-@Transactional
-class ChangePasswordService {
-    fun changePassword(currentPassword: String, newPassword: String) {
-        TODO("Not yet implemented")
-    }
-    //    @Transactional
-//    suspend fun changePassword(currentClearTextPassword: String, newPassword: String) {
-//        SecurityUtils.getCurrentUserLogin().apply {
-//            if (!isNullOrBlank()) {
-//                userRepository.findOneByLogin(this).apply {
-//                    if (this != null) {
-//                        if (!passwordEncoder.matches(
-//                                currentClearTextPassword,
-//                                password
-//                            )
-//                        ) throw InvalidPasswordException()
-//                        else saveUser(this.apply {
-//                            password = passwordEncoder.encode(newPassword)
-//                        }).run {
-//                            log.debug("Changed password for User: {}", this)
-//                        }
-//                    }
-//                }
-//            }
-//        }
-//    }
-
-}
-
-
-@Service
-@Transactional
-class ResetPasswordService(
-    private val accountRepository: AccountRepository
-) {
-    suspend fun completePasswordReset(newPassword: String, key: String): AccountCredentials? =
-        accountRepository.findOneByResetKey(key).run {
-            when {
-                this != null && resetDate?.isAfter(
-                    now().minusSeconds(86400)
-                ) == true -> {
-                    log.debug("Reset account password for reset key $key")
-                    return@completePasswordReset toCredentialsModel
-                    //                return saveUser(
-                    //                apply {
-                    ////                    password = passwordEncoder.encode(newPassword)
-                    //                    resetKey = null
-                    //                    resetDate = null
-                    //                })
-                }
-
-                else -> {
-                    log.debug("$key is not a valid reset account password key")
-                    return@completePasswordReset null
-                }
-            }
-        }
-
-
-    suspend fun requestPasswordReset(mail: String): AccountCredentials? = null
-//        return userRepository
-//            .findOneByEmail(mail)
-//            .apply {
-//                if (this != null && this.activated) {
-//                    resetKey = generateResetKey
-//                    resetDate = now()
-//                    saveUser(this)
-//                } else return null
-//            }
-//    }
-
-}
 
 @Service
 @Transactional
 class SignUpService(
-    private val accountRepository: AccountRepository, private val mailService: MailService
+    private val accountRepository: AccountRepository,
+    private val mailService: MailService
 ) {
 
     @Throws(
@@ -173,6 +101,80 @@ class SignUpService(
             }
         }
     }
+}
+
+@Service
+@Transactional
+class ResetPasswordService(
+    private val accountRepository: AccountRepository
+) {
+    suspend fun completePasswordReset(newPassword: String, key: String): AccountCredentials? =
+        accountRepository.findOneByResetKey(key).run {
+            when {
+                this != null && resetDate?.isAfter(
+                    now().minusSeconds(86400)
+                ) == true -> {
+                    log.debug("Reset account password for reset key $key")
+                    return@completePasswordReset toCredentialsModel
+                    //                return saveUser(
+                    //                apply {
+                    ////                    password = passwordEncoder.encode(newPassword)
+                    //                    resetKey = null
+                    //                    resetDate = null
+                    //                })
+                }
+
+                else -> {
+                    log.debug("$key is not a valid reset account password key")
+                    return@completePasswordReset null
+                }
+            }
+        }
+
+
+    suspend fun requestPasswordReset(mail: String): AccountCredentials? = null
+//        return userRepository
+//            .findOneByEmail(mail)
+//            .apply {
+//                if (this != null && this.activated) {
+//                    resetKey = generateResetKey
+//                    resetDate = now()
+//                    saveUser(this)
+//                } else return null
+//            }
+//    }
+
+}
+
+
+@Service
+@Transactional
+class ChangePasswordService {
+    fun changePassword(currentPassword: String, newPassword: String) {
+        TODO("Not yet implemented")
+    }
+    //    @Transactional
+//    suspend fun changePassword(currentClearTextPassword: String, newPassword: String) {
+//        SecurityUtils.getCurrentUserLogin().apply {
+//            if (!isNullOrBlank()) {
+//                userRepository.findOneByLogin(this).apply {
+//                    if (this != null) {
+//                        if (!passwordEncoder.matches(
+//                                currentClearTextPassword,
+//                                password
+//                            )
+//                        ) throw InvalidPasswordException()
+//                        else saveUser(this.apply {
+//                            password = passwordEncoder.encode(newPassword)
+//                        }).run {
+//                            log.debug("Changed password for User: {}", this)
+//                        }
+//                    }
+//                }
+//            }
+//        }
+//    }
+
 }
 
 
