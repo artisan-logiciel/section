@@ -15,9 +15,13 @@ import reactor.kotlin.core.publisher.toMono
 import java.util.*
 
 
+/*=================================================================================*/
+
 interface AuthorityRepository {
     suspend fun findOne(role: String): String?
 }
+
+/*=================================================================================*/
 
 interface AccountRepository {
     suspend fun findOneByLogin(login: String): AccountCredentials?
@@ -37,6 +41,8 @@ interface AccountRepository {
     suspend fun findOneByResetKey(key: String): AccountRecord<*>?//<AuthorityRecord>?
 }
 
+/*=================================================================================*/
+
 interface AccountAuthorityRepository {
     suspend fun save(id: UUID, authority: String): Unit
 
@@ -46,6 +52,8 @@ interface AccountAuthorityRepository {
 
     suspend fun deleteAllByAccountId(id: UUID): Unit
 }
+
+/*=================================================================================*/
 
 
 @Repository
@@ -77,6 +85,8 @@ class AccountAuthorityRepositoryR2dbc(
     }
 }
 
+
+/*=================================================================================*/
 
 @Repository
 class AccountRepositoryR2dbc(
@@ -166,6 +176,8 @@ class AccountRepositoryR2dbc(
 
 }
 
+/*=================================================================================*/
+
 @Repository
 class AuthorityRepositoryR2dbc(
     private val dao: R2dbcEntityTemplate
@@ -175,4 +187,6 @@ class AuthorityRepositoryR2dbc(
             .matching(query(where(ROLE_COLUMN).`is`(role)))
             .awaitOneOrNull()?.role
 }
+
+/*=================================================================================*/
 

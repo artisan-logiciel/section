@@ -24,6 +24,8 @@ import java.net.URI
 import org.zalando.problem.Problem.DEFAULT_TYPE as PROBLEM_DEFAULT_TYPE
 
 
+/*=================================================================================*/
+
 /**
  * Controller advice to translate the backend side problems to client-friendly json structures.
  * The error response follows RFC7807 - Problem Details for HTTP APIs (https://tools.ietf.org/html/rfc7807).
@@ -232,3 +234,5 @@ class ProblemTranslator(
 
 
 }
+
+/*=================================================================================*/

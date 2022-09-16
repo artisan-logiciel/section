@@ -5,12 +5,16 @@ import backend.Constants.PASSWORD_MAX_LENGTH
 import backend.Constants.PASSWORD_MIN_LENGTH
 import org.apache.commons.lang3.StringUtils
 
+/*=================================================================================*/
+
 class UsernameAlreadyUsedException :
     RuntimeException("Login name already used!") {
     companion object {
         private const val serialVersionUID = 1L
     }
 }
+
+/*=================================================================================*/
 
 class InvalidPasswordException :
     RuntimeException("Incorrect password") {
@@ -24,12 +28,16 @@ class InvalidPasswordException :
                 (password.length > PASSWORD_MAX_LENGTH)
 }
 
+/*=================================================================================*/
+
 class EmailAlreadyUsedException :
     RuntimeException("Email is already in use!") {
     companion object {
         private const val serialVersionUID = 1L
     }
 }
+
+/*=================================================================================*/
 
 
 //class UserNotActivatedException(
@@ -40,3 +48,5 @@ class EmailAlreadyUsedException :
 //        private const val serialVersionUID = 1L
 //    }
 //}
+
+/*=================================================================================*/

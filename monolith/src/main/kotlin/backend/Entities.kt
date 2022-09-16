@@ -14,6 +14,8 @@ import javax.validation.constraints.Pattern
 import javax.validation.constraints.Size
 import javax.validation.constraints.Email as EmailConstraint
 
+
+/*=================================================================================*/
 interface AuthorityRecord : Persistable<String> {
     val role: String
     override fun getId() = role
@@ -24,6 +26,8 @@ interface AuthorityRecord : Persistable<String> {
     }
 }
 
+
+/*=================================================================================*/
 @Table("`authority`")
 data class AuthorityEntity(
     @Id
@@ -34,6 +38,8 @@ data class AuthorityEntity(
 ) : AuthorityRecord
 
 
+
+/*=================================================================================*/
 @Table("`phone`")
 data class PhoneEntity(
     @Id var id: UUID? = null,
@@ -43,6 +49,8 @@ data class PhoneEntity(
     var value: String? = null
 )
 
+
+/*=================================================================================*/
 @Table("`country_phone_code`")
 data class CountryPhoneCodeEntity(
     @Id val code: String,
@@ -52,6 +60,8 @@ data class CountryPhoneCodeEntity(
     override fun isNew() = true
 }
 
+
+/*=================================================================================*/
 @Table("`email`")
 data class EmailEntity(@Id val value: @EmailConstraint String) : Persistable<String> {
     override fun getId() = value
@@ -59,6 +69,8 @@ data class EmailEntity(@Id val value: @EmailConstraint String) : Persistable<Str
 }
 
 
+
+/*=================================================================================*/
 @Table("`user_authority`")
 data class AccountAuthorityEntity(
     @Id var id: Long? = null,
@@ -68,6 +80,8 @@ data class AccountAuthorityEntity(
     val role: String
 )
 
+
+/*=================================================================================*/
 interface AccountRecord<AUTH : AuthorityRecord> {
     var id: UUID?
     var login: String?
@@ -124,6 +138,8 @@ interface AccountRecord<AUTH : AuthorityRecord> {
 }
 
 
+
+/*=================================================================================*/
 @Table("`user`")
 data class AccountEntity @JvmOverloads constructor(
     @Id override var id: UUID? = null,
@@ -240,3 +256,5 @@ data class AccountEntity @JvmOverloads constructor(
         activationKey = model.activationKey
     }
 }
+
+/*=================================================================================*/

@@ -10,6 +10,8 @@ import java.net.UnknownHostException
 import java.util.*
 
 
+/*=================================================================================*/
+
 fun main(args: Array<String>) = runApplication<Server>(*args) {
     with(this) {
         setDefaultProperties(hashMapOf<String, Any>(Constants.SPRING_PROFILE_CONF_DEFAULT_KEY to Constants.SPRING_PROFILE_DEVELOPMENT))
@@ -17,6 +19,8 @@ fun main(args: Array<String>) = runApplication<Server>(*args) {
     }
 }.run { startupLog(context = this) }
 
+
+/*=================================================================================*/
 
 internal fun checkProfileLog(context: ApplicationContext) =
     context.environment.activeProfiles.run {
@@ -51,6 +55,8 @@ internal fun checkProfileLog(context: ApplicationContext) =
     }
 
 
+/*=================================================================================*/
+
 private fun startupLogMessage(
     appName: String?,
     protocol: String,
@@ -69,6 +75,8 @@ Profile(s): $profiles
 ----------------------------------------------------------
 ${"\n\n\n"}""".trimIndent()
 
+
+/*=================================================================================*/
 
 private fun startupLog(context: ApplicationContext): Unit =
     log.info(
@@ -90,5 +98,7 @@ private fun startupLog(context: ApplicationContext): Unit =
             profiles = context.environment.activeProfiles.joinToString(separator = ",")
         )
     )
+
+/*=================================================================================*/
 
 

@@ -18,11 +18,12 @@ import org.springframework.transaction.annotation.Transactional
 import org.thymeleaf.context.Context
 import org.thymeleaf.spring5.SpringWebFluxTemplateEngine
 import java.nio.charset.StandardCharsets.UTF_8
-import java.time.Instant
 import java.time.Instant.now
 import java.util.Locale.forLanguageTag
 import javax.mail.MessagingException
 
+
+/*=================================================================================*/
 
 @Service
 @Transactional
@@ -32,7 +33,9 @@ class SignUpService(
 ) {
 
     @Throws(
-        InvalidPasswordException::class, UsernameAlreadyUsedException::class, UsernameAlreadyUsedException::class
+        InvalidPasswordException::class,
+        UsernameAlreadyUsedException::class,
+        UsernameAlreadyUsedException::class
     )
     suspend fun signup(account: AccountCredentials) {
         InvalidPasswordException().run {
@@ -40,7 +43,7 @@ class SignUpService(
         }
         loginValidation(account)
         emailValidation(account)
-        val createdDate = Instant.now()
+        val createdDate = now()
         account.copy(
             //TODO: hash password
             activationKey = RandomUtils.generateActivationKey,
@@ -103,6 +106,8 @@ class SignUpService(
     }
 }
 
+
+/*=================================================================================*/
 @Service
 @Transactional
 class ResetPasswordService(
@@ -146,6 +151,8 @@ class ResetPasswordService(
 
 }
 
+/*=================================================================================*/
+
 
 @Service
 @Transactional
@@ -177,6 +184,7 @@ class ChangePasswordService {
 
 }
 
+/*=================================================================================*/
 
 @Service("mailService")
 class MailService(
@@ -263,6 +271,8 @@ class MailService(
             )
         }
 }
+
+/*=================================================================================*/
 
 
 //@Service("userService")
@@ -565,3 +575,5 @@ class MailService(
 //            }
 //        }
 //}
+
+/*=================================================================================*/

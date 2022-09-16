@@ -9,7 +9,7 @@ import javax.validation.constraints.NotNull
 import javax.validation.constraints.Pattern
 import javax.validation.constraints.Size
 import javax.validation.constraints.Email as EmailConstraints
-
+/*=================================================================================*/
 /**
  * Représente l'account domain model sans le password
  */
@@ -40,7 +40,7 @@ data class Account(
 ) {
     fun isActivated(): Boolean = activated
 }
-
+/*=================================================================================*/
 /**
  * Représente l'account domain model avec le password et l'activationKey
  * pour la vue
@@ -109,7 +109,7 @@ data class AccountCredentials(
         authorities = authorities
     )
 }
-
+/*=================================================================================*/
 /**
  * Représente l'account domain model minimaliste pour la view
  */
@@ -117,12 +117,13 @@ data class Avatar(
     val id: UUID? = null,
     val login: String? = null
 )
+/*=================================================================================*/
 
 data class KeyAndPassword(
     val key: String? = null,
     val newPassword: String? = null
 )
-
+/*=================================================================================*/
 data class Login(
     @field:NotNull
     val username:
@@ -134,8 +135,9 @@ data class Login(
     String? = null,
     val rememberMe: Boolean? = null
 )
-
+/*=================================================================================*/
 data class PasswordChange(
     val currentPassword: String? = null,
     val newPassword: String? = null
 )
+/*=================================================================================*/

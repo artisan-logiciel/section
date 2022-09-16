@@ -10,6 +10,8 @@ import org.zalando.problem.Exceptional
 import org.zalando.problem.Status.BAD_REQUEST
 import java.net.URI
 
+/*=================================================================================*/
+
 class LoginAlreadyUsedProblem :
     AlertProblem(
         type = LOGIN_ALREADY_USED_TYPE,
@@ -24,6 +26,8 @@ class LoginAlreadyUsedProblem :
     }
 }
 
+/*=================================================================================*/
+
 class InvalidPasswordProblem : AbstractThrowableProblem(
     INVALID_PASSWORD_TYPE,
     "Incorrect password",
@@ -36,6 +40,8 @@ class InvalidPasswordProblem : AbstractThrowableProblem(
     }
 }
 
+/*=================================================================================*/
+
 class EmailAlreadyUsedProblem : AlertProblem(
     type = EMAIL_ALREADY_USED_TYPE,
     defaultMessage = "Email is already in use!",
@@ -46,6 +52,8 @@ class EmailAlreadyUsedProblem : AlertProblem(
         private const val serialVersionUID = 1L
     }
 }
+
+/*=================================================================================*/
 
 open class AlertProblem(
     type: URI,
@@ -83,4 +91,6 @@ open class AlertProblem(
             )
     }
 }
+
+/*=================================================================================*/
 
