@@ -4,25 +4,43 @@ package backend
 
 import backend.Constants.BASE_URL
 import backend.Constants.DEFAULT_LANGUAGE
+import backend.Constants.PROFILE_CLI
 import backend.Constants.ROLE_USER
 import backend.Constants.SYSTEM_USER
 import backend.Constants.USER
 import backend.Log.log
+import kotlinx.coroutines.runBlocking
+import org.springframework.boot.CommandLineRunner
+import org.springframework.context.ApplicationContext
 import org.springframework.context.MessageSource
+import org.springframework.context.annotation.Profile
 import org.springframework.mail.MailException
 import org.springframework.mail.javamail.JavaMailSender
 import org.springframework.mail.javamail.MimeMessageHelper
 import org.springframework.scheduling.annotation.Async
+import org.springframework.stereotype.Component
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import org.thymeleaf.context.Context
-import org.thymeleaf.spring5.SpringWebFluxTemplateEngine
+import org.thymeleaf.spring5.SpringTemplateEngine
 import java.nio.charset.StandardCharsets.UTF_8
 import java.time.Instant.now
 import java.util.Locale.forLanguageTag
+import javax.annotation.PostConstruct
 import javax.mail.MessagingException
 
+@Component
+@Profile(PROFILE_CLI)
+class CliRunner: CommandLineRunner {
+    override fun run(vararg args: String?) = runBlocking { log.info("command line interface") }
+}
 
+/*=================================================================================*/
+@Service
+class BackendService(private val context: ApplicationContext) {
+    @PostConstruct
+    private fun init() = checkProfileLog(context)
+}
 /*=================================================================================*/
 
 @Service
@@ -191,7 +209,7 @@ class MailService(
     private val properties: ApplicationProperties,
     private val mailSender: JavaMailSender,
     private val messageSource: MessageSource,
-    private val templateEngine: SpringWebFluxTemplateEngine
+    private val templateEngine: SpringTemplateEngine
 ) {
     @Async
     fun sendEmail(
@@ -275,18 +293,20 @@ class MailService(
 /*=================================================================================*/
 
 
-//@Service("userService")
+@Service("userService")
 //@Suppress("unused")
-//class UserService
-// (
+class UserService
+    (
 //    private val passwordEncoder: PasswordEncoder,
 //    private val userRepository: UserRepository,
 //    private val iUserRepository: IUserRepository,
 //    private val userRepositoryPageable: UserRepositoryPageable,
 //    private val userAuthRepository: UserAuthRepository,
 //    private val authorityRepository: AuthorityRepository
-//)
-//{
+    private val context: ApplicationContext,
+) {
+    @PostConstruct
+    private fun init() = checkProfileLog(context)
 //
 //    @Transactional
 //    suspend fun activateRegistration(key: String): User? =
@@ -574,6 +594,6 @@ class MailService(
 //                }
 //            }
 //        }
-//}
+}
 
 /*=================================================================================*/

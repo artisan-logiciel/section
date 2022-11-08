@@ -2,7 +2,7 @@
 
 package backend.canaries
 
-import backend.Server
+import backend.BackendApplication
 import backend.testLoader
 import org.springframework.boot.runApplication
 import org.springframework.context.ConfigurableApplicationContext
@@ -13,7 +13,7 @@ internal class CanaryFunctionalTest {
 
     //    @org.junit.jupiter.api.BeforeAll
     fun `lance le server en profile test`() {
-        context = runApplication<Server> { testLoader(app = this) }
+        context = runApplication<BackendApplication> { testLoader(app = this) }
     }
 
     //    @org.junit.jupiter.api.AfterAll

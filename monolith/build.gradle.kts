@@ -220,3 +220,11 @@ tasks.register<DeployGAE>("deployGAE") {
     doLast { println(cmd) }
 }
 
+springBoot.mainClass.set("backend.BackendBootstrap")
+
+tasks.register("cli") {
+    group = "application"
+    description = "Run backend cli"
+    doFirst { springBoot.mainClass.set("backend.CliBootstrap") }
+    finalizedBy("bootRun")
+}

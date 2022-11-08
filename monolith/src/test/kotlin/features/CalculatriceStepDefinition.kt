@@ -2,7 +2,7 @@
 
 package features
 
-import backend.Server
+import backend.BackendApplication
 import calculator.add
 import calculator.subtract
 import com.fasterxml.jackson.databind.ObjectMapper
@@ -19,7 +19,7 @@ import kotlin.test.assertEquals
 
 
 @SpringBootTest(
-    classes = [Server::class],
+    classes = [BackendApplication::class],
     webEnvironment = DEFINED_PORT
 )
 @ActiveProfiles("test")

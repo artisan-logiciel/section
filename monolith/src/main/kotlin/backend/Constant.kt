@@ -8,7 +8,6 @@ import java.net.URI.create
 
 object Constants {
 
-
     //SignUpController
     @JvmStatic
     val ALLOWED_ORDERED_PROPERTIES = arrayOf(
@@ -20,6 +19,18 @@ object Constants {
         "activated",
         "langKey"
     )
+    const val NORMAL_TERMINATION = 0
+
+    const val DOMAIN_URL = "https://www.cheroliv.com"
+    const val STARTUP_HOST_WARN_LOG_MSG = "The host name could not be determined, using `localhost` as fallback"
+    const val SPRING_APPLICATION_NAME = "spring.application.name"
+    const val SERVER_SSL_KEY_STORE = "server.ssl.key-store"
+    const val SERVER_PORT = "server.port"
+    const val SERVER_SERVLET_CONTEXT_PATH = "server.servlet.context-path"
+    const val EMPTY_CONTEXT_PATH = "/"
+    const val HTTPS = "https"
+    const val HTTP = "http"
+    const val PROFILE_SEPARATOR = ","
 
     //Spring profiles
     const val SPRING_PROFILE_DEVELOPMENT = "dev"
@@ -33,6 +44,8 @@ object Constants {
     const val SPRING_PROFILE_SWAGGER = "swagger"
     const val SPRING_PROFILE_NO_LIQUIBASE = "no-liquibase"
     const val SPRING_PROFILE_K8S = "k8s"
+    const val PROFILE_CLI = "cli"
+    val PROFILE_CLI_PROPS = mapOf("spring.main.web-application-type" to "none")
 
     //Config
     const val DEV_HOST = "localhost"
@@ -45,15 +58,15 @@ object Constants {
         "geolocation 'none'; midi 'none'; sync-xhr 'none'; microphone 'none'; camera 'none'; magnetometer 'none'; gyroscope 'none'; speaker 'none'; fullscreen 'self'; payment 'none'"
 
     //Security
-    const val ROLE_ADMIN: String = "ADMIN"
-    const val ROLE_USER: String = "USER"
-    const val ROLE_ANONYMOUS: String = "ANONYMOUS"
+    const val ROLE_ADMIN = "ADMIN"
+    const val ROLE_USER = "USER"
+    const val ROLE_ANONYMOUS = "ANONYMOUS"
     const val AUTHORITIES_KEY = "auth"
     const val AUTHORIZATION_HEADER = "Authorization"
     const val BEARER_START_WITH = "Bearer "
     const val AUTHORIZATION_ID_TOKEN = "id_token"
-    const val VALID_TOKEN: Boolean = true
-    const val INVALID_TOKEN: Boolean = false
+    const val VALID_TOKEN = true
+    const val INVALID_TOKEN = false
 
     //REST API
     //URIs
@@ -95,6 +108,7 @@ object Constants {
     const val SYSTEM_USER = "system"
 
 
+    @Suppress("SpellCheckingInspection")
     const val ANONYMOUS_USER: String = "anonymoususer"
     const val DEFAULT_LANGUAGE = "en"
     const val PASSWORD_MIN_LENGTH: Int = 4
@@ -103,7 +117,7 @@ object Constants {
     const val ERR_VALIDATION: String = "error.validation"
     const val USER_INITIAL_ACTIVATED_VALUE = false
     const val IMAGE_URL_DEFAULT = "http://placehold.it/50x50"
-    private const val PROBLEM_BASE_URL: String = "https://www.cheroliv.com/problem"
+    private const val PROBLEM_BASE_URL: String = "$DOMAIN_URL/problem"
 
 
     @JvmField

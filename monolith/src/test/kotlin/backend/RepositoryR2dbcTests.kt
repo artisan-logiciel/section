@@ -29,7 +29,7 @@ internal class AuthorityRepositoryR2dbcTest {
     private val authorityRepository: AuthorityRepository by lazy { context.getBean<AuthorityRepositoryR2dbc>() }
 
     @BeforeAll
-    fun `lance le server en profile test`() = runApplication<Server> {
+    fun `lance le server en profile test`() = runApplication<BackendApplication> {
         testLoader(app = this)
     }.run { context = this }
 
@@ -55,7 +55,7 @@ internal class AccountRepositoryR2dbcTest {
     private val accountRepository: AccountRepository by lazy { context.getBean<AccountRepositoryR2dbc>() }
 
     @BeforeAll
-    fun `lance le server en profile test`() = runApplication<Server> {
+    fun `lance le server en profile test`() = runApplication<BackendApplication> {
         testLoader(this)
     }.run { context = this }
 
@@ -197,7 +197,7 @@ internal class AccountAuthorityRepositoryR2dbcTest {
     private val accountAuthorityRepository: AccountAuthorityRepository by lazy { context.getBean<AccountAuthorityRepositoryR2dbc>() }
 
     @BeforeAll
-    fun `lance le server en profile test`() = runApplication<Server> {
+    fun `lance le server en profile test`() = runApplication<BackendApplication> {
         testLoader(this)
     }.run { context = this }
 

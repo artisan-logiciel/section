@@ -2,6 +2,9 @@
 
 package backend
 
+import backend.Constants.CONSTRAINT_VIOLATION_TYPE
+import backend.Constants.DEFAULT_TYPE
+import backend.Constants.ERR_VALIDATION
 import org.springframework.core.env.Environment
 import org.springframework.dao.ConcurrencyFailureException
 import org.springframework.dao.DataAccessException
@@ -71,7 +74,7 @@ class ProblemTranslator(
         ) return just(entity)
         val builder = builder()
             .withType(
-                if (PROBLEM_DEFAULT_TYPE == problem.type) Constants.DEFAULT_TYPE
+                if (PROBLEM_DEFAULT_TYPE == problem.type) DEFAULT_TYPE
                 else problem.type
             )
             .withStatus(problem.status)
@@ -80,7 +83,7 @@ class ProblemTranslator(
 
         if (problem is ConstraintViolationProblem) builder
             .with(VIOLATIONS_KEY, problem.violations)
-            .with(MESSAGE_KEY, Constants.ERR_VALIDATION)
+            .with(MESSAGE_KEY, ERR_VALIDATION)
         else {
             builder
                 .withCause((problem as DefaultProblem).cause)
@@ -107,10 +110,10 @@ class ProblemTranslator(
         ex: WebExchangeBindException, request: ServerWebExchange
     ): Mono<ResponseEntity<Problem>> = create(
         ex, builder()
-            .withType(Constants.CONSTRAINT_VIOLATION_TYPE)
+            .withType(CONSTRAINT_VIOLATION_TYPE)
             .withTitle("Data binding and validation failure")
             .withStatus(BAD_REQUEST)
-            .with(MESSAGE_KEY, Constants.ERR_VALIDATION)
+            .with(MESSAGE_KEY, ERR_VALIDATION)
             .with(FIELD_ERRORS_KEY, ex.bindingResult.fieldErrors.map {
                 FieldErrorVM(
                     it.objectName.replaceFirst(

@@ -45,7 +45,7 @@ class SignUpController(
      * `GET  /activate` : activate the signed-up user.
      *
      * @param key the activation key.
-     * @throws RuntimeException `500 (Internal Server Error)` if the user couldn't be activated.
+     * @throws RuntimeException `500 (Internal BackendApplication Error)` if the user couldn't be activated.
      */
     @GetMapping(ACTIVATE_API)
     suspend fun activateAccount(@RequestParam(value = ACTIVATE_API_KEY) key: String) {
@@ -83,7 +83,7 @@ class ResetPasswordController(
      *
      * @param keyAndPassword the generated key and the new password.
      * @throws InvalidPasswordProblem {@code 400 (Bad Request)} if the password is incorrect.
-     * @throws RuntimeException         {@code 500 (Internal Server Error)} if the password could not be reset.
+     * @throws RuntimeException         {@code 500 (Internal BackendApplication Error)} if the password could not be reset.
      */
     @PostMapping(RESET_PASSWORD_API_FINISH)
     suspend fun finishPasswordReset(@RequestBody keyAndPassword: KeyAndPassword): Unit =
@@ -161,7 +161,7 @@ class ChangePasswordController(
 ////     * {@code GET  /account} : get the current user.
 ////     *
 ////     * @return the current user.
-////     * @throws RuntimeException {@code 500 (Internal Server Error)} if the user couldn't be returned.
+////     * @throws RuntimeException {@code 500 (Internal BackendApplication Error)} if the user couldn't be returned.
 ////     */
 ////    @GetMapping("account")
 ////    suspend fun getAccount(): Account = log.info("controller getAccount").run {
@@ -176,7 +176,7 @@ class ChangePasswordController(
 ////     *
 ////     * @param account the current user information.
 ////     * @throws EmailAlreadyUsedProblem {@code 400 (Bad Request)} if the email is already used.
-////     * @throws RuntimeException          {@code 500 (Internal Server Error)} if the user login wasn't found.
+////     * @throws RuntimeException          {@code 500 (Internal BackendApplication Error)} if the user login wasn't found.
 ////     */
 ////    @PostMapping("account")
 ////    suspend fun saveAccount(@Valid @RequestBody account: Account): Unit {
@@ -233,7 +233,7 @@ class ChangePasswordController(
 ////     *
 ////     * @param keyAndPassword the generated key and the new password.
 ////     * @throws InvalidPasswordProblem {@code 400 (Bad Request)} if the password is incorrect.
-////     * @throws RuntimeException         {@code 500 (Internal Server Error)} if the password could not be reset.
+////     * @throws RuntimeException         {@code 500 (Internal BackendApplication Error)} if the password could not be reset.
 ////     */
 ////    @PostMapping("account/reset-password/finish")
 ////    suspend fun finishPasswordReset(@RequestBody keyAndPassword: KeyAndPassword): Unit {
@@ -500,7 +500,7 @@ class ChangePasswordController(
 /*=================================================================================*/
 
 
-//import backend.Server.Log.log
+//import backend.BackendApplication.Log.log
 //import common.domain.Avatar
 //import backend.http.util.PaginationUtil.generatePaginationHttpHeaders
 ////import backend.UserService

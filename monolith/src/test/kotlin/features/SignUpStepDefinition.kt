@@ -6,7 +6,7 @@ import backend.Account
 import backend.AccountCredentials
 import backend.Log.log
 import backend.RandomUtils
-import backend.Server
+import backend.BackendApplication
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.cucumber.datatable.DataTable
 import io.cucumber.java8.Fr
@@ -24,7 +24,7 @@ import reactor.kotlin.core.publisher.toMono
 import kotlin.test.assertEquals
 
 @SpringBootTest(
-    classes = [Server::class],
+    classes = [BackendApplication::class],
     webEnvironment = DEFINED_PORT
 )
 @ActiveProfiles("test")

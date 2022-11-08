@@ -3,61 +3,62 @@
 package backend
 
 
+import backend.Constants.REQUEST_PARAM_LANG
 import backend.Log.log
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import org.apache.commons.mail.EmailConstants.*
+import org.springframework.aop.interceptor.AsyncUncaughtExceptionHandler
+import org.springframework.aop.interceptor.SimpleAsyncUncaughtExceptionHandler
+import org.springframework.beans.factory.DisposableBean
+import org.springframework.beans.factory.InitializingBean
+import org.springframework.boot.autoconfigure.task.TaskExecutionProperties
+import org.springframework.boot.autoconfigure.web.reactive.ResourceHandlerRegistrationCustomizer
 import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.Configuration
+import org.springframework.context.annotation.Import
 import org.springframework.context.annotation.Profile
+import org.springframework.context.i18n.LocaleContext
+import org.springframework.context.i18n.SimpleLocaleContext
 import org.springframework.core.annotation.Order
+import org.springframework.core.task.AsyncTaskExecutor
 import org.springframework.data.web.ReactivePageableHandlerMethodArgumentResolver
 import org.springframework.data.web.ReactiveSortHandlerMethodArgumentResolver
 import org.springframework.format.FormatterRegistry
 import org.springframework.format.datetime.standard.DateTimeFormatterRegistrar
 import org.springframework.mail.javamail.JavaMailSender
 import org.springframework.mail.javamail.JavaMailSenderImpl
-import org.springframework.validation.Validator
-import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean
-import org.springframework.web.cors.reactive.CorsWebFilter
-import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource
-import org.springframework.web.reactive.config.EnableWebFlux
-import org.springframework.web.reactive.config.WebFluxConfigurer
-import org.springframework.web.server.WebExceptionHandler
-import org.zalando.problem.jackson.ProblemModule
-import org.zalando.problem.spring.webflux.advice.ProblemExceptionHandler
-import org.zalando.problem.spring.webflux.advice.ProblemHandling
-import org.zalando.problem.violations.ConstraintViolationProblemModule
-import reactor.core.publisher.Hooks
-import backend.Constants.REQUEST_PARAM_LANG
-import org.springframework.aop.interceptor.AsyncUncaughtExceptionHandler
-import org.springframework.aop.interceptor.SimpleAsyncUncaughtExceptionHandler
-import org.springframework.beans.factory.DisposableBean
-import org.springframework.beans.factory.InitializingBean
-import org.springframework.boot.autoconfigure.task.TaskExecutionProperties
-import org.springframework.context.annotation.Configuration
-import org.springframework.context.i18n.LocaleContext
-import org.springframework.context.i18n.SimpleLocaleContext
-import org.springframework.core.task.AsyncTaskExecutor
 import org.springframework.scheduling.annotation.AsyncConfigurer
 import org.springframework.scheduling.annotation.EnableAsync
 import org.springframework.scheduling.annotation.EnableScheduling
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor
+//import org.springframework.security.config.annotation.method.configuration.EnableReactiveMethodSecurity
+//import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity
+//import org.springframework.security.core.userdetails.ReactiveUserDetailsService
+import org.springframework.validation.Validator
+import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean
+import org.springframework.web.cors.reactive.CorsWebFilter
+import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource
 import org.springframework.web.reactive.config.DelegatingWebFluxConfiguration
+import org.springframework.web.reactive.config.EnableWebFlux
+import org.springframework.web.reactive.config.WebFluxConfigurer
 import org.springframework.web.server.ServerWebExchange
+import org.springframework.web.server.WebExceptionHandler
 import org.springframework.web.server.i18n.LocaleContextResolver
+import org.zalando.problem.jackson.ProblemModule
+import org.zalando.problem.spring.webflux.advice.ProblemExceptionHandler
+import org.zalando.problem.spring.webflux.advice.ProblemHandling
+import org.zalando.problem.spring.webflux.advice.security.SecurityProblemSupport
+import org.zalando.problem.violations.ConstraintViolationProblemModule
+import reactor.core.publisher.Hooks
 import java.util.Locale.forLanguageTag
 import java.util.Locale.getDefault
 import java.util.concurrent.Callable
 import java.util.concurrent.Executor
 import java.util.concurrent.Future
 
-
-
-
-
-
-
+/*=================================================================================*/
 @Configuration
 class LocaleSupportConfiguration : DelegatingWebFluxConfiguration() {
 
@@ -81,6 +82,8 @@ class LocaleSupportConfiguration : DelegatingWebFluxConfiguration() {
     }
 }
 
+
+/*=================================================================================*/
 @Configuration
 @EnableWebFlux
 //@EnableWebFluxSecurity
@@ -90,7 +93,7 @@ class WebConfiguration(
     private val properties: ApplicationProperties,
 //    private val userDetailsService: ReactiveUserDetailsService,
 //    private val tokenProvider: TokenProvider,
-//    private val problemSupport: org.zalando.problem.spring.webflux.advice.security.SecurityProblemSupport,
+//    private val problemSupport: SecurityProblemSupport,
 ) : WebFluxConfigurer {
 
     override fun addFormatters(registry: FormatterRegistry) {
@@ -181,10 +184,10 @@ class WebConfiguration(
 //            return registration -> registration.setCacheControl(null);
 //        }
 //        @Bean
-//        @Profile(backend.Constants.SPRING_PROFILE_PRODUCTION)
+//        @Profile(Constants.SPRING_PROFILE_PRODUCTION)
 //        fun  cachingHttpHeadersFilter():CachingHttpHeadersFilter {
 //            // Use a cache filter that only match selected paths
-//            return  CachingHttpHeadersFilter(TimeUnit.DAYS.toMillis(ApplicationProperties.getHttp().getCache().getTimeToLiveInDays()));
+//            return  CachingHttpHeadersFilter(TimeUnit.DAYS.toMillis(ApplicationProperties.getHttp().getCache().getTimeToLiveInDays()))
 //        }
 
 //    @Bean("passwordEncoder")
@@ -223,7 +226,7 @@ class WebConfiguration(
 //            .accessDeniedHandler(problemSupport)
 //            .authenticationEntryPoint(problemSupport)
 //            .and()
-//            .headers().contentSecurityPolicy(backend.Constants.CONTENT_SECURITY_POLICY)
+//            .headers().contentSecurityPolicy(Constants.CONTENT_SECURITY_POLICY)
 //            .and()
 //            .referrerPolicy(STRICT_ORIGIN_WHEN_CROSS_ORIGIN)
 //            .and()
@@ -256,6 +259,8 @@ class WebConfiguration(
 //            .build()
 }
 
+/*=================================================================================*/
+
 
 @EnableAsync
 @Configuration
@@ -270,7 +275,7 @@ class AsyncTasksConfiguration(
     override fun getAsyncExecutor()
             : Executor = ExceptionHandlingAsyncTaskExecutor(
         ThreadPoolTaskExecutor().apply {
-            setQueueCapacity(taskExecutionProperties.pool.queueCapacity)
+            queueCapacity = taskExecutionProperties.pool.queueCapacity
             @Suppress("UsePropertyAccessSyntax")
             setThreadNamePrefix(taskExecutionProperties.threadNamePrefix)
             corePoolSize = taskExecutionProperties.pool.coreSize
@@ -292,6 +297,7 @@ class AsyncTasksConfiguration(
 
         override fun execute(task: Runnable): Unit = executor.execute(createWrappedRunnable(task))
 
+        @Suppress("OVERRIDE_DEPRECATION")
         override fun execute(task: Runnable, startTimeout: Long): Unit =
             executor.execute(createWrappedRunnable(task), startTimeout)
 
@@ -334,3 +340,5 @@ class AsyncTasksConfiguration(
         }
     }
 }
+
+/*=================================================================================*/
