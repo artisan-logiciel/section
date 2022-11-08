@@ -106,17 +106,13 @@ class SignUpService(
     suspend fun activate(key: String): Boolean {
         accountRepository.run {
             with(findOneByActivationKey(key)) {
-                return when {
-                    this == null -> false
+                when {
+                    this == null -> return false
                     else -> {
-                        save(
-                            copy(
-                                activated = true, activationKey = null
-                            )
-                        ).apply {
+                        save(copy(activated = true, activationKey = null)).apply {
                             if (id != null) log.info("activation: $login")
                         }
-                        true
+                        return true
                     }
                 }
             }
