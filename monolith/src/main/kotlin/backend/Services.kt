@@ -29,10 +29,13 @@ import java.util.Locale.forLanguageTag
 import javax.annotation.PostConstruct
 import javax.mail.MessagingException
 
+/*=================================================================================*/
 @Component
 @Profile(PROFILE_CLI)
-class CliRunner: CommandLineRunner {
-    override fun run(vararg args: String?) = runBlocking { log.info("command line interface") }
+class CliRunner : CommandLineRunner {
+    override fun run(vararg args: String?) = runBlocking {
+        log.info("command line interface")
+    }
 }
 
 /*=================================================================================*/
@@ -96,7 +99,7 @@ class SignUpService(
         accountRepository.findOneByEmail(model.email!!).run {
             if (this != null) {
                 when {
-                    !activated -> accountRepository.suppress(this.toAccount())
+                    !activated -> accountRepository.suppress(toAccount())
                     else -> throw EmailAlreadyUsedException()
                 }
             }
@@ -106,13 +109,17 @@ class SignUpService(
     suspend fun activate(key: String): Boolean {
         accountRepository.run {
             with(findOneByActivationKey(key)) {
-                when {
-                    this == null -> return false
+                return when {
+                    this == null -> false
                     else -> {
-                        save(copy(activated = true, activationKey = null)).apply {
+                        save(
+                            copy(
+                                activated = true, activationKey = null
+                            )
+                        ).apply {
                             if (id != null) log.info("activation: $login")
                         }
-                        return true
+                        true
                     }
                 }
             }

@@ -21,7 +21,7 @@ object BackendBootstrap {
     fun main(args: Array<String>) = runApplication<BackendApplication>(*args) {
         setDefaultProperties(hashMapOf<String, Any>(SPRING_PROFILE_CONF_DEFAULT_KEY to SPRING_PROFILE_DEVELOPMENT))
         setAdditionalProfiles(SPRING_PROFILE_DEVELOPMENT)
-    }.run { startupLog(context = this) }
+    }.run { bootstrapLog(context = this) }
 }
 
 object CliBootstrap {

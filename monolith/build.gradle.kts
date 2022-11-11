@@ -20,6 +20,7 @@ plugins {
     id("io.spring.dependency-management")
     id("com.google.cloud.tools.jib")
     jacoco
+    id("com.github.andygoossens.gradle-modernizer-plugin")
 }
 
 repositories {
@@ -136,6 +137,10 @@ tasks.withType<Test> {
     }
 }
 
+modernizer {
+    failOnViolations = true
+    includeTestClasses = true
+}
 
 tasks.register<Delete>("cleanResources") {
     description = "Delete directory build/resources"
@@ -222,6 +227,9 @@ tasks.register<DeployGAE>("deployGAE") {
 
 springBoot.mainClass.set("backend.BackendBootstrap")
 
+/*
+./gradlew -q cli --args='your args there'
+ */
 tasks.register("cli") {
     group = "application"
     description = "Run backend cli"

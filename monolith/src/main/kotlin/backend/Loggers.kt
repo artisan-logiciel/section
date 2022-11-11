@@ -91,7 +91,7 @@ ${"\n\n\n"}""".trimIndent()
 
 
 
-internal fun startupLog(context: ApplicationContext): Unit =
+internal fun bootstrapLog(context: ApplicationContext): Unit =
     log.info(
         startupLogMessage(
             appName = context.environment.getProperty(SPRING_APPLICATION_NAME),

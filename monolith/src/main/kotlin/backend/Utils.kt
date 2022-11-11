@@ -9,9 +9,10 @@ import org.springframework.http.HttpHeaders
 import org.springframework.web.util.UriComponentsBuilder
 import java.io.UnsupportedEncodingException
 import java.net.URLEncoder.encode
-import java.nio.charset.StandardCharsets.UTF_8
+
 import java.security.SecureRandom
 import java.text.MessageFormat
+import kotlin.text.Charsets.UTF_8
 
 /*=================================================================================*/
 object RandomUtils {
@@ -59,7 +60,7 @@ object HttpHeaderUtil {
         try {
             add(
                 "X-$applicationName-params",
-                encode(param, UTF_8.toString())
+                encode(param, UTF_8)
             )
         } catch (_: UnsupportedEncodingException) {
             // StandardCharsets are supported by every Java implementation so this exceptions will never happen
