@@ -36,7 +36,7 @@ internal class SignUpAccountControllerTest {
 
     @BeforeAll
     fun `lance le server en profile test`() =
-        runApplication<BackendApplication> { testLoader(app = this) }
+        runApplication<BackendApplication> { testLoader(this) }
             .run { context = this }
 
     @AfterAll

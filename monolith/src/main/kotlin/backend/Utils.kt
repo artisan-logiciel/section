@@ -3,13 +3,12 @@
 package backend
 
 import backend.Log.log
-import org.apache.commons.lang3.RandomStringUtils
+import org.apache.commons.lang3.RandomStringUtils.random
 import org.springframework.data.domain.Page
 import org.springframework.http.HttpHeaders
 import org.springframework.web.util.UriComponentsBuilder
 import java.io.UnsupportedEncodingException
 import java.net.URLEncoder.encode
-
 import java.security.SecureRandom
 import java.text.MessageFormat
 import kotlin.text.Charsets.UTF_8
@@ -22,7 +21,7 @@ object RandomUtils {
     }
 
     private val generateRandomAlphanumericString: String
-        get() = RandomStringUtils.random(
+        get() = random(
             DEF_COUNT, 0, 0, true, true, null, SECURE_RANDOM
         )
 
@@ -58,10 +57,7 @@ object HttpHeaderUtil {
     ): HttpHeaders = HttpHeaders().apply {
         add("X-$applicationName-alert", message)
         try {
-            add(
-                "X-$applicationName-params",
-                encode(param, UTF_8)
-            )
+            add("X-$applicationName-params", encode(param, UTF_8))
         } catch (_: UnsupportedEncodingException) {
             // StandardCharsets are supported by every Java implementation so this exceptions will never happen
         }
@@ -166,10 +162,7 @@ object HttpHeaderUtil {
                 if (enableTranslation) "error.$errorKey"
                 else defaultMessage!!
             )
-            add(
-                "X-$applicationName-params",
-                entityName
-            )
+            add("X-$applicationName-params", entityName)
         }
     }
 }

@@ -4,21 +4,16 @@ package backend
 
 import backend.Constants.BASE_URL
 import backend.Constants.DEFAULT_LANGUAGE
-import backend.Constants.PROFILE_CLI
 import backend.Constants.ROLE_USER
 import backend.Constants.SYSTEM_USER
 import backend.Constants.USER
 import backend.Log.log
-import kotlinx.coroutines.runBlocking
-import org.springframework.boot.CommandLineRunner
 import org.springframework.context.ApplicationContext
 import org.springframework.context.MessageSource
-import org.springframework.context.annotation.Profile
 import org.springframework.mail.MailException
 import org.springframework.mail.javamail.JavaMailSender
 import org.springframework.mail.javamail.MimeMessageHelper
 import org.springframework.scheduling.annotation.Async
-import org.springframework.stereotype.Component
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import org.thymeleaf.context.Context
@@ -30,14 +25,13 @@ import javax.annotation.PostConstruct
 import javax.mail.MessagingException
 
 /*=================================================================================*/
-@Component
-@Profile(PROFILE_CLI)
-class CliRunner : CommandLineRunner {
-    override fun run(vararg args: String?) = runBlocking {
-        log.info("command line interface")
-    }
-}
-
+//@org.springframework.stereotype.Component
+//@org.springframework.context.annotation.Profile(Constants.PROFILE_CLI)
+//class CliRunner : CommandLineRunner {
+//    override fun run(vararg args: String?) = runBlocking {
+//        log.info("command line interface: $args")
+//    }
+//}
 /*=================================================================================*/
 @Service
 class BackendService(private val context: ApplicationContext) {

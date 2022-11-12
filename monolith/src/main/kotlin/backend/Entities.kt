@@ -59,17 +59,12 @@ data class CountryPhoneCodeEntity(
     override fun getId() = code
     override fun isNew() = true
 }
-
-
 /*=================================================================================*/
 @Table("`email`")
 data class EmailEntity(@Id val value: @EmailConstraint String) : Persistable<String> {
     override fun getId() = value
     override fun isNew() = true
 }
-
-
-
 /*=================================================================================*/
 @Table("`user_authority`")
 data class AccountAuthorityEntity(
@@ -79,8 +74,6 @@ data class AccountAuthorityEntity(
     @field:NotNull
     val role: String
 )
-
-
 /*=================================================================================*/
 interface AccountRecord<AUTH : AuthorityRecord> {
     var id: UUID?
@@ -136,9 +129,6 @@ interface AccountRecord<AUTH : AuthorityRecord> {
             authorities = authorities?.map { it.role }?.toSet()
         )
 }
-
-
-
 /*=================================================================================*/
 @Table("`user`")
 data class AccountEntity @JvmOverloads constructor(
@@ -236,8 +226,6 @@ data class AccountEntity @JvmOverloads constructor(
         lastModifiedBy,
         lastModifiedDate
     )
-
-
     constructor(model: AccountCredentials) : this() {
         id = model.id
         login = model.login

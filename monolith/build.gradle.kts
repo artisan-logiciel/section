@@ -225,14 +225,13 @@ tasks.register<DeployGAE>("deployGAE") {
     doLast { println(cmd) }
 }
 
-springBoot.mainClass.set("backend.BackendBootstrap")
-
-/*
-./gradlew -q cli --args='your args there'
- */
-tasks.register("cli") {
-    group = "application"
-    description = "Run backend cli"
-    doFirst { springBoot.mainClass.set("backend.CliBootstrap") }
-    finalizedBy("bootRun")
-}
+//springBoot.mainClass.set("backend.BackendBootstrap")
+///*
+//./gradlew -q cli --args='your args there'
+// */
+//tasks.register("cli") {
+//    group = "application"
+//    description = "Run backend cli"
+//    doFirst { springBoot.mainClass.set("backend.CliBootstrap") }
+//    finalizedBy("bootRun")
+//}
