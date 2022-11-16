@@ -4,6 +4,7 @@ package backend
 
 
 import backend.AuthorityRecord.Companion.ROLE_COLUMN
+import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.reactor.awaitSingle
 import kotlinx.coroutines.reactor.awaitSingleOrNull
 import org.springframework.dao.DataAccessException
@@ -19,6 +20,9 @@ import java.util.*
 
 interface AuthorityRepository {
     suspend fun findOne(role: String): String?
+    suspend fun findAll(): List<String>
+
+    suspend fun count(): Long
 }
 
 /*=================================================================================*/
@@ -169,10 +173,10 @@ class AccountRepositoryR2dbc(
             AccountEntity::class.java
         ).awaitSingleOrNull()?.toCredentialsModel
 
-    override suspend fun findOneByResetKey(key: String)=dao.selectOne(
-            query(where("resetKey").`is`(key)),
-            AccountEntity::class.java
-        ).awaitSingleOrNull() //as  AccountRecord<*>?
+    override suspend fun findOneByResetKey(key: String) = dao.selectOne(
+        query(where("resetKey").`is`(key)),
+        AccountEntity::class.java
+    ).awaitSingleOrNull() //as  AccountRecord<*>?
 
 }
 
@@ -186,6 +190,17 @@ class AuthorityRepositoryR2dbc(
         dao.select(AuthorityEntity::class.java)
             .matching(query(where(ROLE_COLUMN).`is`(role)))
             .awaitOneOrNull()?.role
+
+    override suspend fun findAll(): List<String> =
+        dao.select(AuthorityEntity::class.java)
+            .flow()
+            .toList()
+            .map(AuthorityEntity::role)
+
+    override suspend fun count(): Long =
+        dao.select<AuthorityEntity>()
+            .count()
+            .awaitSingle()
 }
 
 /*=================================================================================*/

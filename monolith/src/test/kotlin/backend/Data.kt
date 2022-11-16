@@ -1,21 +1,29 @@
 @file:Suppress(
     "unused",
     "HttpUrlsUsage",
-    "MemberVisibilityCanBePrivate"
+    "MemberVisibilityCanBePrivate",
+    "NonAsciiCharacters"
 )
 
 package backend
 
 import backend.Constants.ADMIN
 import backend.Constants.USER
-import org.apache.commons.lang3.StringUtils
+import backend.Data.accounts
+import backend.Data.defaultAccount
+import com.fasterxml.jackson.databind.ObjectMapper
+import org.apache.commons.lang3.StringUtils.stripAccents
+import org.junit.jupiter.api.AfterAll
+import org.junit.jupiter.api.BeforeAll
+import org.springframework.beans.factory.getBean
+import org.springframework.boot.runApplication
+import org.springframework.context.ConfigurableApplicationContext
+import kotlin.test.Test
 
 
 internal object Data {
-
     val adminAccount by lazy { accountCredentialsFactory(ADMIN) }
     val defaultAccount by lazy { accountCredentialsFactory(USER) }
-
     val accounts = setOf(adminAccount, defaultAccount)
 }
 
@@ -31,7 +39,12 @@ fun accountCredentialsFactory(login: String): AccountCredentials =
     )
 
 fun nameToLogin(userList: List<String>): List<String> = userList.map { s: String ->
-    StringUtils.stripAccents(s.lowercase().replace(oldChar = ' ', newChar = '.'))
+    stripAccents(
+        s.lowercase().replace(
+            ' ',
+            '.'
+        )
+    )
 }
 
 @Suppress("unused")
@@ -65,3 +78,24 @@ val writers = listOf(
     "Michel Clouscard"
 )
 
+internal class DataTests {
+
+    private lateinit var context: ConfigurableApplicationContext
+
+    @BeforeAll
+    fun `lance le server en profile test`() =
+        runApplication<BackendApplication> {
+            testLoader(app = this)
+        }.run { context = this }
+
+    @AfterAll
+    fun `arrête le serveur`() = context.close()
+
+
+    @Test
+    fun `affiche moi du json`() {
+        Log.log.info(context.getBean<ObjectMapper>().writeValueAsString(accounts))
+        Log.log.info(context.getBean<ObjectMapper>().writeValueAsString(defaultAccount))
+        Log.log.info("""{"login":"user","firstName":"user","lastName":"user","email":"user@acme.com","password":"user","imageUrl":"http://placehold.it/50x50"}""".trimIndent())
+    }
+}

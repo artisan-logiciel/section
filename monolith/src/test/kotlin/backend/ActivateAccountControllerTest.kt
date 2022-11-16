@@ -1,11 +1,14 @@
 @file:Suppress(
-    "NonAsciiCharacters", "unused"
+    "NonAsciiCharacters",
+    "unused",
+    "SpellCheckingInspection"
 )
 
 package backend
 
 import backend.Constants.ACTIVATE_API_PATH
 import backend.Constants.ACTIVATE_API_PARAM
+import backend.Data.defaultAccount
 import backend.RandomUtils.generateActivationKey
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.AfterEach
@@ -43,7 +46,7 @@ internal class ActivateAccountControllerTest {
     fun tearDown() = deleteAllAccounts(dao)
 
     @Test
-    fun `vérifie que la requete contient bien des données cohérentes`() {
+    fun `vérifie que la requête contient bien des données cohérentes`() {
         generateActivationKey.run {
             client
                 .get()
@@ -70,7 +73,7 @@ internal class ActivateAccountControllerTest {
     fun `test activate avec une clé valide`() {
         assertEquals(0, countAccount(dao))
         assertEquals(0, countAccountAuthority(dao))
-        createDataAccounts(setOf(Data.defaultAccount), dao)
+        createDataAccounts(setOf(defaultAccount), dao)
         assertEquals(1, countAccount(dao))
         assertEquals(1, countAccountAuthority(dao))
 
@@ -78,7 +81,7 @@ internal class ActivateAccountControllerTest {
             .get()
             .uri(
                 "$ACTIVATE_API_PATH$ACTIVATE_API_PARAM",
-                findOneByLogin(Data.defaultAccount.login!!, dao)!!.apply {
+                findOneByLogin(defaultAccount.login!!, dao)!!.apply {
                     assertTrue(activationKey!!.isNotBlank())
                     assertFalse(activated)
                 }.activationKey
@@ -87,7 +90,7 @@ internal class ActivateAccountControllerTest {
             .expectStatus().isOk
             .returnResult<Unit>()
 
-        findOneByLogin(Data.defaultAccount.login!!, dao)!!.run {
+        findOneByLogin(defaultAccount.login!!, dao)!!.run {
             assertNull(activationKey)
             assertTrue(activated)
         }

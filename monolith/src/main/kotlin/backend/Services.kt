@@ -42,7 +42,7 @@ class BackendService(private val context: ApplicationContext) {
 
 @Service
 @Transactional
-class SignUpService(
+class SignupService(
     private val accountRepository: AccountRepository,
     private val mailService: MailService
 ) {
