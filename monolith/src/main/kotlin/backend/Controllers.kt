@@ -37,7 +37,6 @@ class AuthorityController(
         .count()
 }
 /*=================================================================================*/
-
 @RestController
 @RequestMapping(ACCOUNT_API)
 class SignupController(
@@ -68,7 +67,7 @@ class SignupController(
     @GetMapping(ACTIVATE_API)
     suspend fun activateAccount(@RequestParam(value = ACTIVATE_API_KEY) key: String) {
         when {
-            !signupService.activate(key = key) -> throw SignupException("No user was found for this activation key")
+            !signupService.activate(key) -> throw SignupException("No user was found for this activation key")
         }
     }
 }
