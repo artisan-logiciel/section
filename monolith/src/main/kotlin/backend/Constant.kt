@@ -21,6 +21,7 @@ object Constants {
     )
     const val NORMAL_TERMINATION = 0
 
+    const val DOMAIN_DEV_URL = "acme.com"
     const val DOMAIN_URL = "https://www.cheroliv.com"
     const val STARTUP_HOST_WARN_LOG_MSG = "The host name could not be determined, using `localhost` as fallback"
     const val SPRING_APPLICATION_NAME = "spring.application.name"

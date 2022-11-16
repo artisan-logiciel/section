@@ -8,9 +8,11 @@
 package backend
 
 import backend.Constants.ADMIN
+import backend.Constants.DOMAIN_DEV_URL
 import backend.Constants.USER
 import backend.Data.accounts
 import backend.Data.defaultAccount
+import backend.Data.defaultAccountJson
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.apache.commons.lang3.StringUtils.stripAccents
 import org.junit.jupiter.api.AfterAll
@@ -25,6 +27,14 @@ internal object Data {
     val adminAccount by lazy { accountCredentialsFactory(ADMIN) }
     val defaultAccount by lazy { accountCredentialsFactory(USER) }
     val accounts = setOf(adminAccount, defaultAccount)
+    const val defaultAccountJson = """{
+    "login": "$USER",
+    "firstName": "$USER",
+    "lastName": "$USER",
+    "email": "$USER@$DOMAIN_DEV_URL",
+    "password": "$USER",
+    "imageUrl": "http://placehold.it/50x50"
+}"""
 }
 
 
@@ -34,7 +44,7 @@ fun accountCredentialsFactory(login: String): AccountCredentials =
         login = login,
         firstName = login,
         lastName = login,
-        email = "$login@acme.com",
+        email = "$login@$DOMAIN_DEV_URL",
         imageUrl = "http://placehold.it/50x50",
     )
 
@@ -96,6 +106,6 @@ internal class DataTests {
     fun `affiche moi du json`() {
         Log.log.info(context.getBean<ObjectMapper>().writeValueAsString(accounts))
         Log.log.info(context.getBean<ObjectMapper>().writeValueAsString(defaultAccount))
-        Log.log.info("""{"login":"user","firstName":"user","lastName":"user","email":"user@acme.com","password":"user","imageUrl":"http://placehold.it/50x50"}""".trimIndent())
+        Log.log.info(defaultAccountJson)
     }
 }
