@@ -1,6 +1,6 @@
 package backend
 
-//import org.springframework.security.core.AuthenticationException
+import org.springframework.security.core.AuthenticationException
 import backend.Constants.PASSWORD_MAX_LENGTH
 import backend.Constants.PASSWORD_MIN_LENGTH
 import org.apache.commons.lang3.StringUtils
@@ -40,13 +40,13 @@ class EmailAlreadyUsedException :
 /*=================================================================================*/
 
 
-//class UserNotActivatedException(
-//    message: String,
-//    t: Throwable? = null
-//) : AuthenticationException(message, t) {
-//    companion object {
-//        private const val serialVersionUID = 1L
-//    }
-//}
+class UserNotActivatedException(
+    message: String,
+    t: Throwable? = null
+) : AuthenticationException(message, t) {
+    companion object {
+        private const val serialVersionUID = 1L
+    }
+}
 
 /*=================================================================================*/

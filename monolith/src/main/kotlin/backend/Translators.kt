@@ -19,6 +19,7 @@ import org.zalando.problem.*
 import org.zalando.problem.Problem.builder
 import org.zalando.problem.Status.BAD_REQUEST
 import org.zalando.problem.spring.webflux.advice.ProblemHandling
+import org.zalando.problem.spring.webflux.advice.security.SecurityAdviceTrait
 import org.zalando.problem.violations.ConstraintViolationProblem
 import reactor.core.publisher.Mono
 import reactor.core.publisher.Mono.just
@@ -38,7 +39,7 @@ import org.zalando.problem.Problem.DEFAULT_TYPE as PROBLEM_DEFAULT_TYPE
 class ProblemTranslator(
     private val env: Environment,
     private val properties: ApplicationProperties
-) : ProblemHandling/*, SecurityAdviceTrait*/ {
+) : ProblemHandling, SecurityAdviceTrait {
 
     companion object {
         private const val FIELD_ERRORS_KEY = "fieldErrors"

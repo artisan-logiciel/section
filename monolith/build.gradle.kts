@@ -80,9 +80,9 @@ dependencies {
 //    runtimeOnly("io.r2dbc:r2dbc-postgresql")
 //    runtimeOnly("org.postgresql:postgresql")
     //Spring Security
-//    implementation( "org.springframework.boot:spring-boot-starter-security")
-//    implementation( "org.springframework.security:spring-security-data")
-//    testImplementation( "org.springframework.security:spring-security-test")
+    implementation( "org.springframework.boot:spring-boot-starter-security")
+    implementation( "org.springframework.security:spring-security-data")
+    testImplementation( "org.springframework.security:spring-security-test")
     // JWT authentication
     implementation("io.jsonwebtoken:jjwt-impl:${properties["jsonwebtoken.version"]}")
     implementation("io.jsonwebtoken:jjwt-jackson:${properties["jsonwebtoken.version"]}")

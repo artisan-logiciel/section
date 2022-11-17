@@ -1,4 +1,8 @@
-@file:Suppress("unused", "FunctionName", "RedundantUnitReturnType")
+@file:Suppress(
+    "unused",
+    "FunctionName",
+    "RedundantUnitReturnType"
+)
 
 package backend
 
@@ -43,6 +47,10 @@ interface AccountRepository {
     suspend fun signup(model: AccountCredentials)
     suspend fun findOneByActivationKey(key: String): AccountCredentials?
     suspend fun findOneByResetKey(key: String): AccountRecord<*>?//<AuthorityRecord>?
+
+    suspend fun findOneByEmailWithAuthorities(email:String): AccountCredentials?
+
+    suspend fun findOneByLoginWithAuthorities(login:String): AccountCredentials?
 }
 
 /*=================================================================================*/
@@ -178,10 +186,16 @@ class AccountRepositoryR2dbc(
         AccountEntity::class.java
     ).awaitSingleOrNull() //as  AccountRecord<*>?
 
+    override suspend fun findOneByEmailWithAuthorities(email: String): AccountCredentials? {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun findOneByLoginWithAuthorities(login: String): AccountCredentials? {
+        TODO("Not yet implemented")
+    }
+
 }
-
 /*=================================================================================*/
-
 @Repository
 class AuthorityRepositoryR2dbc(
     private val dao: R2dbcEntityTemplate
@@ -202,6 +216,5 @@ class AuthorityRepositoryR2dbc(
             .count()
             .awaitSingle()
 }
-
 /*=================================================================================*/
 

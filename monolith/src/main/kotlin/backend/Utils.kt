@@ -2,16 +2,25 @@
 
 package backend
 
+import backend.Constants.ROLE_ANONYMOUS
 import backend.Log.log
 import org.apache.commons.lang3.RandomStringUtils.random
 import org.springframework.data.domain.Page
 import org.springframework.http.HttpHeaders
+import org.springframework.security.core.Authentication
+import org.springframework.security.core.GrantedAuthority
+import org.springframework.security.core.context.SecurityContext
+import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.web.util.UriComponentsBuilder
 import java.io.UnsupportedEncodingException
 import java.net.URLEncoder.encode
 import java.security.SecureRandom
 import java.text.MessageFormat
 import kotlin.text.Charsets.UTF_8
+import org.springframework.security.core.context.ReactiveSecurityContextHolder.getContext
+import kotlinx.coroutines.reactive.awaitSingle
+
+
 
 /*=================================================================================*/
 object RandomUtils {
@@ -22,7 +31,13 @@ object RandomUtils {
 
     private val generateRandomAlphanumericString: String
         get() = random(
-            DEF_COUNT, 0, 0, true, true, null, SECURE_RANDOM
+            DEF_COUNT,
+            0,
+            0,
+            true,
+            true,
+            null,
+            SECURE_RANDOM
         )
 
     val generatePassword: String
@@ -244,49 +259,48 @@ object PaginationUtil {
         .replace(oldValue = ";", newValue = "%3B")
 }
 /*=================================================================================*/
-//@Suppress("ClassName")
-//object SecurityUtils {
-//
-//    suspend fun getCurrentUserLogin(): String =
-//        extractPrincipal(
-//            getContext()
-//                .awaitSingle()
-//                .authentication
-//        )
-//
-//    private fun extractPrincipal(authentication: Authentication?): String =
-//        if (authentication == null) ""
-//        else when (val principal = authentication.principal) {
-//            is UserDetails -> principal.username
-//            is String -> principal
-//            else -> ""
-//        }
-//
-//    suspend fun getCurrentUserJwt(): String =
-//        getContext()
-//            .map(SecurityContext::getAuthentication)
-//            .filter { it.credentials is String }
-//            .map { it.credentials as String }
-//            .awaitSingle()
-//
-//    suspend fun isAuthenticated(): Boolean =
-//        getContext()
-//            .map(SecurityContext::getAuthentication)
-//            .map(Authentication::getAuthorities)
-//            .map { roles: Collection<GrantedAuthority> ->
-//                roles.map(transform = GrantedAuthority::getAuthority)
-//                    .none { it == ROLE_ANONYMOUS }
-//            }.awaitSingle()
-//
-//
-//    suspend fun isCurrentUserInRole(authority: String): Boolean =
-//        getContext()
-//            .map(SecurityContext::getAuthentication)
-//            .map(Authentication::getAuthorities)
-//            .map { roles: Collection<GrantedAuthority> ->
-//                roles.map(transform = GrantedAuthority::getAuthority)
-//                    .any { it == authority }
-//            }.awaitSingle()
-//}
+object SecurityUtils {
+
+    suspend fun getCurrentUserLogin(): String =
+        extractPrincipal(
+            getContext()
+                .awaitSingle()
+                .authentication
+        )
+
+    private fun extractPrincipal(authentication: Authentication?): String =
+        if (authentication == null) ""
+        else when (val principal = authentication.principal) {
+            is UserDetails -> principal.username
+            is String -> principal
+            else -> ""
+        }
+
+    suspend fun getCurrentUserJwt(): String =
+        getContext()
+            .map(SecurityContext::getAuthentication)
+            .filter { it.credentials is String }
+            .map { it.credentials as String }
+            .awaitSingle()
+
+    suspend fun isAuthenticated(): Boolean =
+        getContext()
+            .map(SecurityContext::getAuthentication)
+            .map(Authentication::getAuthorities)
+            .map { roles: Collection<GrantedAuthority> ->
+                roles.map(transform = GrantedAuthority::getAuthority)
+                    .none { it == ROLE_ANONYMOUS }
+            }.awaitSingle()
+
+
+    suspend fun isCurrentUserInRole(authority: String): Boolean =
+        getContext()
+            .map(SecurityContext::getAuthentication)
+            .map(Authentication::getAuthorities)
+            .map { roles: Collection<GrantedAuthority> ->
+                roles.map(transform = GrantedAuthority::getAuthority)
+                    .any { it == authority }
+            }.awaitSingle()
+}
 
 /*=================================================================================*/

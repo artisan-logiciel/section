@@ -2,7 +2,9 @@
 
 package backend
 
+//import reactor.core.publisher.Hooks.onOperatorDebug
 
+import backend.Constants.FEATURE_POLICY
 import backend.Constants.REQUEST_PARAM_LANG
 import backend.Log.log
 import com.fasterxml.jackson.databind.ObjectMapper
@@ -27,15 +29,28 @@ import org.springframework.data.web.ReactivePageableHandlerMethodArgumentResolve
 import org.springframework.data.web.ReactiveSortHandlerMethodArgumentResolver
 import org.springframework.format.FormatterRegistry
 import org.springframework.format.datetime.standard.DateTimeFormatterRegistrar
+import org.springframework.http.HttpMethod.OPTIONS
 import org.springframework.mail.javamail.JavaMailSender
 import org.springframework.mail.javamail.JavaMailSenderImpl
 import org.springframework.scheduling.annotation.AsyncConfigurer
 import org.springframework.scheduling.annotation.EnableAsync
 import org.springframework.scheduling.annotation.EnableScheduling
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor
-//import org.springframework.security.config.annotation.method.configuration.EnableReactiveMethodSecurity
-//import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity
-//import org.springframework.security.core.userdetails.ReactiveUserDetailsService
+import org.springframework.security.authentication.ReactiveAuthenticationManager
+import org.springframework.security.authentication.UserDetailsRepositoryReactiveAuthenticationManager
+import org.springframework.security.config.annotation.method.configuration.EnableReactiveMethodSecurity
+import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity
+import org.springframework.security.config.web.server.SecurityWebFiltersOrder.AUTHENTICATION
+import org.springframework.security.config.web.server.SecurityWebFiltersOrder.HTTP_BASIC
+import org.springframework.security.config.web.server.ServerHttpSecurity
+import org.springframework.security.core.userdetails.ReactiveUserDetailsService
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
+import org.springframework.security.crypto.password.PasswordEncoder
+import org.springframework.security.web.server.SecurityWebFilterChain
+import org.springframework.security.web.server.header.ReferrerPolicyServerHttpHeadersWriter.ReferrerPolicy.STRICT_ORIGIN_WHEN_CROSS_ORIGIN
+import org.springframework.security.web.server.util.matcher.NegatedServerWebExchangeMatcher
+import org.springframework.security.web.server.util.matcher.OrServerWebExchangeMatcher
+import org.springframework.security.web.server.util.matcher.ServerWebExchangeMatchers.pathMatchers
 import org.springframework.validation.Validator
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean
 import org.springframework.web.cors.reactive.CorsWebFilter
@@ -57,6 +72,13 @@ import java.util.Locale.getDefault
 import java.util.concurrent.Callable
 import java.util.concurrent.Executor
 import java.util.concurrent.Future
+
+//import org.springframework.boot.autoconfigure.web.reactive.ResourceHandlerRegistrationCustomizer
+//import org.springframework.context.annotation.Import
+//import org.springframework.security.config.annotation.method.configuration.EnableReactiveMethodSecurity
+//import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity
+//import org.springframework.security.core.userdetails.ReactiveUserDetailsService
+//import org.zalando.problem.spring.webflux.advice.security.SecurityProblemSupport
 
 /*=================================================================================*/
 @Configuration
@@ -86,14 +108,14 @@ class LocaleSupportConfiguration : DelegatingWebFluxConfiguration() {
 /*=================================================================================*/
 @Configuration
 @EnableWebFlux
-//@EnableWebFluxSecurity
-//@EnableReactiveMethodSecurity
-//@Import(SecurityProblemSupport::class)
+@EnableWebFluxSecurity
+@EnableReactiveMethodSecurity
+@Import(SecurityProblemSupport::class)
 class WebConfiguration(
     private val properties: ApplicationProperties,
-//    private val userDetailsService: ReactiveUserDetailsService,
-//    private val tokenProvider: TokenProvider,
-//    private val problemSupport: SecurityProblemSupport,
+    private val userDetailsService: ReactiveUserDetailsService,
+    private val tokenProvider: TokenProvider,
+    private val problemSupport: SecurityProblemSupport,
 ) : WebFluxConfigurer {
 
     override fun addFormatters(registry: FormatterRegistry) {
@@ -177,86 +199,91 @@ class WebConfiguration(
     @Bean
     fun reactiveSortHandlerMethodArgumentResolver() = ReactiveSortHandlerMethodArgumentResolver()
 
+/*
+    @Bean
+    fun registrationCustomizer(): ResourceHandlerRegistrationCustomizer {
+        // Disable built-in cache control to use our custom filter instead
+        return registration -> registration.setCacheControl(null);
+    }
 
-//        @Bean
-//        fun registrationCustomizer():ResourceHandlerRegistrationCustomizer {
-//            // Disable built-in cache control to use our custom filter instead
-//            return registration -> registration.setCacheControl(null);
-//        }
-//        @Bean
-//        @Profile(Constants.SPRING_PROFILE_PRODUCTION)
-//        fun  cachingHttpHeadersFilter():CachingHttpHeadersFilter {
-//            // Use a cache filter that only match selected paths
-//            return  CachingHttpHeadersFilter(TimeUnit.DAYS.toMillis(ApplicationProperties.getHttp().getCache().getTimeToLiveInDays()))
-//        }
+    @Bean
+    @Profile(Constants.SPRING_PROFILE_PRODUCTION)
+    fun cachingHttpHeadersFilter(): CachingHttpHeadersFilter {
+        // Use a cache filter that only match selected paths
+        return CachingHttpHeadersFilter(
+            TimeUnit.DAYS.toMillis(
+                ApplicationProperties.getHttp().getCache().getTimeToLiveInDays()
+            )
+        )
+    }
+*/
+    @Bean("passwordEncoder")
+    fun passwordEncoder(): PasswordEncoder = BCryptPasswordEncoder()
 
-//    @Bean("passwordEncoder")
-//    fun passwordEncoder(): PasswordEncoder = BCryptPasswordEncoder()
+    @Bean
+    fun reactiveAuthenticationManager(): ReactiveAuthenticationManager =
+        UserDetailsRepositoryReactiveAuthenticationManager(userDetailsService)
+            .apply { setPasswordEncoder(passwordEncoder()) }
 
-//    @Bean
-//    fun reactiveAuthenticationManager(): ReactiveAuthenticationManager =
-//        UserDetailsRepositoryReactiveAuthenticationManager(userDetailsService)
-//            .apply { setPasswordEncoder(passwordEncoder()) }
-
-//    @Bean
-//    fun springSecurityFilterChain(
-//        http: ServerHttpSecurity
-//    ): SecurityWebFilterChain =
-//        @Suppress("DEPRECATION")
-//        http.securityMatcher(
-//            NegatedServerWebExchangeMatcher(
-//                OrServerWebExchangeMatcher(
-//                    pathMatchers(
-//                        "/app/**",
-//                        "/i18n/**",
-//                        "/content/**",
-//                        "/swagger-ui/**",
-//                        "/test/**",
-//                        "/webjars/**"
-//                    ),
-//                    pathMatchers(OPTIONS, "/**")
-//                )
-//            )
-//        ).csrf()
-//            .disable()
-//            .addFilterAt(SpaWebFilter(), AUTHENTICATION)
-//            .addFilterAt(JwtFilter(tokenProvider), HTTP_BASIC)
-//            .authenticationManager(reactiveAuthenticationManager())
-//            .exceptionHandling()
-//            .accessDeniedHandler(problemSupport)
-//            .authenticationEntryPoint(problemSupport)
-//            .and()
-//            .headers().contentSecurityPolicy(Constants.CONTENT_SECURITY_POLICY)
-//            .and()
-//            .referrerPolicy(STRICT_ORIGIN_WHEN_CROSS_ORIGIN)
-//            .and()
-//            .featurePolicy(FEATURE_POLICY)
-//            .and()
-//            .frameOptions().disable()
-//            .and()
-//            .authorizeExchange()
-//            .pathMatchers("/").permitAll()
-//            .pathMatchers("/**").permitAll()
-//            .pathMatchers("/*.*").permitAll()
-//            .pathMatchers("/api/register").permitAll()
-//            .pathMatchers("/api/activate").permitAll()
-//            .pathMatchers("/api/authenticate").permitAll()
-//            .pathMatchers("/api/account/reset-password/init").permitAll()
-//            .pathMatchers("/api/account/reset-password/finish").permitAll()
-//            .pathMatchers("/api/auth-info").permitAll()
-//            .pathMatchers("/api/user/**").permitAll()
-//            .pathMatchers("/management/health").permitAll()
-//            .pathMatchers("/management/health/**").permitAll()
-//            .pathMatchers("/management/info").permitAll()
-//            .pathMatchers("/management/prometheus").permitAll()
-//            .pathMatchers("/api/**").permitAll()
-//            .pathMatchers("/services/**").authenticated()
-//            .pathMatchers("/swagger-resources/**").authenticated()
-//            .pathMatchers("/v2/api-docs").authenticated()
-//            .pathMatchers("/management/**").hasAuthority(Constants.ROLE_ADMIN)
-//            .pathMatchers("/api/admin/**").hasAuthority(Constants.ROLE_ADMIN)
-//            .and()
-//            .build()
+    @Bean
+    fun springSecurityFilterChain(
+        http: ServerHttpSecurity
+    ): SecurityWebFilterChain =
+        @Suppress("DEPRECATION")
+        http.securityMatcher(
+            NegatedServerWebExchangeMatcher(
+                OrServerWebExchangeMatcher(
+                    pathMatchers(
+                        "/app/**",
+                        "/i18n/**",
+                        "/content/**",
+                        "/swagger-ui/**",
+                        "/test/**",
+                        "/webjars/**"
+                    ),
+                    pathMatchers(OPTIONS, "/**")
+                )
+            )
+        ).csrf()
+            .disable()
+            .addFilterAt(SpaWebFilter(), AUTHENTICATION)
+            .addFilterAt(JwtFilter(tokenProvider), HTTP_BASIC)
+            .authenticationManager(reactiveAuthenticationManager())
+            .exceptionHandling()
+            .accessDeniedHandler(problemSupport)
+            .authenticationEntryPoint(problemSupport)
+            .and()
+            .headers().contentSecurityPolicy(Constants.CONTENT_SECURITY_POLICY)
+            .and()
+            .referrerPolicy(STRICT_ORIGIN_WHEN_CROSS_ORIGIN)
+            .and()
+            .featurePolicy(FEATURE_POLICY)
+            .and()
+            .frameOptions().disable()
+            .and()
+            .authorizeExchange()
+            .pathMatchers("/").permitAll()
+            .pathMatchers("/**").permitAll()
+            .pathMatchers("/*.*").permitAll()
+            .pathMatchers("/api/account/signup").permitAll()
+            .pathMatchers("/api/activate").permitAll()
+            .pathMatchers("/api/authenticate").permitAll()
+            .pathMatchers("/api/account/reset-password/init").permitAll()
+            .pathMatchers("/api/account/reset-password/finish").permitAll()
+            .pathMatchers("/api/auth-info").permitAll()
+            .pathMatchers("/api/user/**").permitAll()
+            .pathMatchers("/management/health").permitAll()
+            .pathMatchers("/management/health/**").permitAll()
+            .pathMatchers("/management/info").permitAll()
+            .pathMatchers("/management/prometheus").permitAll()
+            .pathMatchers("/api/**").permitAll()
+            .pathMatchers("/services/**").authenticated()
+            .pathMatchers("/swagger-resources/**").authenticated()
+            .pathMatchers("/v2/api-docs").authenticated()
+            .pathMatchers("/management/**").hasAuthority(Constants.ROLE_ADMIN)
+            .pathMatchers("/api/admin/**").hasAuthority(Constants.ROLE_ADMIN)
+            .and()
+            .build()
 }
 
 /*=================================================================================*/

@@ -2,9 +2,6 @@
 
 package backend
 
-//import backend.services.SecurityUtils.getCurrentUserLogin
-
-
 import backend.Constants.ACCOUNT_API
 import backend.Constants.ACTIVATE_API
 import backend.Constants.ACTIVATE_API_KEY
